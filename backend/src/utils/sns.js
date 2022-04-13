@@ -20,4 +20,12 @@ function makeSignature(timestamp, suburl, method) {
 	return hash.toString(CryptoJS.enc.Base64);
 }
 
+// 휴대폰 인증이 성공적으로 되었는지를 반환하는 함수
+function checkSMSVerification(req) {
+	const { smsVerification } = req.session;
+	if (!smsVerification) return false;
+	return smsVerification.verified;
+}
+
 module.exports.makeSignature = makeSignature;
+module.exports.checkSMSVerification = checkSMSVerification;

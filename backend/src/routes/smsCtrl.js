@@ -65,7 +65,7 @@ router.post('/sending', async (req, res) => {
     return res.status(500).json({ message: '서버 문제로 인증번호를 발송하지 못했습니다.' });
   }
 
-  return res.status(200).json({ message: 'end of line' });
+  return res.status(501).json({ message: 'end of line' });
 });
 
 // 인증번호 검증
@@ -99,7 +99,7 @@ router.post('/confirmation', async (req, res) => {
     return res.status(200).json({ message: '인증되었습니다.' });
   }
 
-  return res.status(200).json({ message: 'end of line' });
+  return res.status(501).json({ message: 'end of line' });
 });
 
 module.exports = router;
