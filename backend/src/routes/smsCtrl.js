@@ -73,7 +73,11 @@ router.post('/confirmation', async (req, res) => {
   let { smsVerification } = req.session;
   let { cert_num } = req.body;
 
-  // 이미 인증이 되어있는 상태면 특별한 처리를 하지 않음.
+  // 인증번호가 아직 세션에 없으면 인증 로직 처리를 하지 않음.
+  if (!smsVerification)
+    return res.status(400).json({ message: '인증번호를 먼저 발송해주세요.' });
+
+  // 이미 인증이 되어있는 상태면 인증 로직 처리를 하지 않음.
   if (smsVerification.verified) {
     return res.status(200).json({ message: '이미 인증번호가 인증 되었습니다.' });
   } else {
