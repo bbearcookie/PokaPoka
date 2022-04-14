@@ -5,16 +5,22 @@ const { checkSMSVerification } = require('../utils/sns');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
-  const { username, password, password_check, name, nickname, favorite } = req.body;
-  let { phone } = req.body;
+  const { password, password_check, name, nickname, favorite } = req.body;
+  let { username, phone } = req.body;
 
   // 데이터 유효성 검사
+  username = username.toLowerCase();
+  console.log(username);
   if (!username) return res.status(400).json({ message: '아이디를 입력해주세요.' });
+  if (/([^A-Za-z0-9])/.exec(username)) return res.status(400).json({ message: '아이디는 영문자와 숫자만 입력할 수 있습니다.' });
+  if (username.length > 20) return res.status(400).json({ message: '아이디는 최대 20글자까지 입력할 수 있습니다.' });
   if (!password) return res.status(400).json({ message: '비밀번호를 입력해주세요.' });
   if (!password_check) return res.status(400).json({ message: '비밀번호 확인을 입력해주세요.' });
   if (password !== password_check) return res.status(400).json({ message: '비밀번호 확인이 일치하지 않아요.' });
   if (!name) return res.status(400).json({ message: '이름을 입력해주세요.' });
+  if (name.length > 10) return res.status(400).json({ message: '이름은 최대 10글자까지 입력할 수 있습니다.' });
   if (!nickname) return res.status(400).json({ message: '닉네임을 입력해주세요.' });
+  if (nickname.length > 20) return res.status(400).json({ message: '닉네임은 최대 20글자까지 입력할 수 있습니다.' });
   if (!favorite) return res.status(400).json({ message: '최애그룹을 입력해주세요.' });
 
   // 전화번호 유효성 검사
@@ -68,7 +74,5 @@ router.post('/login', async (req, res) => {
 router.post('/logout', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
-
-
 
 module.exports = router;
