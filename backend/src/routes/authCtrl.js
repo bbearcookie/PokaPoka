@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 const { checkSMSVerification } = require('../utils/sns');
-const { createToken } = require('../utils/jwt');
+const { createToken, verifyToken } = require('../utils/jwt');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
@@ -97,9 +97,11 @@ router.post('/login/local', async (req, res) => {
     // 비밀번호 확인
     if (user.password !== encryptText(password, user.salt)) return res.status(403).json({ message: '비밀번호가 다릅니다.' });
 
-    // DB에 저장할 액세스 토큰 만료 시간 생성
+    // DB에 저장할 만료 시간 생성
     let accessExpires = new Date();
     accessExpires.setMilliseconds(accessExpires.getMilliseconds() + parseInt(process.env.ACCESS_TOKEN_EXPIRES));
+    let refreshExpires = new Date();
+    refreshExpires.setMilliseconds(refreshExpires.getMilliseconds() + parseInt(process.env.REFRESH_TOKEN_EXPIRES));
 
     // 토큰 생성
     const payload = { username: user.username, role: user.role, strategy: user.strategy };
@@ -112,9 +114,9 @@ router.post('/login/local', async (req, res) => {
 
     // DB에 로그인 정보와 새로운 토큰 정보 저장
     sql = `INSERT INTO 
-    LoginToken (username, access, refresh, user_agent, write_time, access_expire_time) 
-    VALUES (?, ?, ?, ?, ?, ?)`;
-    await con.execute(sql, [username, accessToken, refreshToken, userAgent, new Date(), accessExpires]);
+    LoginToken (username, access, refresh, user_agent, login_time, access_expire_time, refresh_expire_time) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    await con.execute(sql, [username, accessToken, refreshToken, userAgent, new Date(), accessExpires, refreshExpires]);
 
     // 쿠키에 토큰 보관
     res.cookie('accessToken', accessToken, { httpOnly: true });
@@ -138,10 +140,21 @@ router.post('/logout', async (req, res) => {
 
 // 토큰 테스트
 router.post('/token/test', async (req, res) => {
-  let { accessToken, refreshToken } = req.cookies;
+  // let { accessToken, refreshToken } = req.cookies;
 
-  console.log(accessToken);
-  console.log(refreshToken);
+  // console.log(accessToken);
+  // console.log(refreshToken);
+
+  const token = await verifyToken(req, res);
+
+  if (token) {
+    console.log(token.accessToken);
+    console.log(JSON.stringify(token.payload));
+  } else {
+    console.log('토큰 없음');
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+  }
 
   return res.status(501).json({ message: 'end of line' });
 });
