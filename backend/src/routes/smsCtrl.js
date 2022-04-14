@@ -58,7 +58,6 @@ router.post('/sending', async (req, res) => {
       },
       data: smsData
     });
-    console.log(data.data);
     return res.status(200).json({ message: '인증번호가 발송되었습니다.' });
   } catch (err) {
     console.error(err);
@@ -95,11 +94,16 @@ router.post('/confirmation', async (req, res) => {
       verified: true
     };
     req.session.smsVerification = smsVerification;
-    console.log(req.session.smsVerification);
     return res.status(200).json({ message: '인증되었습니다.' });
   }
 
   return res.status(501).json({ message: 'end of line' });
+});
+
+// 인증번호 세션 초기화
+router.delete('/session', async (req, res) => {
+  req.session.smsVerification = undefined;
+  return res.status(200).json({ message: '휴대폰 인증 정보가 초기화되었습니다.' });
 });
 
 module.exports = router;
