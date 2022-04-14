@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 const { checkSMSVerification } = require('../utils/sns');
-const { createToken, verifyToken, verifyLogin } = require('../utils/jwt');
+const { createToken, verifyLogin } = require('../utils/jwt');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
@@ -135,6 +135,25 @@ router.post('/login/local', async (req, res) => {
 
 // 로그아웃 처리
 router.post('/logout', async (req, res) => {
+  const { accessToken, refreshToken } = req.cookies;
+
+  const con = await db.getConnection();
+  try {
+    // DB에 저장된 로그인 토큰 정보 삭제
+    let sql = `DELETE FROM LoginToken WHERE refresh='${refreshToken}'`;
+    await con.execute(sql);
+
+    // 쿠키에 있는 액세스 토큰, 리프레쉬 토큰 삭제
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    return res.status(200).json({ message: '로그아웃 되었습니다.'});
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
   return res.status(501).json({ message: 'end of line' });
 });
 
