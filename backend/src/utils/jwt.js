@@ -7,7 +7,7 @@ function createToken(payload, expires) {
 }
 
 // 리프레쉬 토큰을 가지고 새로운 액세스 토큰 생성
-async function renewAccessToken(refreshToken, userAgent, res) {
+async function renewAccessToken(refreshToken, userAgent) {
   // DB 사용
   const con = await db.getConnection();
   try {
@@ -22,9 +22,8 @@ async function renewAccessToken(refreshToken, userAgent, res) {
 
       // 토큰의 정보를 가져올 수 있으면 리프레쉬 토큰이 유효한 상태임.
       if (token) {
-
         // 액세스 토큰 만료 시간이 지난 경우 정상적인 요청이므로 액세스 토큰을 새로 발급해준다.
-        if (Date.now() >= token.access_expire_time) {
+        if (Date.now() + 5000 >= token.access_expire_time) {
           sql = `SELECT username, role, strategy FROM User where username='${token.username}'`;
           let [[user]] = await con.query(sql);
 
@@ -45,10 +44,7 @@ async function renewAccessToken(refreshToken, userAgent, res) {
             LoginToken (username, access, refresh, user_agent, login_time, access_expire_time, refresh_expire_time) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`;
             await con.execute(sql, [user.username, accessToken, refreshToken, userAgent, token.login_time, accessExpires, token.refresh_expire_time]);
-
-            // 쿠키에 토큰 보관
-            res.cookie('accessToken', accessToken, { httpOnly: true });
-            console.log('액세스 토큰 재발급');
+            console.log(`${user.username} 사용자의 액세스 토큰을 재발급했습니다.`);
             
             return { accessToken, payload };
           // 어떤 문제가 발생해서 사용자 정보가 없어지면 액세스 토큰을 발급하지 않음.
@@ -105,10 +101,7 @@ async function renewAccessToken(refreshToken, userAgent, res) {
 // payload 에는 { 접속한 사용자ID, 역할, 로그인방법 } 정보가 들어있음.
 // 만약 액세스 토큰이 만료되었다면 리프레쉬 토큰으로 재발급을 시도함.
 // 검증이나 재발급중 문제가 생기면 {undefined, undefined} 를 반환함.
-async function verifyToken(req, res) {
-  let { accessToken, refreshToken } = req.cookies;
-  const userAgent = req.headers['user-agent'];
-
+async function verifyToken(accessToken, refreshToken, userAgent) {
   // 액세스 토큰과 리프레쉬 토큰이 있어야 검증 수행
   if (accessToken && refreshToken) {
     // 현재의 액세스 토큰이 유효하면 그대로 반환
@@ -119,7 +112,7 @@ async function verifyToken(req, res) {
     // 현재의 액세스 토큰이 만료되었으면 리프레쉬 토큰으로 재발급을 시도함
     } catch (err) {
       try {
-        return await renewAccessToken(refreshToken, userAgent, res);
+        return await renewAccessToken(refreshToken, userAgent);
       } catch (err) {
         console.error(err);
       }
@@ -129,5 +122,34 @@ async function verifyToken(req, res) {
   return undefined;
 }
 
+// 로그인 한 사용자의 정보를 req.accessToken 객체에 담는 미들웨어
+/** @type {import("express").RequestHandler} */
+const verifyLogin = async (req, res, next) => {
+  let { accessToken, refreshToken } = req.cookies;
+  const userAgent = req.headers['user-agent'];
+
+  // 쿠키에 액세스 토큰이 있으면 검증 시도
+  if (accessToken) {
+    const token = await verifyToken(accessToken, refreshToken, userAgent);
+
+    // 검증 성공하면 처리 req.accessToken 객체와 쿠키에 토큰 정보 저장
+    if (token) {
+      req.accessToken = {
+        token: token.accessToken,
+        payload: token.payload
+      };
+      res.cookie('accessToken', token.accessToken, { httpOnly: true });
+    // 검증 실패하면 쿠키에서 토큰 삭제
+    } else {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+    }
+  } else {
+    req.accessToken = undefined;
+  }
+
+  next();
+}
+
 module.exports.createToken = createToken;
-module.exports.verifyToken = verifyToken;
+module.exports.verifyLogin = verifyLogin;

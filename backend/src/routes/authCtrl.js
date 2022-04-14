@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 const { checkSMSVerification } = require('../utils/sns');
-const { createToken, verifyToken } = require('../utils/jwt');
+const { createToken, verifyToken, verifyLogin } = require('../utils/jwt');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
@@ -138,22 +138,15 @@ router.post('/logout', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 토큰 테스트
-router.post('/token/test', async (req, res) => {
-  // let { accessToken, refreshToken } = req.cookies;
+// 로그인 검증 기능 테스트
+router.post('/login/test', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
 
-  // console.log(accessToken);
-  // console.log(refreshToken);
-
-  const token = await verifyToken(req, res);
-
-  if (token) {
-    console.log(token.accessToken);
-    console.log(JSON.stringify(token.payload));
+  if (accessToken) {
+    const { username, role, strategy } = accessToken.payload;
+    return res.status(200).json({ message: `${username} 님 어서오세요! 당신은 ${strategy} 방식으로 로그인 하셨으며, 서비스 내에서 ${role} 역할을 맡고 있습니다.` });
   } else {
-    console.log('토큰 없음');
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    return res.status(401).json({ message: '당신은 로그인 상태가 아닙니다.' });
   }
 
   return res.status(501).json({ message: 'end of line' });
