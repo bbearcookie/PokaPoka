@@ -2,15 +2,15 @@ const router = require('../config/express').router;
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 const { checkSMSVerification } = require('../utils/sns');
+const jwt = require('jsonwebtoken');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
   const { password, password_check, name, nickname, favorite } = req.body;
   let { username, phone } = req.body;
+  username = username.toLowerCase();
 
   // 데이터 유효성 검사
-  username = username.toLowerCase();
-  console.log(username);
   if (!username) return res.status(400).json({ message: '아이디를 입력해주세요.' });
   if (/([^A-Za-z0-9])/.exec(username)) return res.status(400).json({ message: '아이디는 영문자와 숫자만 입력할 수 있습니다.' });
   if (username.length > 20) return res.status(400).json({ message: '아이디는 최대 20글자까지 입력할 수 있습니다.' });
@@ -66,7 +66,40 @@ router.post('/signup', async (req, res) => {
 });
 
 // 로그인 처리
-router.post('/login', async (req, res) => {
+router.post('/login/local', async (req, res) => {
+  const { password } = req.body;
+  let { username } = req.body;
+  username = username.toLowerCase();
+
+  // 데이터 유효성 검사
+  if (!username) return res.status(400).json({ message: '아이디를 입력해주세요.' });
+  if (!password) return res.status(400).json({ message: '비밀번호를 입력해주세요.' });
+
+  const con = await db.getConnection();
+  try {
+    // DB에서 사용자 정보 가져오기
+    let sql = `
+    SELECT username, password, salt, role, strategy, inactive
+    FROM USER
+    WHERE username='${username}'`;
+    let [[user]] = await con.query(sql);
+
+    // 비활성화 여부 확인
+    if (user.inactive) return res.status(406).json({ message: '비활성화된 계정입니다.' });
+    // 로컬 로그인으로 가입된 계정 맞는지 확인
+    if (user.strategy !== 'local') return res.status(400).json({ message: '로컬 로그인으로 가입된 계정이 아닙니다.' });
+    // 비밀번호 확인
+    if (user.password !== encryptText(password, user.salt)) return res.status(403).json({ message: '비밀번호가 다릅니다.' });
+
+    console.log(user);
+    return res.status(200).json({ message: '로그인 성공처리 해주면 된다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
   return res.status(501).json({ message: 'end of line' });
 });
 
