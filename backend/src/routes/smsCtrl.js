@@ -58,14 +58,13 @@ router.post('/sending', async (req, res) => {
       },
       data: smsData
     });
-    console.log(data.data);
     return res.status(200).json({ message: '인증번호가 발송되었습니다.' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: '서버 문제로 인증번호를 발송하지 못했습니다.' });
   }
 
-  return res.status(200).json({ message: 'end of line' });
+  return res.status(501).json({ message: 'end of line' });
 });
 
 // 인증번호 검증
@@ -73,7 +72,11 @@ router.post('/confirmation', async (req, res) => {
   let { smsVerification } = req.session;
   let { cert_num } = req.body;
 
-  // 이미 인증이 되어있는 상태면 특별한 처리를 하지 않음.
+  // 인증번호가 아직 세션에 없으면 인증 로직 처리를 하지 않음.
+  if (!smsVerification)
+    return res.status(400).json({ message: '인증번호를 먼저 발송해주세요.' });
+
+  // 이미 인증이 되어있는 상태면 인증 로직 처리를 하지 않음.
   if (smsVerification.verified) {
     return res.status(200).json({ message: '이미 인증번호가 인증 되었습니다.' });
   } else {
@@ -91,11 +94,16 @@ router.post('/confirmation', async (req, res) => {
       verified: true
     };
     req.session.smsVerification = smsVerification;
-    console.log(req.session.smsVerification);
     return res.status(200).json({ message: '인증되었습니다.' });
   }
 
-  return res.status(200).json({ message: 'end of line' });
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 인증번호 세션 초기화
+router.delete('/session', async (req, res) => {
+  req.session.smsVerification = undefined;
+  return res.status(200).json({ message: '휴대폰 인증 정보가 초기화되었습니다.' });
 });
 
 module.exports = router;
