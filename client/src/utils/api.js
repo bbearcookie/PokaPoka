@@ -14,3 +14,27 @@ export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
 
 // 백엔드 서버에 데이터 요청하는 테스트 기능
 export const getTestDB = () => axios.get(`${BACKEND}/test/db`, options);
+
+
+//아이디 찾기 시작
+//백엔드 서버에 전화 번호 인증을 요청하는 기능
+export const postVerified = (phone) => axios.post(`${BACKEND}/sms/sending`,
+  { 
+    phone: phone
+  },
+  options
+);
+
+//백엔드 서버에 전화 번호 인증 여부를 확인하는 기능
+export const postVerifiedCheck = (verified) => axios.post(`${BACKEND}/sms/confirmation`,
+  { 
+    verified: verified
+  },
+  options
+);
+
+//백엔드 서버에 아이디 데이터를 요청하는 기능
+export const getFindID = (name, phone) => axios.get(`${BACKEND}/findID/db2?name=${name}&phone=${phone}`,
+  options
+);
+//아이디 찾기 끝

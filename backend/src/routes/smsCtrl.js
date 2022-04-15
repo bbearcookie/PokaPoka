@@ -1,5 +1,5 @@
 const router = require('../config/express').router;
-const { db } = require('../config/database');
+//const { db } = require('../config/database');
 const { makeSignature } = require('../utils/sns');
 const { getRandomInt } = require('../utils/math');
 const axios = require('axios');
@@ -75,15 +75,15 @@ router.post('/confirmation', async (req, res) => {
 
   // 이미 인증이 되어있는 상태면 특별한 처리를 하지 않음.
   if (smsVerification.verified) {
-    return res.status(200).json({ message: '이미 인증번호가 인증 되었습니다.' });
+    return res.status(200).json({ message: '이미 인증번호가 인증 되었습니다.'});
   } else {
     // 인증시간을 초과했으면 인증하지 않음.
     if (Date.now() > smsVerification.expireAt)
-      return res.status(400).json({ message: '유효기간이 지났습니다. 인증번호를 다시 발송해주세요.' });
+      return res.status(400).json({ message: '유효기간이 지났습니다. 인증번호를 다시 발송해주세요.'});
     
     // 입력한 인증번호가 일치하지 않으면 인증하지 않음.
     if (cert_num !== smsVerification.answer)
-      return res.status(400).json({ message: '인증번호가 다릅니다.' });
+      return res.status(400).json({ message: '인증번호가 다릅니다.'});
 
     // 인증시간 내에 인증 성공하면 인증 처리하여 세션에 저장.
     smsVerification = {
@@ -92,7 +92,7 @@ router.post('/confirmation', async (req, res) => {
     };
     req.session.smsVerification = smsVerification;
     console.log(req.session.smsVerification);
-    return res.status(200).json({ message: '인증되었습니다.' });
+    return res.status(200).json({ message: '인증되었습니다.'});
   }
 
   return res.status(200).json({ message: 'end of line' });
