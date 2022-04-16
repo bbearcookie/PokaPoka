@@ -4,7 +4,7 @@ const axios = require('axios');
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 const { checkSMSVerification } = require('../utils/sns');
-const { createToken, verifyLogin } = require('../utils/jwt');
+const { createToken, createLoginToken, verifyLogin } = require('../utils/jwt');
 const { getURIEncode } = require('../utils/encode');
 
 // 회원가입 처리
@@ -100,26 +100,8 @@ router.post('/login/local', async (req, res) => {
     // 비밀번호 확인
     if (user.password !== encryptText(password, user.salt)) return res.status(403).json({ message: '비밀번호가 다릅니다.' });
 
-    // DB에 저장할 만료 시간 생성
-    let accessExpires = new Date();
-    accessExpires.setMilliseconds(accessExpires.getMilliseconds() + parseInt(process.env.ACCESS_TOKEN_EXPIRES));
-    let refreshExpires = new Date();
-    refreshExpires.setMilliseconds(refreshExpires.getMilliseconds() + parseInt(process.env.REFRESH_TOKEN_EXPIRES));
-
-    // 토큰 생성
-    const payload = { username: user.username, role: user.role, strategy: user.strategy };
-    const accessToken = createToken(payload, process.env.ACCESS_TOKEN_EXPIRES);
-    const refreshToken = createToken(payload, process.env.REFRESH_TOKEN_EXPIRES);
-
-    // 기존에 보관된 로그인 토큰 정보 삭제
-    sql = `DELETE FROM LoginToken WHERE username='${username}'`;
-    await con.execute(sql);
-
-    // DB에 로그인 정보와 새로운 토큰 정보 저장
-    sql = `INSERT INTO 
-    LoginToken (username, access, refresh, user_agent, login_time, access_expire_time, refresh_expire_time) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    await con.execute(sql, [username, accessToken, refreshToken, userAgent, new Date(), accessExpires, refreshExpires]);
+    // 토큰 발급
+    const { accessToken, refreshToken } = await createLoginToken(user, userAgent);
 
     // 쿠키에 토큰 보관
     res.cookie('accessToken', accessToken, { httpOnly: true });
@@ -138,11 +120,13 @@ router.post('/login/local', async (req, res) => {
 
 // 카카오 로그인 처리
 router.get('/login/kakao', async (req, res) => {
+  const userAgent = req.headers['user-agent'];
   const { code } = req.query; // 사용자가 로그인 성공후 카카오 API가 우리에게 보내준 일회성 인증 코드. 액세스 토큰을 한번 생성하면 인증 코드는 소멸된다.
   const token = {}; // 카카오로부터 생성받은 토큰 관련 정보
+  const provider = 'kakao'; // 로그인 방식. 사용자의 username 뒤에 _kakao 로 접미사가 붙으며 strategy 필드가 kakao로 설정된다.
 
   // 유효성 검사
-  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' })
+  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' });
   
   // 카카오에 토큰 생성 요청
   try {
@@ -185,12 +169,48 @@ router.get('/login/kakao', async (req, res) => {
     // 사용자 정보 조회 요청
     let result = await axios.get('https://kapi.kakao.com/v2/user/me', options);
     console.log(result.data);
+
+    // 필요한 사용자 정보를 가져왔으니 필요 없어진 카카오 액세스 토큰을 폐기하기 위해 카카오 로그아웃 처리 요청
+    await axios.post('https://kapi.kakao.com/v1/user/logout', undefined, options);
+
+    // User 테이블에서 해당 사용자 정보가 있는지를 조회하고 있다면 로그인 처리하고 없다면 회원가입 후 로그인 처리해야함.
+    const con = await db.getConnection();
+    try {
+      const username = `${result.data.id}_${provider}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
+
+      // DB에서 사용자 정보 가져오기
+      let sql = `
+      SELECT username, role, strategy, inactive
+      FROM USER
+      WHERE username='${username}'`;
+      let [[user]] = await con.query(sql);
+
+      // 카카오 로그인으로 처음 접속한거면 DB에 사용자 정보 생성
+      if (!user) {
+        sql = `INSERT INTO User (username, strategy, nickname) VALUES (?, ?, ?)`;
+        await con.execute(sql, [username, provider, result.data.properties.nickname]);
+      }
+
+      // 토큰 발급
+      const { accessToken, refreshToken } = await createLoginToken(user, userAgent);
+
+      // 쿠키에 토큰 보관
+      res.cookie('accessToken', accessToken, { httpOnly: true });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+
+      // 로그인 성공후 화면으로 리디렉션
+      return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+    } catch (err) {
+      throw err;
+    } finally {
+      con.release();
+    }
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: '로그인에 실패했습니다.' });
   }
 
-  return res.redirect('http://localhost:3000/');
+  return res.status(501).json({ message: 'end of line' });
 });
 
 // 로그아웃 처리

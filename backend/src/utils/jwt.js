@@ -6,6 +6,41 @@ function createToken(payload, expires) {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expires });
 }
 
+// 로그인 성공시 발급해야 할 액세스 토큰과 리프레쉬 토큰을 생성하고 DB에 저장후 반환
+async function createLoginToken(user, userAgent) {
+  const con = await db.getConnection();
+
+  try {
+    // DB에 저장할 만료 시간 생성
+    let accessExpires = new Date();
+    accessExpires.setMilliseconds(accessExpires.getMilliseconds() + parseInt(process.env.ACCESS_TOKEN_EXPIRES));
+    let refreshExpires = new Date();
+    refreshExpires.setMilliseconds(refreshExpires.getMilliseconds() + parseInt(process.env.REFRESH_TOKEN_EXPIRES));
+
+    // 토큰 생성
+    const payload = { username: user.username, role: user.role, strategy: user.strategy };
+    const accessToken = createToken(payload, process.env.ACCESS_TOKEN_EXPIRES);
+    const refreshToken = createToken(payload, process.env.REFRESH_TOKEN_EXPIRES);
+
+    // 기존에 보관된 로그인 토큰 정보 삭제
+    sql = `DELETE FROM LoginToken WHERE username='${user.username}'`;
+    await con.execute(sql);
+
+    // DB에 로그인 정보와 새로운 토큰 정보 저장
+    sql = `INSERT INTO 
+    LoginToken (username, access, refresh, user_agent, login_time, access_expire_time, refresh_expire_time) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    await con.execute(sql, [user.username, accessToken, refreshToken, userAgent, new Date(), accessExpires, refreshExpires]);
+
+    // 액세스 토큰과 리프레쉬 토큰 반환
+    return { accessToken, refreshToken };
+  } catch (err) {
+    throw err;
+  } finally {
+    con.release();
+  }
+}
+
 // 리프레쉬 토큰을 가지고 새로운 액세스 토큰 생성
 async function renewAccessToken(refreshToken, userAgent) {
   // DB 사용
@@ -152,4 +187,5 @@ const verifyLogin = async (req, res, next) => {
 }
 
 module.exports.createToken = createToken;
+module.exports.createLoginToken = createLoginToken;
 module.exports.verifyLogin = verifyLogin;
