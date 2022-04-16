@@ -9,7 +9,7 @@ const IndexPage = () => {
       <div>
         <Link to="/test">테스트 페이지로 가기</Link>
         <br />
-        <Link to="/kakao">카카오 테스트 페이지로 가기</Link>
+        <Link to="/social">소셜 로그인 테스트 페이지로 가기</Link>
       </div>
     </div>
   );

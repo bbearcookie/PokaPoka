@@ -1,6 +1,6 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
-const { makeSignature } = require('../utils/sns');
+const { makeSignature } = require('../utils/sms');
 const { getRandomInt } = require('../utils/math');
 const axios = require('axios');
 
