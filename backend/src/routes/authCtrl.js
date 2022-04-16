@@ -1,9 +1,11 @@
 const router = require('../config/express').router;
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 const { checkSMSVerification } = require('../utils/sns');
 const { createToken, verifyLogin } = require('../utils/jwt');
+const { getURIEncode } = require('../utils/encode');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
@@ -68,16 +70,17 @@ router.post('/signup', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 로그인 처리
+// 로컬 로그인 처리
 router.post('/login/local', async (req, res) => {
   const { password } = req.body;
   let { username } = req.body;
   const userAgent = req.headers['user-agent'];
-  username = username.toLowerCase();
 
   // 데이터 유효성 검사
   if (!username) return res.status(400).json({ message: '아이디를 입력해주세요.' });
   if (!password) return res.status(400).json({ message: '비밀번호를 입력해주세요.' });
+
+  username = username.toLowerCase();
 
   const con = await db.getConnection();
   try {
@@ -131,6 +134,63 @@ router.post('/login/local', async (req, res) => {
   }
 
   return res.status(501).json({ message: 'end of line' });
+});
+
+// 카카오 로그인 처리
+router.get('/login/kakao', async (req, res) => {
+  const { code } = req.query; // 사용자가 로그인 성공후 카카오 API가 우리에게 보내준 일회성 인증 코드. 액세스 토큰을 한번 생성하면 인증 코드는 소멸된다.
+  const token = {}; // 카카오로부터 생성받은 토큰 관련 정보
+
+  // 유효성 검사
+  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' })
+  
+  // 카카오에 토큰 생성 요청
+  try {
+    // 카카오 API가 요구하는 형태의 데이터 생성
+    let payload = {
+      grant_type: 'authorization_code',
+      client_id: process.env.KAKAO_LOGIN_NATIVE_APP_KEY, // 백엔드 서버에서는 네이티브 앱 키로 요청해야함.
+      client_secret: process.env.KAKAO_LOGIN_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/api/auth/login/kakao',
+      code: code, // 일회성 인증 코드 사용
+    };
+    let encodedPayload = getURIEncode(payload);
+    let options = {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+      }
+    }
+
+    // 토큰 생성 요청
+    let result = await axios.post('https://kauth.kakao.com/oauth/token', encodedPayload, options);
+    token['access'] = result.data.access_token; // 카카오 액세스 토큰
+    token['refresh'] = result.data.refresh_token; // 카카오 리프레쉬 토큰
+    token['scope'] = result.data.scope; // 로그인 한 사용자로부터 수집 가능한 데이터
+    console.log(token);
+  } catch (err) {
+    const { error_code, error_description } = err.response.data;
+    console.error(err.response.data);
+    return res.status(500).json({ message: '로그인에 실패했습니다.', error_code, error_description });
+  }
+
+  // 카카오 액세스 토큰으로 사용자 정보 조회
+  try {
+    // 카카오 API가 요구하는 형태의 데이터 생성
+    let options = {
+      headers: {
+        'Authorization': `Bearer ${token.access}`
+      }
+    }
+
+    // 사용자 정보 조회 요청
+    let result = await axios.get('https://kapi.kakao.com/v2/user/me', options);
+    console.log(result.data);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: '로그인에 실패했습니다.' });
+  }
+
+  return res.redirect('http://localhost:3000/');
 });
 
 // 로그아웃 처리
