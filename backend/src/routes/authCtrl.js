@@ -1,9 +1,11 @@
 const router = require('../config/express').router;
-const jwt = require('jsonwebtoken');
+const axios = require('axios');
 const { db } = require('../config/database');
 const { makeSalt, encryptText } = require('../utils/encrypt');
-const { checkSMSVerification } = require('../utils/sns');
-const { createToken, verifyLogin } = require('../utils/jwt');
+const { checkSMSVerification } = require('../utils/sms');
+const { createLoginToken, verifyLogin } = require('../utils/jwt');
+const { getURIEncode } = require('../utils/encode');
+const { getOAuthToken, OAuthLogin } = require('../utils/OAuth');
 
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
@@ -68,16 +70,17 @@ router.post('/signup', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 로그인 처리
+// 로컬 로그인 처리
 router.post('/login/local', async (req, res) => {
   const { password } = req.body;
   let { username } = req.body;
   const userAgent = req.headers['user-agent'];
-  username = username.toLowerCase();
 
   // 데이터 유효성 검사
   if (!username) return res.status(400).json({ message: '아이디를 입력해주세요.' });
   if (!password) return res.status(400).json({ message: '비밀번호를 입력해주세요.' });
+
+  username = username.toLowerCase();
 
   const con = await db.getConnection();
   try {
@@ -97,26 +100,8 @@ router.post('/login/local', async (req, res) => {
     // 비밀번호 확인
     if (user.password !== encryptText(password, user.salt)) return res.status(403).json({ message: '비밀번호가 다릅니다.' });
 
-    // DB에 저장할 만료 시간 생성
-    let accessExpires = new Date();
-    accessExpires.setMilliseconds(accessExpires.getMilliseconds() + parseInt(process.env.ACCESS_TOKEN_EXPIRES));
-    let refreshExpires = new Date();
-    refreshExpires.setMilliseconds(refreshExpires.getMilliseconds() + parseInt(process.env.REFRESH_TOKEN_EXPIRES));
-
-    // 토큰 생성
-    const payload = { username: user.username, role: user.role, strategy: user.strategy };
-    const accessToken = createToken(payload, process.env.ACCESS_TOKEN_EXPIRES);
-    const refreshToken = createToken(payload, process.env.REFRESH_TOKEN_EXPIRES);
-
-    // 기존에 보관된 로그인 토큰 정보 삭제
-    sql = `DELETE FROM LoginToken WHERE username='${username}'`;
-    await con.execute(sql);
-
-    // DB에 로그인 정보와 새로운 토큰 정보 저장
-    sql = `INSERT INTO 
-    LoginToken (username, access, refresh, user_agent, login_time, access_expire_time, refresh_expire_time) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    await con.execute(sql, [username, accessToken, refreshToken, userAgent, new Date(), accessExpires, refreshExpires]);
+    // 토큰 발급
+    const { accessToken, refreshToken } = await createLoginToken(user, userAgent);
 
     // 쿠키에 토큰 보관
     res.cookie('accessToken', accessToken, { httpOnly: true });
@@ -130,6 +115,142 @@ router.post('/login/local', async (req, res) => {
     con.release();
   }
 
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 카카오 로그인 처리
+router.get('/login/kakao', async (req, res) => {
+  const userAgent = req.headers['user-agent'];
+  const { code } = req.query; // 사용자가 로그인 성공후 카카오 API가 우리에게 보내준 일회성 인증 코드. 액세스 토큰을 한번 생성하면 인증 코드는 소멸된다.
+  const strategy = 'kakao'; // 로그인 방식. 사용자의 username 뒤에 _kakao 로 접미사가 붙으며 strategy 필드가 kakao로 설정된다.
+
+  // 유효성 검사
+  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' });
+  
+  try {
+    // 카카오에 액세스 토큰 생성 요청할때 담을 데이터
+    let payload = {
+      grant_type: 'authorization_code',
+      client_id: process.env.KAKAO_LOGIN_NATIVE_APP_KEY, // 백엔드 서버에서는 네이티브 앱 키로 요청해야함.
+      client_secret: process.env.KAKAO_LOGIN_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/api/auth/login/kakao',
+      code: code, // 일회성 인증 코드 사용
+    };
+
+    // 카카오 액세스 토큰과 리프레쉬 토큰을 요청함
+    const token = await getOAuthToken('https://kauth.kakao.com/oauth/token', 'post', payload);
+
+    // 카카오 액세스 토큰으로 사용자 정보 조회
+    const result = await axios({
+      url: 'https://kapi.kakao.com/v2/user/me',
+      method: 'get',
+      headers: {
+        'Authorization': `Bearer ${token.access}`
+      }
+    });
+
+    // 사용자 정보를 가져왔으니 필요 없어진 액세스 토큰을 폐기하기 위해 카카오 로그아웃 처리 요청
+    await axios({
+      url: 'https://kapi.kakao.com/v1/user/logout',
+      method: 'post',
+      headers: {
+        'Authorization': `Bearer ${token.access}`
+      }
+    });
+
+    // 카카오가 제공해준 사용자 정보를 가지고 우리 서비스의 사용자 정보와 매칭한다.
+    const username = `${result.data.id}_${strategy}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
+    const nickname = result.data.properties.nickname;
+    const user = await OAuthLogin(username, strategy, nickname); // 우리 서비스에서의 사용자 정보
+    console.log(user);
+
+    // 계정이 비활성화 상태이면 로그인 불가
+    if (user.inactive) return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+
+    // 토큰 발급
+    const { accessToken, refreshToken } = await createLoginToken(user, userAgent);
+
+    // 쿠키에 토큰 보관
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+
+    // 로그인 성공후 화면으로 리디렉션
+    return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: '서버 문제로 로그인에 실패했습니다.' });
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 네이버 로그인 처리
+router.get('/login/naver', async (req, res) => {
+  const userAgent = req.headers['user-agent'];
+  const { code, state } = req.query;
+  const strategy = 'naver';
+
+  // 유효성 검사
+  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' });
+
+  try {
+    // 네이버에 액세스 토큰 생성 요청할때 담을 데이터
+    let payload = {
+      grant_type: 'authorization_code',
+      client_id: process.env.NAVER_LOGIN_CLIENT_ID,
+      client_secret: process.env.NAVER_LOGIN_CLIENT_SECRET,
+      code,
+      state
+    };
+
+    // 네이버 액세스 토큰과 리프레쉬 토큰을 요청함
+    const token = await getOAuthToken('https://nid.naver.com/oauth2.0/token', 'post', payload);
+
+    // 네이버 액세스 토큰으로 사용자 정보 조회
+    const result = await axios({
+      url: 'https://openapi.naver.com/v1/nid/me',
+      method: 'get',
+      headers: {
+        'Authorization': `Bearer ${token.access}`
+      }
+    });
+
+    // 사용자 정보를 가져왔으니 필요 없어진 액세스 토큰을 폐기하기 위해 네이버에 폐기 요청
+    await axios({
+      url: 'https://nid.naver.com/oauth2.0/token',
+      method: 'post',
+      data: getURIEncode({
+        grant_type: 'delete',
+        client_id: process.env.NAVER_LOGIN_CLIENT_ID,
+        client_secret: process.env.NAVER_LOGIN_CLIENT_SECRET,
+        access_token: token.access,
+        service_provider: strategy
+      })
+    });
+
+    // 네이버가 제공해준 사용자 정보를 가지고 우리 서비스의 사용자 정보와 매칭한다.
+    const username = `${result.data.response.id}_${strategy}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
+    const nickname = result.data.response.nickname;
+    const user = await OAuthLogin(username, strategy, nickname); // 우리 서비스에서의 사용자 정보
+    console.log(user);
+
+    // 계정이 비활성화 상태이면 로그인 불가
+    if (user.inactive) return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+
+    // 토큰 발급
+    const { accessToken, refreshToken } = await createLoginToken(user, userAgent);
+
+    // 쿠키에 토큰 보관
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+
+    // 로그인 성공후 화면으로 리디렉션
+    return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: '서버 문제로 로그인에 실패했습니다.' });
+  }
+  
   return res.status(501).json({ message: 'end of line' });
 });
 
