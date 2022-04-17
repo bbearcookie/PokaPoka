@@ -124,8 +124,8 @@ router.get('/login/kakao', async (req, res) => {
   const { code } = req.query; // 사용자가 로그인 성공후 카카오 API가 우리에게 보내준 일회성 인증 코드. 액세스 토큰을 한번 생성하면 인증 코드는 소멸된다.
   const strategy = 'kakao'; // 로그인 방식. 사용자의 username 뒤에 _kakao 로 접미사가 붙으며 strategy 필드가 kakao로 설정된다.
 
-  // 유효성 검사
-  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' });
+  // 유효성 검사. 비정상적인 방법으로 로그인을 시도하면 로그인 페이지로 리디렉션.
+  if (!code) return res.redirect(process.env.LOGIN_PAGE_URL);
   
   try {
     // 카카오에 액세스 토큰 생성 요청할때 담을 데이터
@@ -165,7 +165,8 @@ router.get('/login/kakao', async (req, res) => {
     console.log(user);
 
     // 계정이 비활성화 상태이면 로그인 불가
-    if (user.inactive) return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+    if (user.inactive)
+      return res.redirect(process.env.LOGIN_PAGE_URL + "/?message=비활성화된 계정입니다.");
 
     // 토큰 발급
     const { accessToken, refreshToken } = await createLoginToken(user, userAgent);
@@ -190,9 +191,9 @@ router.get('/login/naver', async (req, res) => {
   const { code, state } = req.query;
   const strategy = 'naver';
 
-  // 유효성 검사
-  if (!code) return res.status(400).json({ message: '비정상적인 경로로 로그인을 시도하셨습니다.' });
-
+  // 유효성 검사. 비정상적인 방법으로 로그인을 시도하면 로그인 페이지로 리디렉션.
+  if (!code) return res.redirect(process.env.LOGIN_PAGE_URL);
+  
   try {
     // 네이버에 액세스 토큰 생성 요청할때 담을 데이터
     let payload = {
@@ -235,7 +236,8 @@ router.get('/login/naver', async (req, res) => {
     console.log(user);
 
     // 계정이 비활성화 상태이면 로그인 불가
-    if (user.inactive) return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+    if (user.inactive)
+      return res.redirect(process.env.LOGIN_PAGE_URL + "/?message=비활성화된 계정입니다.");
 
     // 토큰 발급
     const { accessToken, refreshToken } = await createLoginToken(user, userAgent);

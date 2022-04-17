@@ -3,6 +3,15 @@ import axios from 'axios';
 export const BACKEND = 'http://localhost:5000'; // 백엔드 서버 주소
 const options = { withCredentials: true }; // 여러 API 요청들이 공통적으로 사용할만한 옵션
 
+// 로컬 로그인 요청
+export const postLogin = (form) => axios.post(`${BACKEND}/api/auth/login/local`,
+  {
+    username: form.username,
+    password: form.password
+  },
+  options
+);
+
 // 로그아웃 요청
 export const postLogout = () => axios.post(`${BACKEND}/api/auth/logout`, undefined, options);
 
