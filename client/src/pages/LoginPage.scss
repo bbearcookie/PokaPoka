@@ -1,0 +1,132 @@
+.LoginPage {
+  header {
+    height: 7.38rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c4c4c4;
+
+    h1 {
+      color: #c1392b;
+      font-family: Inter, sans-serif;
+      font-size: 3rem;
+    }
+  }
+
+  .login_section {
+    margin: 100px; padding: 40px 0;
+    display: flex;
+    justify-content: center;
+    border: 1px solid grey;
+
+    form {
+      width: 500px;
+      padding: 0 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .title-label {
+        margin: 0 0 20px 0;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .message-label {
+        width: 100%; padding: 10px;
+        text-align: center;
+        margin: 0 0 20px 0;
+        color: #842029;
+        background-color: #f8d7da;
+        border: 1px solid #f5c2c7;
+        border-radius: 5px;
+      }
+
+      input {
+        width: 100%; height: 40px;
+        padding: 0 10px;
+        border: 1px solid hsl(222, 9%, 78%);
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+
+      input:focus {
+        outline: none;
+        border: 1px solid rgb(206, 28, 73);
+        box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+        transition: all 0.25s;
+      }
+
+      .submit_btn {
+        width: 100%; height: 50px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        background-color: rgb(206, 28, 73);
+        color: white;
+
+        &:hover {
+          background-color: rgb(163, 33, 66);
+        }
+      }
+
+      .social_login_section {
+        width: 100%;
+
+        .Button {
+          width: 250px; height: 50px;
+          margin-bottom: 20px;
+        }
+
+        .naver_btn {
+          background-color: rgb(3, 199, 90);
+          color: white;
+
+          svg {
+            width: 40px; height: 40px;
+            position: relative;
+            top: 1px;
+            left: -20px;
+          }
+
+          span {
+            position: relative;
+            top: -14px;
+            left: -8px;
+          }
+        }
+
+        .kakao_btn {
+          background-color: #FEE500;
+          position: relative;
+          padding-top: 18px; // 네이버, 카카오 버튼의 어긋난 위치를 맞추기 위함
+
+          &:hover {
+            background-color: #f0d905;
+          }
+
+          svg {
+            width: 25px; height: 25px;
+            position: relative;
+            top: -7px;
+            left: -20px;
+          }
+
+          span {
+            position: relative;
+            top: -15px;
+          }
+        }
+      }
+
+      .bottom_section {
+        font-size: 18px;
+        color: gray;
+
+        a {
+          text-decoration: none;
+          color: gray;
+        }
+      }
+    }
+  }
+}
