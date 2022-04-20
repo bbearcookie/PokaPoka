@@ -27,5 +27,5 @@ export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
 // 백엔드 서버에 데이터 요청하는 테스트 기능
 export const getTestDB = () => axios.get(`${BACKEND}/test/db`, options);
 
-// 로그인 검증 테스트
-export const postLoginTest = () => axios.post(`${BACKEND}/api/auth/login/test`, undefined, options);
+// 토큰 유효성 테스트. 성공시 payload 내용 반환
+export const postTokenTest = () => axios.post(`${BACKEND}/api/auth/token/test`, undefined, options);

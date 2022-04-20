@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import useRequest from '../utils/useRequest';
-import * as api from '../utils/api';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import qs from 'qs';
+import useRequest from '../utils/useRequest';
+import * as api from '../utils/api';
+import AuthContext from '../contexts/Auth';
 import Button from '../components/form/Button';
+import Navbar from '../components/Navbar';
 import Kakao from '../assets/Kakao';
 import Naver from '../assets/Naver';
 import './LoginPage.scss';
@@ -23,8 +25,9 @@ const naverURL = `https://nid.naver.com/oauth2.0/authorize?` +
 
 // 로그인 페이지 컴포넌트
 const LoginPage = () => {
-  const request = useRequest();
+  const { state: authState, actions: authActions } = useContext(AuthContext);
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  const request = useRequest();
   const [form, setForm] = useState({
     username: '',
     password: ''
@@ -45,6 +48,7 @@ const LoginPage = () => {
     try {
       const res = await request.call(api.postLogin, form);
       console.log(res);
+      authActions.login(res);
       setMessage(res.message);
     } catch (err) {
       console.error(err);
@@ -103,6 +107,8 @@ const LoginPage = () => {
           </section>
         </form>
       </section>
+
+      <Navbar />
 
     </div>
   );
