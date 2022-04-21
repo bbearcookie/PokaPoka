@@ -5,12 +5,7 @@ const AuthContext = createContext();
 
 // Provider
 const AuthProvider = ({ children }) => {
-  const DEFAULT_USER = {
-    username: '',
-    role: '',
-    strategy: ''
-  };
-  const [user, setUser] = useState(DEFAULT_USER); // 사용자의 정보가 담겨 있는 상태 변수
+  const [user, setUser] = useState(undefined); // 사용자의 정보가 담겨 있는 상태 변수
 
   // 로그인 성공시 호출하여 상태 값에 사용자 정보를 기억해두는 함수
   const login = (res) => {
@@ -22,7 +17,7 @@ const AuthProvider = ({ children }) => {
   }
 
   // 로그아웃시 호출하여 사용자 상태 값을 초기 상태로 초기화 하는 함수
-  const logout = () => setUser(DEFAULT_USER);
+  const logout = () => setUser(undefined);
 
   // 외부에 반환할 값
   const value = {

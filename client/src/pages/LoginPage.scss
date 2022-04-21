@@ -81,6 +81,10 @@
           background-color: rgb(3, 199, 90);
           color: white;
 
+          &:hover {
+            background-color: rgb(13, 185, 90);
+          }
+
           svg {
             width: 40px; height: 40px;
             position: relative;
