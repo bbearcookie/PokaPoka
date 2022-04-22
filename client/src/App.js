@@ -8,6 +8,9 @@ import TestPage from './pages/TestPage';
 import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
+import MainPage from './pages/admin/MainPage';
+import GroupPage from './pages/admin/GroupPage';
+import GroupWriterPage from './pages/admin/GroupWriterPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -30,6 +33,9 @@ function App() {
         <Route path="/social" element={<SocialLoginTestPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />
+        <Route path="/admin" element={<MainPage />} />
+        <Route path="/admin/group" element={<GroupPage />} />
+        <Route path="/admin/group/writer" element={<GroupWriterPage />} />
       </Routes>
     </div>
   );

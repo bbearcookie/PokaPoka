@@ -1,0 +1,47 @@
+.AdminTemplate {
+
+  .middle_section {
+    display: flex;
+
+    .sidebar {
+      width: 150px;
+      min-height: calc(100vh - 83px);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: rgb(191, 191, 191);
+
+      .nav_category {
+        margin: 20px 0 0 0;
+        padding: 0;
+        list-style-type: none;
+
+        .title-item {
+          padding-inline-start: 0px;
+        }
+        .link-item {
+          margin-top: 5px;
+          padding-inline-start: 20px;
+        }
+
+        a {
+          margin: 10px 0 0 10px;
+          text-decoration: none;
+          color: black;
+  
+          &:hover {
+            color: blue;
+          }
+  
+          &:active {
+            color: red;
+          }
+  
+          &.active {
+            color: red;
+          }
+        }
+      }
+    }
+  }
+}

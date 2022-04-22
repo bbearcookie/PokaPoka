@@ -51,6 +51,11 @@ router.post('/signup', async (req, res) => {
     [[user]] = await con.query(sql);
     if (user) return res.status(400).json({ message: '이미 해당 휴대폰번호로 가입한 계정이 있습니다.' });
 
+    // 중복한 닉네임 확인
+    sql = `SELECT nickname FROM User where nickname='${nickname}'`;
+    [[user]] = await con.query(sql);
+    if (user) return res.status(400).json({ message: '이미 있는 닉네임입니다.' });
+
     // 회원가입 처리
     const salt = makeSalt();
     const encryptedPwd = encryptText(password, salt);

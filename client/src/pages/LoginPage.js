@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import qs from 'qs';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
 import AuthContext from '../contexts/Auth';
+import Input from '../components/form/Input';
 import Button from '../components/form/Button';
 import Navbar from '../components/Navbar';
 import Kakao from '../assets/Kakao';
@@ -28,6 +29,7 @@ const LoginPage = () => {
   const { state: authState, actions: authActions } = useContext(AuthContext);
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   const request = useRequest();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: '',
     password: ''
@@ -50,6 +52,9 @@ const LoginPage = () => {
       console.log(res);
       authActions.login(res);
       setMessage(res.message);
+
+      // 관리자가 로그인 시 관리자 페이지로 리디렉션
+      if (res.role === 'admin') return navigate('/admin');
     } catch (err) {
       console.error(err);
       setMessage(err.response.data.message);
@@ -67,7 +72,7 @@ const LoginPage = () => {
           <p className="title-label">로그인</p>
           {message ? <p className="message-label">{message}</p> : null}
 
-          <input
+          <Input
             type="text"
             name="username"
             placeholder="아이디"
@@ -75,7 +80,7 @@ const LoginPage = () => {
             value={form.username}
             onChange={onChangeInput}
           />
-          <input
+          <Input
             type="password"
             name="password"
             placeholder="비밀번호"
