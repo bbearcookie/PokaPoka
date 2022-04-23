@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import produce from 'immer';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
@@ -114,7 +115,7 @@ const GroupWriterPage = () => {
           <label htmlFor="girl">여성</label>
         </section>
         <section className="submit_section">
-          <Button className="cancel_button">취소</Button>
+          <Link to="/admin/group"><Button className="cancel_button">취소</Button></Link>
           <Button className="submit_button" type="submit">작성</Button>
         </section>
       </form>

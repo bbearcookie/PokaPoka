@@ -1,0 +1,14 @@
+.GroupCard {
+  width: 200px; height: 250px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+
+  img {
+    object-fit: contain;
+  }
+
+  .name-label {
+    margin: 10px 0 0 0;
+    text-align: center;
+  }
+}
