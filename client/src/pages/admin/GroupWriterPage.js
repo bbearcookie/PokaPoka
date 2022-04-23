@@ -109,10 +109,10 @@ const GroupWriterPage = () => {
         <section className="gender_section">
           <input id="mixed" type="radio" name="gender" value="m" onChange={onChangeInput} />
           <label htmlFor="mixed">혼성</label>
-          <input id="boy" type="radio" name="gender" value="b" onChange={onChangeInput} />
-          <label htmlFor="boy">남성</label>
           <input id="girl" type="radio" name="gender" value="g" onChange={onChangeInput} />
-          <label htmlFor="girl">여성</label>
+          <label htmlFor="girl">걸그룹</label>
+          <input id="boy" type="radio" name="gender" value="b" onChange={onChangeInput} />
+          <label htmlFor="boy">보이그룹</label>
         </section>
         <section className="submit_section">
           <Link to="/admin/group"><Button className="cancel_button">취소</Button></Link>

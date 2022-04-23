@@ -7,7 +7,7 @@ import AdminTemplate from '../../templates/AdminTemplate';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Button from '../../components/form/Button';
 import GroupCard from '../../components/card/GroupCard';
-import './GroupPage.scss';
+import './GroupListPage.scss';
 
 const GroupPage = () => {
   const request = useRequest();
@@ -27,7 +27,7 @@ const GroupPage = () => {
   };
 
   return (
-    <AdminTemplate className="AdminGroupPage">
+    <AdminTemplate className="AdminGroupListPage">
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">아이돌 그룹 목록</h1>
@@ -40,6 +40,7 @@ const GroupPage = () => {
         groups.map(group =>
           <GroupCard
             key={group.group_id}
+            id={group.group_id}
             name={group.name}
             src={`${BACKEND}/image/group/${group.image_name}`}
           />

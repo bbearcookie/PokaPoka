@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import classNames from 'classnames';
 import { STORAGE_KEY_NAME } from '../contexts/Auth';
 import Navbar from '../components/Navbar';
 import './AdminTemplate.scss';
 
-const AdminTemplate = ({className, children}) => {
+const AdminTemplate = ({ className, children }) => {
   const navigate = useNavigate();
 
   // 관리자가 아니면 페이지 접근 불가능하도록 함.
@@ -42,7 +43,7 @@ const AdminTemplate = ({className, children}) => {
             <li className="link-item"><NavLink to="/admin/test1">포토카드 관리</NavLink></li>
           </ul>
         </article>
-        <section className={className}>
+        <section className={classNames("content_section", className)}>
           {children}
         </section>
       </section>

@@ -1,11 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { BACKEND } from '../../utils/api';
 import './GroupCard.scss';
 
-const GroupCard = ({ className, src, name }) => {
+const GroupCard = ({ className, id, src, name }) => {
   return (
-    <article className={classNames("GroupCard", className)}>
+    <Link className={classNames("GroupCard", className)} to={`/admin/group/detail/${id}`}>
       <img 
         width="100%"
         height="200px"
@@ -14,7 +14,7 @@ const GroupCard = ({ className, src, name }) => {
         alt="그룹"
       />
       <p className="name-label">{name}</p>
-  </article>
+    </Link>
   );
 };
 

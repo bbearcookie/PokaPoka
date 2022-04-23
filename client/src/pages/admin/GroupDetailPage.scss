@@ -1,0 +1,67 @@
+.AdminGroupDetailPage {
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .label_area {
+    margin-bottom: 50px;
+
+    img {
+      object-fit: cover;
+    }
+
+    p {
+      align-self: flex-start;
+      font-size: 20px;
+      margin: 5px 0 0 0;
+    }
+
+    .label {
+      font-size: 26px;
+      font-weight: bold;
+    }
+  }
+
+  .submit_section {
+    margin-top: 10px;
+    align-self: flex-end;
+
+    .Button {
+      width: 100px; height: 50px;
+      margin-left: 15px;
+    }
+
+    .cancel_button {
+      background-color: #ececec;
+  
+      &:hover {
+        background: gainsboro;
+      }
+    }
+
+    .edit_button {
+      color: white;
+      background-color: #0dcaf0;
+
+      &:hover {
+        background-color: #11badc;
+      }
+    }
+
+    .remove_button {
+      color: white;
+      background-color: rgb(206, 28, 73);
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  }
+
+}

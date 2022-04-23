@@ -8,7 +8,8 @@ import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
 import MainPage from './pages/admin/MainPage';
-import GroupPage from './pages/admin/GroupPage';
+import GroupListPage from './pages/admin/GroupListPage';
+import GroupDetailPage from './pages/admin/GroupDetailPage';
 import GroupWriterPage from './pages/admin/GroupWriterPage';
 
 function App() {
@@ -35,8 +36,9 @@ function App() {
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />
         <Route path="/admin" element={<MainPage />} />
-        <Route path="/admin/group" element={<GroupPage />} />
+        <Route path="/admin/group" element={<GroupListPage />} />
         <Route path="/admin/group/writer" element={<GroupWriterPage />} />
+        <Route path="/admin/group/detail/:groupId" element={<GroupDetailPage />} />
       </Routes>
     </div>
   );
