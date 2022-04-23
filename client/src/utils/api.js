@@ -21,6 +21,9 @@ export const postTokenTest = () => axios.post(`${BACKEND}/api/auth/token/test`, 
 // 아이돌 그룹 목록 데이터 조회 요청
 export const getAdminGroupList = () => axios.get(`${BACKEND}/api/admin/group/list`, options);
 
+// 아이돌 그룹 상세 데이터 조회 요청
+export const getAdminGroupDetail = (groupId) => axios.get(`${BACKEND}/api/admin/group/detail/${groupId}`, options);
+
 // 아이돌 그룹 데이터 작성 요청. 파일을 담아서 전송하는 방식인 multipart에서는 이처럼 데이터를 FormData에 담아서 보내줘야 함.
 export const postAdminGroup = (form) => {
   let formData = new FormData();

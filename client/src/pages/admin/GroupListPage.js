@@ -32,7 +32,7 @@ const GroupPage = () => {
       <section className="title_area">
         <h1 className="title-label">아이돌 그룹 목록</h1>
         <Link to="/admin/group/writer">
-          <Button className="add_btn">추가</Button>
+          <Button className="add_button">추가</Button>
         </Link>
       </section>
       <section className="card_section">

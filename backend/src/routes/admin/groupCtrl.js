@@ -5,6 +5,7 @@ const fsAsync = require('fs');
 const { db } = require('../../config/database');
 const { getExtension, groupImageUpload } = require('../../config/multer');
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
+const { isNull } = require('../../utils/common');
 
 // 아이돌 그룹 목록 조회 처리
 router.get('/list', verifyLogin, async (req, res) => {
@@ -13,11 +14,39 @@ router.get('/list', verifyLogin, async (req, res) => {
   // 관리자 권한 확인
   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
+  // 아이돌 그룹 목록 조회
   const con = await db.getConnection();
   try {
     let sql = `SELECT group_id, name, image_name FROM GroupData`;
     let [groups] = await con.query(sql);
     return res.status(200).json({ message: '아이돌 그룹 목록 조회에 성공했습니다.', groups });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 아이돌 그룹 상세 조회 처리
+router.get('/detail/:groupId', verifyLogin, async (req, res) => {
+  const { groupId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (isNull(groupId)) return res.status(400).json({ message: '그룹 번호를 입력해주세요' });
+
+  // 아이돌 그룹 상세 조회
+  const con = await db.getConnection();
+  try {
+    let sql = `SELECT name, description, gender, image_name FROM GroupData WHERE group_id=${groupId}`;
+    let [[group]] = await con.query(sql);
+    return res.status(200).json({ message: '아이돌 그룹 정보 상세 조회에 성공했습니다.', group });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
