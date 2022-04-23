@@ -1,18 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import AuthContext from '../contexts/Auth';
+import { STORAGE_KEY_NAME } from '../contexts/Auth';
 import Navbar from '../components/Navbar';
 import './AdminTemplate.scss';
 
 const AdminTemplate = ({className, children}) => {
-  const { state: authState, actions: authActions } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // 관리자가 아니면 페이지 접근 불가능하도록 함.
-  // useEffect(() => {
-  //   if (!authState.user) return navigate('/auth/login');
-  //   if (authState.user.role !== 'admin') return navigate('/auth/login');
-  // }, []);
+  useEffect(() => {
+    let user = sessionStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
+    if (!user) return navigate('/auth/login'); // 로그인 안된 상태면 접근 불가
+    user = JSON.parse(user);
+    if (user.role !== 'admin') return navigate('/auth/login'); // 관리자 아닌 상태면 접근 불가
+  }, []);
 
   return (
     <div className="AdminTemplate">

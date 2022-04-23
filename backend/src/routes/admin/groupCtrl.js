@@ -6,6 +6,28 @@ const { db } = require('../../config/database');
 const { getExtension, groupImageUpload } = require('../../config/multer');
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
 
+// 아이돌 그룹 목록 조회 처리
+router.get('/list', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    let sql = `SELECT group_id, name, image_name FROM GroupData`;
+    let [groups] = await con.query(sql);
+    return res.status(200).json({ message: '아이돌 그룹 목록 조회에 성공했습니다.', groups });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 아이돌 그룹 추가 처리
 router.post('/', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { name, description, gender } = req.body;
