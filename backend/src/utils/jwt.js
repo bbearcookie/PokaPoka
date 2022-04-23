@@ -157,6 +157,14 @@ async function verifyToken(accessToken, refreshToken, userAgent) {
   return undefined;
 }
 
+// 관리자 여부를 확인하는 함수. 관리자면 true를, 아니면 false를 반환함.
+function isAdmin(accessToken) {
+    if (!accessToken) return false;
+    if (accessToken.payload.role !== 'admin') return false;
+
+    return true;
+}
+
 // 로그인 한 사용자의 정보를 req.accessToken 객체에 담는 미들웨어
 /** @type {import("express").RequestHandler} */
 const verifyLogin = async (req, res, next) => {
@@ -188,4 +196,5 @@ const verifyLogin = async (req, res, next) => {
 
 module.exports.createToken = createToken;
 module.exports.createLoginToken = createLoginToken;
+module.exports.isAdmin = isAdmin;
 module.exports.verifyLogin = verifyLogin;
