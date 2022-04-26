@@ -9,7 +9,8 @@ import Button from '../../components/form/Button';
 import GroupCard from '../../components/card/GroupCard';
 import './GroupListPage.scss';
 
-const GroupPage = () => {
+// 그룹 목록 조회 페이지
+const GroupListPage = () => {
   const request = useRequest();
   const [groups, setGroups] = useState([]);
 
@@ -50,4 +51,4 @@ const GroupPage = () => {
   );
 };
 
-export default GroupPage;
+export default GroupListPage;

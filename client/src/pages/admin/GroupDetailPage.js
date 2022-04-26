@@ -15,15 +15,15 @@ const gender = {
   'b': '보이그룹'
 }
 
-// 컴포넌트
+// 그룹 상세 조회 페이지
 const GroupDetailPage = () => {
+  const { groupId } = useParams(); // URL에 포함된 groupId Params 정보
   const [group, setGroup] = useState({
     name: '',
     description: '',
     gender: '',
     image_name: ''
   });
-  const { groupId } = useParams(); // URL에 포함된 groupId Params 정보
   const request = useRequest();
 
   // 페이지 로드시 동작
@@ -68,15 +68,9 @@ const GroupDetailPage = () => {
         <p className="label">성별</p>
         <p>{gender[group.gender]}</p>
       </section>
-      {/* <section className="label_area">
-        <p className="label">멤버</p>
-        <p>그리즐리</p>
-        <p>판다</p>
-        <p>아이스베어</p>
-      </section> */}
       <section className="submit_section">
         <Link to="/admin/group"><Button className="cancel_button">뒤로 가기</Button></Link>
-        <Button className="edit_button">수정</Button>
+        <Link to={`/admin/group/writer/${groupId}`}><Button className="edit_button">수정</Button></Link>
         <Button className="remove_button">삭제</Button>
       </section>
     </AdminTemplate>
