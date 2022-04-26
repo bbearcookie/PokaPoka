@@ -1,0 +1,11 @@
+.ModalFooter {
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid gainsboro;
+
+  .Button {
+    width: 50px; height: 35px;
+    margin-left: 15px;
+  }
+}

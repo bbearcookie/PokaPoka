@@ -37,31 +37,31 @@
       width: 100px; height: 50px;
       margin: 15px 0 0 15px;
     }
+  }
 
-    .cancel_button {
-      background-color: #ececec;
-  
-      &:hover {
-        background: gainsboro;
-      }
+  .remove_button {
+    color: white;
+    background-color: rgb(206, 28, 73);
+
+    &:hover {
+      background-color: rgb(163, 33, 66);
     }
+  }
 
-    .edit_button {
-      color: white;
-      background-color: #0dcaf0;
+  .cancel_button {
+    background-color: #ececec;
 
-      &:hover {
-        background-color: #11badc;
-      }
+    &:hover {
+      background: gainsboro;
     }
+  }
 
-    .remove_button {
-      color: white;
-      background-color: rgb(206, 28, 73);
-  
-      &:hover {
-        background-color: rgb(163, 33, 66);
-      }
+  .edit_button {
+    color: white;
+    background-color: #0dcaf0;
+
+    &:hover {
+      background-color: #11badc;
     }
   }
 
