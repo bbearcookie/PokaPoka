@@ -43,3 +43,4 @@ const groupImageUpload = multer({
 
 module.exports.getExtension = getExtension;
 module.exports.groupImageUpload = groupImageUpload;
+module.exports.IDOL_GROUP_IMAGE_DIR = IDOL_GROUP_IMAGE_DIR;

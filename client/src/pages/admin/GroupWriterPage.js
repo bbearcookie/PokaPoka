@@ -6,6 +6,7 @@ import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
 import AdminTemplate from '../../templates/AdminTemplate';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import MessageLabel from '../../components/MessageLabel';
 import Input from '../../components/form/Input';
 import Textarea from '../../components/form/Textarea';
 import Button from '../../components/form/Button';
@@ -124,7 +125,8 @@ const GroupWriterPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       <form onSubmit={onSubmit}>
         <h1 className="title-label">아이돌 그룹 추가</h1>
-        {message ? <p className="message-label">{message}</p> : null}
+        {/* {message ? <p className="message-label">{message}</p> : null} */}
+        {message ? <MessageLabel>{message}</MessageLabel> : null}
         <p className="label">그룹 이미지</p>
         <section className="image_section">
           <img 

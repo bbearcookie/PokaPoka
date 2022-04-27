@@ -4,6 +4,7 @@ import qs from 'qs';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
 import AuthContext from '../contexts/Auth';
+import MessageLabel from '../components/MessageLabel';
 import Input from '../components/form/Input';
 import Button from '../components/form/Button';
 import Navbar from '../components/Navbar';
@@ -70,7 +71,7 @@ const LoginPage = () => {
       <section className="login_section">
         <form onSubmit={onSubmit}>
           <p className="title-label">로그인</p>
-          {message ? <p className="message-label">{message}</p> : null}
+          {message ? <MessageLabel>{message}</MessageLabel> : null}
 
           <Input
             type="text"

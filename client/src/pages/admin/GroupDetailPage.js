@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
 import Button from '../../components/form/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import MessageLabel from '../../components/MessageLabel';
 import Modal from '../../components/modal/Modal';
 import ModalHeader from '../../components/modal/ModalHeader';
 import ModalBody from '../../components/modal/ModalBody';
@@ -29,6 +30,8 @@ const GroupDetailPage = () => {
     image_name: ''
   });
   const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
   const request = useRequest();
 
   // 삭제 모달 열기 / 닫기
@@ -36,8 +39,14 @@ const GroupDetailPage = () => {
   const closeModal = () => setShowModal(false);
 
   // 삭제 버튼 클릭시
-  const onClickRemove = () => {
-    console.log('remove');
+  const onClickRemove = async () => {
+    try {
+      const res = await request.call(api.deleteAdminGroup, groupId);
+      return navigate('/admin/group');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeModal();
   }
 
   // 페이지 로드시 동작
@@ -78,6 +87,7 @@ const GroupDetailPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
 
       <h1 className="title-label">아이돌 그룹 상세 정보</h1>
+      {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="label_area">
         <p className="label">이미지</p>
         <img 

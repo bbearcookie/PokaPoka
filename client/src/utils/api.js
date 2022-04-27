@@ -50,6 +50,9 @@ export const putAdminGroup = (form, groupId) => {
   );
 }
 
+// 아이돌 그룹 데이터 삭제 요청
+export const deleteAdminGroup = (groupId) => axios.delete(`${BACKEND}/api/admin/group/${groupId}`, options);
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 
