@@ -9,4 +9,5 @@ module.exports = (app) => {
   app.use('/api/finding', require('../routes/findingCtrl'));
   app.use('/api/admin', require('../routes/admin/groupCtrl'));
   app.use('/api/admin', require('../routes/admin/memberCtrl'));
+  app.use('/api/admin', require('../routes/admin/albumCtrl'));
 }

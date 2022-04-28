@@ -92,6 +92,10 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
     removeTempFile();
     return res.status(400).json({ message: '이름을 입력해주세요.' });
   }
+  if (!groupId) {
+    removeTempFile();
+    return res.status(400).json({ message: '그룹 번호를 입력해주세요.' });
+  }
 
   const con = await db.getConnection();
   try {
@@ -126,7 +130,7 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
     sql = `UPDATE MemberData SET image_name = '${filename}' WHERE member_id = ${result.insertId}`;
     await con.execute(sql);
 
-    return res.status(200).json({ message: '새로운 멤버를 추가했습니다.' });
+    return res.status(200).json({ message: '새로운 멤버를 등록했습니다.' });
   } catch (err) {
     console.error(err);
     removeTempFile();

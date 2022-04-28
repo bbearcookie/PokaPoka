@@ -45,9 +45,12 @@ function createUploader(dir) {
 
 const groupImageUpload = createUploader(IDOL_GROUP_IMAGE_DIR); // 아이돌 그룹 이미지 업로더
 const memberImageUpload = createUploader(IDOL_MEMBER_IMAGE_DIR); // 아이돌 멤버 이미지 업로더
+const albumImageUpload = createUploader(ALBUM_IMAGE_DIR); // 앨범 이미지 업로더
 
 module.exports.getExtension = getExtension;
 module.exports.groupImageUpload = groupImageUpload;
 module.exports.memberImageUpload = memberImageUpload;
+module.exports.albumImageUpload = albumImageUpload;
 module.exports.IDOL_GROUP_IMAGE_DIR = IDOL_GROUP_IMAGE_DIR;
 module.exports.IDOL_MEMBER_IMAGE_DIR = IDOL_MEMBER_IMAGE_DIR;
+module.exports.ALBUM_IMAGE_DIR = ALBUM_IMAGE_DIR;

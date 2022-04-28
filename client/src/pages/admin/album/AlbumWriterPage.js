@@ -72,6 +72,21 @@ const AlbumWriterPage = () => {
   // 작성 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
+    console.log(form);
+
+    // 새로 작성하는 경우
+    if (!albumId) {
+      try {
+        const res = await request.call(api.postAdminAlbum, form, groupId);
+        setMessage(res.message);
+        return navigate(`/admin/group/detail/${groupId}`);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    // 내용을 수정하는 경우
+    } else {
+
+    }
   }
 
   return (
