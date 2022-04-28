@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './SignupPage.scss';
-import Table from 'react-bootstrap/Table';
+//import Table from 'react-bootstrap/Table';
 const SignupPage = () => {
 
 return(

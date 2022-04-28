@@ -14,7 +14,7 @@ router.post('/new', async (req, res) => {
     //~~~
 
     //suggestion_id
-    //INT, 1, 2, 3 ...
+    //INT, 1, 2, 3 ... cnt++로 해도 되려나?
 
     let sql = `
     INSERT into suggestion(suggestion_id, username, category, title, content) 
@@ -40,6 +40,18 @@ router.get('/list/:page', function(req, res, next){ // board/list/page숫자 형
         connection.query(sql, function(err, rows){  // select 쿼리문 날린 데이터를 rows 변수에 담는다 오류가 있으면 err
         if(err) console.error("err : " + err);
         res.render('list.ejs', {title : '게시판 리스트', rows:rows});
+    });
+});
+router.get('/page/:page', function(req, res, next){ // 게시글 리스트에 :page가 추가된것임
+    var page = req.params.page; // 현재 페이지는 params 을 req 요청받아옴
+    var sql =  "select idx, name, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
+    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate,hit from board";  // select 구절 그대로
+
+    connection.query(sql, function(err, rows){
+        if (err) console.err("err : " + err);
+        res.render('page', {title : '글목록', rows:rows, page:page, length:rows.length-1, page_num:10, pass:true}); 
+        // length 데이터 전체넘버 랜더링,-1을 한이유는 db에서는1부터지만 for문에서는 0부터 시작 ,page_num: 한페이지에 보여줄 갯수
+        console.log(rows.length-1);
     });
 });
 //참고 코드 끝

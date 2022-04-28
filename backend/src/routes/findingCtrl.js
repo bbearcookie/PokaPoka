@@ -1,6 +1,6 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
-const { checkSMSVerification } = require('../utils/sns');
+const { checkSMSVerification } = require('../utils/sms');
 const { makeSalt, encryptText } = require('../utils/encrypt');
 
 //아이디 찾기
@@ -12,8 +12,8 @@ router.get('/username', async (req, res) => {
   if (!name || !phone) {
     return res.status(400).json({ message: '이름과 전화번호를 입력해주세요.' });
   }
-  else if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
-  else if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' })
+  //else if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
+  //else if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' })
   try {
     let sql = `SELECT username FROM user WHERE name='${name}' AND phone='${phone}'`; // SQL 정의
     let [list] = await con.query(sql) // SQL 실행
@@ -76,6 +76,7 @@ router.post('/password', async (req, res) => {
   if (password != password_check) {
     return res.status(400).json({ message: '비밀번호 확인이 일치하지 않습니다.' });
   }
+  else if(!password || !password_check) return res.status(400).json({ message: '새 비밀번호를 입력해주세요' });
   else if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
   try {
     //post /username의 username 값을 가져오는 방법????

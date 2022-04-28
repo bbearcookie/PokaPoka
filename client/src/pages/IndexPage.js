@@ -13,9 +13,6 @@ const IndexPage = () => {
         <br />
         <Link to="/auth/login">로그인 페이지로 가기</Link>
       </div>
-      <div>
-        <Link to="/finding">아이디 찾기</Link>
-      </div>
     </div>
   );
 };

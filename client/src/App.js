@@ -10,6 +10,9 @@ import SignupCompletePage from './pages/SignupCompletePage';
 import PwChangePage from './pages/PwChangePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 
+//임시
+import Certification from './pages/certification';
+
 function App() {
   return (
     <div className="App">
@@ -25,7 +28,9 @@ function App() {
         <Route path="/finding/pwchange" element={<PwChangePage />}/>
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
         <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
-      
+
+        <Route path="/sms" element={<Certification />}/>
+
       </Routes>
     </div>
   );
