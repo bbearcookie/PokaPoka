@@ -1,10 +1,36 @@
+import { useEffect, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import AuthContext from './contexts/Auth';
+import { STORAGE_KEY_NAME } from './contexts/Auth';
 import IndexPage from './pages/IndexPage';
 import TestPage from './pages/TestPage';
 import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
+import LoginSuccessPage from './pages/LoginSuccessPage';
+import MainPage from './pages/admin/MainPage';
+import GroupListPage from './pages/admin/group/GroupListPage';
+import GroupDetailPage from './pages/admin/group/GroupDetailPage';
+import GroupWriterPage from './pages/admin/group/GroupWriterPage';
+import MemberWriterPage from './pages/admin/member/MemberWriterPage';
+import MemberDetailPage from './pages/admin/member/MemberDetailPage';
+import AlbumWriterPage from './pages/admin/album/AlbumWriterPage';
+import AlbumDetailPage from './pages/admin/album/AlbumDetailPage';
 
 function App() {
+  const { state: authState, actions: authActions } = useContext(AuthContext);
+
+  // 페이지 로드시 동작. 새로고침이나 직접 URL 입력해서 접근한 경우 상태 값이 지워지는데,
+  // 세션 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 상태를 업데이트함.
+  const onLoad = async () => {
+    try {
+      if (!authState.user) {
+        const user = sessionStorage.getItem(STORAGE_KEY_NAME);
+        if (user) authActions.login(JSON.parse(user));
+      }
+    } catch (err) {}
+  }
+  useEffect(() => { onLoad(); }, []);
+
   return (
     <div className="App">
       <Routes>
@@ -12,6 +38,18 @@ function App() {
         <Route path="/test" element={<TestPage />} />
         <Route path="/social" element={<SocialLoginTestPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/auth/login/success" element={<LoginSuccessPage />} />
+        <Route path="/admin" element={<MainPage />} />
+        <Route path="/admin/group" element={<GroupListPage />} />
+        <Route path="/admin/group/writer" element={<GroupWriterPage />} />
+        <Route path="/admin/group/writer/:groupId" element={<GroupWriterPage />} />
+        <Route path="/admin/group/detail/:groupId" element={<GroupDetailPage />} />
+        <Route path="/admin/member/writer" element={<MemberWriterPage />} />
+        <Route path="/admin/member/writer/:memberId" element={<MemberWriterPage />} />
+        <Route path="/admin/member/detail/:memberId" element={<MemberDetailPage />} />
+        <Route path="/admin/album/writer" element={<AlbumWriterPage />} />
+        <Route path="/admin/album/writer/:albumId" element={<AlbumWriterPage />} />
+        <Route path="/admin/album/detail/:albumId" element={<AlbumDetailPage />} />
       </Routes>
     </div>
   );

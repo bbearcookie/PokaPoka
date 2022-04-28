@@ -51,6 +51,11 @@ router.post('/signup', async (req, res) => {
     [[user]] = await con.query(sql);
     if (user) return res.status(400).json({ message: '이미 해당 휴대폰번호로 가입한 계정이 있습니다.' });
 
+    // 중복한 닉네임 확인
+    sql = `SELECT nickname FROM User where nickname='${nickname}'`;
+    [[user]] = await con.query(sql);
+    if (user) return res.status(400).json({ message: '이미 있는 닉네임입니다.' });
+
     // 회원가입 처리
     const salt = makeSalt();
     const encryptedPwd = encryptText(password, salt);
@@ -107,7 +112,12 @@ router.post('/login/local', async (req, res) => {
     res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
-    return res.status(200).json({ message: '로그인되었습니다.' });
+    return res.status(200).json({
+      message: '로그인되었습니다.',
+      username: user.username,
+      role: user.role,
+      strategy: user.strategy
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -176,7 +186,7 @@ router.get('/login/kakao', async (req, res) => {
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
     // 로그인 성공후 화면으로 리디렉션
-    return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+    return res.redirect(process.env.LOGIN_REDIRECT_URL);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: '서버 문제로 로그인에 실패했습니다.' });
@@ -247,7 +257,7 @@ router.get('/login/naver', async (req, res) => {
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
     // 로그인 성공후 화면으로 리디렉션
-    return res.redirect(process.env.SNS_LOGIN_REDIRECT_URL);
+    return res.redirect(process.env.LOGIN_REDIRECT_URL);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: '서버 문제로 로그인에 실패했습니다.' });
@@ -280,13 +290,16 @@ router.post('/logout', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 로그인 검증 기능 테스트
-router.post('/login/test', verifyLogin, async (req, res) => {
+// 액세스 토큰의 유효성을 검사하여 토큰에 들어있는 payload를 반환하는 기능
+router.post('/token/test', verifyLogin, async (req, res) => {
   const { accessToken } = req;
 
   if (accessToken) {
     const { username, role, strategy } = accessToken.payload;
-    return res.status(200).json({ message: `${username} 님 어서오세요! 당신은 ${strategy} 방식으로 로그인 하셨으며, 서비스 내에서 ${role} 역할을 맡고 있습니다.` });
+    return res.status(200).json({
+      message: `${username} 님 어서오세요! 당신은 ${strategy} 방식으로 로그인 하셨으며, 서비스 내에서 ${role} 역할을 맡고 있습니다.`,
+      username, role, strategy
+    });
   } else {
     return res.status(401).json({ message: '당신은 로그인 상태가 아닙니다.' });
   }

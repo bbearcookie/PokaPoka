@@ -1,0 +1,42 @@
+.AdminGroupListPage {
+  text-align: center;
+
+  .LoadingSpinner {
+    top: 40%; left: 50%;
+  }
+
+  .title_area {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+
+    .title-label {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    .add_button {
+      width: 50px; height: 35px;
+      margin-left: 10px;
+      border-radius: 50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  }
+
+
+  .card_section {
+    margin-top: 10px;
+    text-align: center;
+
+    .GroupCard {
+      margin: 0 50px 50px 0;
+      display: inline-block;
+    }
+  }
+}

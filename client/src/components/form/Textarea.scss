@@ -1,0 +1,21 @@
+.Textarea {
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid hsl(222, 9%, 78%);
+  border-radius: 5px;
+
+  font-family: inherit;
+  font-weight: lighter;
+  font-size: 16px;
+  line-height: 24px;
+
+  outline: none;
+  resize: none; // textarea 크기 수동조절 불가능 설정
+  overflow-y: hidden; // 스크롤바 숨김
+
+  &:focus {
+    border: 1px solid rgb(206, 28, 73);
+    box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+    transition: all 0.25s;
+  }
+}
