@@ -15,6 +15,13 @@ import MemberWriterPage from './pages/admin/member/MemberWriterPage';
 import MemberDetailPage from './pages/admin/member/MemberDetailPage';
 import AlbumWriterPage from './pages/admin/album/AlbumWriterPage';
 import AlbumDetailPage from './pages/admin/album/AlbumDetailPage';
+import SignupPage from './pages/SignupPage';
+import UsernamePage from './pages/UsernamePage';
+import PasswordPage from './pages/find_password/PwPage';
+import SignupCompletePage from './pages/SignupCompletePage';
+import PwChangePage from './pages/find_password/PwChangePage';
+import ManagerLoginPage from './pages/ManagerLoginPage';
+import CertificationPage from './pages/find_password/CertificationPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -50,6 +57,14 @@ function App() {
         <Route path="/admin/album/writer" element={<AlbumWriterPage />} />
         <Route path="/admin/album/writer/:albumId" element={<AlbumWriterPage />} />
         <Route path="/admin/album/detail/:albumId" element={<AlbumDetailPage />} />
+        <Route path="/auth/signup" element={<SignupPage />} />
+        <Route path="/finding/password" element={<PasswordPage />} />
+        <Route path="/finding/username" element={<UsernamePage />} />
+        <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
+        <Route path="/finding/pwchange" element={<PwChangePage />}/>
+        <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
+        <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
+        <Route path="/finding/sms" element={<CertificationPage />}/>
       </Routes>
     </div>
   );

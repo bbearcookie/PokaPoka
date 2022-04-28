@@ -105,6 +105,44 @@ export const putAdminAlbum = (form, albumId) => {
   );
 }
 
+//아이디 찾기
+export const getUsername = (name, phone) => axios.get(`${BACKEND}/api/finding/username?name=${name}&phone=${phone}`, options);
+
+//비밀 번호 변경시 아이디가 맞는지 확인
+export const postIdCheck = (username, name, phone) => axios.post(`${BACKEND}/api/finding/id_check`,
+  {
+    username: username,
+    name: name,
+    phone: phone
+  },
+  options
+);
+
+//인증 번호 생성하여 휴대폰 번호에 발송
+export const postSending = (phone) => axios.post(`${BACKEND}/api/sms/sending`,
+  {
+    phone: phone
+  },
+  options
+);
+
+//인증 번호가 맞는지 확인
+export const postConfirmation = (cert_num) => axios.post(`${BACKEND}/api/sms/confirmation`,
+  {
+    cert_num: cert_num
+  },
+  options
+);
+
+//비밀번호 변경
+export const postPassword = (password, password_check) => axios.post(`${BACKEND}/api/sms/password`,
+  {
+    password: password,
+    password_check: password_check
+  },
+  options
+);
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 
