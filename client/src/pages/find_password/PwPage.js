@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Button from '../components/form/Button';
+import Button from '../../components/form/Button';
 import './PwPage.scss';
-import useRequest from '../utils/useRequest';
-import * as api from '../utils/api';
+import useRequest from '../../utils/useRequest';
+import * as api from '../../utils/api';
 import { useNavigate } from "react-router-dom";
 
 const PwPage = () => {

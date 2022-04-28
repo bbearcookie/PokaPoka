@@ -40,8 +40,7 @@ var username0 = '';
 router.post('/id_check', async (req, res) => {
   const con = await db.getConnection(); // DB에 접근 가능한 커넥션 반환받음.
   const { username, name, phone } = req.body;
-
-  console.log(username);
+  
   username0 = username;
 
   if (!username || !name || !phone) {
