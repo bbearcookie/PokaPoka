@@ -81,6 +81,8 @@ export const putAdminMember = (form, memberId) => {
 export const getAdminAlbumList = (groupId) => axios.get(`${BACKEND}/api/admin/album/list/${groupId}`, options);
 // 앨범 상세 데이터 조회 요청
 export const getAdminAlbumDetail = (albumId) => axios.get(`${BACKEND}/api/admin/album/detail/${albumId}`, options);
+// 앨범 데이터 삭제 요청
+export const deleteAdminAlbum = (albumId) => axios.delete(`${BACKEND}/api/admin/album/${albumId}`, options);
 // 앨범 데이터 등록 요청
 export const postAdminAlbum = (form, groupId) => {
   let formData = new FormData();

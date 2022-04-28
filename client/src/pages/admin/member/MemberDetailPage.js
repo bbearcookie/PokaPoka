@@ -6,12 +6,12 @@ import * as api from '../../../utils/api';
 import { BACKEND } from '../../../utils/api';
 import Button from '../../../components/form/Button';
 import LoadingSpinner from '../../../components/LoadingSpinner';
-import AdminTemplate from '../../../templates/AdminTemplate';
 import MessageLabel from '../../../components/MessageLabel';
 import Modal from '../../../components/modal/Modal';
 import ModalHeader from '../../../components/modal/ModalHeader';
 import ModalBody from '../../../components/modal/ModalBody';
 import ModalFooter from '../../../components/modal/ModalFooter';
+import AdminTemplate from '../../../templates/AdminTemplate';
 import './MemberDetailPage.scss';
 
 const MemberDetailPage = () => {

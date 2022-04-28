@@ -219,4 +219,37 @@ router.put('/album/:albumId', albumImageUpload.single('image'), verifyLogin, asy
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 앨범 삭제 처리
+router.delete('/album/:albumId', verifyLogin, async (req, res) => {
+  const { albumId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    // 앨범 존재 유무 확인
+    let sql = `SELECT album_id, image_name from AlbumData WHERE album_id=${albumId}`;
+    let [[album]] = await con.query(sql);
+    if (!album) return res.status(404).json({ message: '삭제하려는 앨범이 DB에 없습니다.' });
+
+    // DB에서 멤버 삭제
+    sql = `DELETE FROM AlbumData WHERE album_id=${albumId}`;
+    await con.execute(sql);
+
+    // 이미지 파일 삭제
+    fsAsync.rm(path.join(ALBUM_IMAGE_DIR, album.image_name), (err) => {
+      if (err) console.error(err);
+    });
+
+    return res.status(200).json({ message: '앨범 정보를 삭제했습니다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+});
+
 module.exports = router;
