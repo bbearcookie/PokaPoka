@@ -82,13 +82,16 @@ const GroupWriterPage = () => {
     e.preventDefault();
     let reader = new FileReader();
     let file = e.target.files[0];
-    reader.onloadend = () => {
-      setForm(produce(draft => {
-        draft.image.file = file; // 실제 이미지 파일 설정
-        draft.image.previewURL = reader.result; // 브라우저에 임시로 보여줄 이미지 URL 설정
-      }));
-    };
-    reader.readAsDataURL(file);
+
+    if (file) {
+      reader.onloadend = () => {
+        setForm(produce(draft => {
+          draft.image.file = file; // 실제 이미지 파일 설정
+          draft.image.previewURL = reader.result; // 브라우저에 임시로 보여줄 이미지 URL 설정
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   // 작성 취소 버튼 클릭시
@@ -125,7 +128,6 @@ const GroupWriterPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       <form onSubmit={onSubmit}>
         <h1 className="title-label">아이돌 그룹 추가</h1>
-        {/* {message ? <p className="message-label">{message}</p> : null} */}
         {message ? <MessageLabel>{message}</MessageLabel> : null}
         <p className="label">그룹 이미지</p>
         <section className="image_section">
@@ -168,7 +170,7 @@ const GroupWriterPage = () => {
           <label htmlFor="boy">보이그룹</label>
         </section>
         <section className="submit_section">
-          <Button className="cancel_button" onClick={onCancel}>취소</Button>
+          <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
           <Button className="submit_button" type="submit">작성</Button>
         </section>
       </form>

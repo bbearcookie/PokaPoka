@@ -115,6 +115,12 @@ const GroupDetailPage = () => {
         <Link to={`/admin/group/writer/${groupId}`}><Button className="edit_button">수정</Button></Link>
         <Button className="remove_button" onClick={openModal}>삭제</Button>
       </section>
+      <section className="title_area">
+        <h1 className="title-label">멤버 목록</h1>
+        <Link to="/admin/member/writer">
+          <Button className="add_button">추가</Button>
+        </Link>
+      </section>
     </AdminTemplate>
   );
 };

@@ -11,6 +11,7 @@ import MainPage from './pages/admin/MainPage';
 import GroupListPage from './pages/admin/GroupListPage';
 import GroupDetailPage from './pages/admin/GroupDetailPage';
 import GroupWriterPage from './pages/admin/GroupWriterPage';
+import MemberWriterPage from './pages/admin/MemberWriterPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -40,6 +41,7 @@ function App() {
         <Route path="/admin/group/writer" element={<GroupWriterPage />} />
         <Route path="/admin/group/writer/:groupId" element={<GroupWriterPage />} />
         <Route path="/admin/group/detail/:groupId" element={<GroupDetailPage />} />
+        <Route path="/admin/member/writer" element={<MemberWriterPage />} />
       </Routes>
     </div>
   );
