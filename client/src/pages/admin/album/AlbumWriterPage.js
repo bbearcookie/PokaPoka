@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import produce from 'immer';
 import { useNavigate, useParams } from 'react-router-dom';
+import produce from 'immer';
 import qs from 'qs';
 import AdminTemplate from '../../../templates/AdminTemplate';
 import LoadingSpinner from '../../../components/LoadingSpinner';
@@ -27,6 +27,24 @@ const AlbumWriterPage = () => {
   const imageRef = useRef(null);
   const request = useRequest();
   const navigate = useNavigate();
+
+  // 화면 로드시 동작
+  const onLoad = async () => {
+    // 기존의 앨범 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
+    if (albumId) {
+      try {
+        const res = await request.call(api.getAdminAlbumDetail, albumId);
+        setForm(produce(draft => {
+          draft.name = res.album.name;
+          draft.image.previewURL = `${BACKEND}/image/album/${res.album.image_name}`;
+          draft.image.initialURL = `${BACKEND}/image/album/${res.album.image_name}`;
+        }));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+  useEffect(() => { onLoad(); }, []);
 
   // input 값 변경시
   const onChangeInput = (e) => {
@@ -85,7 +103,13 @@ const AlbumWriterPage = () => {
       }
     // 내용을 수정하는 경우
     } else {
-
+      try {
+        const res = await request.call(api.putAdminAlbum, form, albumId);
+        setMessage(res.message);
+        return navigate(`/admin/album/detail/${albumId}?groupId=${groupId}`);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
     }
   }
 

@@ -167,6 +167,10 @@ router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, 
     removeTempFile();
     return res.status(400).json({ message: '이름을 입력해주세요.' });
   }
+  if (!memberId) {
+    removeTempFile();
+    return res.status(400).json({ message: '멤버 번호를 입력해주세요.' });
+  }
 
   const con = await db.getConnection();
   try {

@@ -81,7 +81,6 @@ export const putAdminMember = (form, memberId) => {
 export const getAdminAlbumList = (groupId) => axios.get(`${BACKEND}/api/admin/album/list/${groupId}`, options);
 // 앨범 상세 데이터 조회 요청
 export const getAdminAlbumDetail = (albumId) => axios.get(`${BACKEND}/api/admin/album/detail/${albumId}`, options);
-
 // 앨범 데이터 등록 요청
 export const postAdminAlbum = (form, groupId) => {
   let formData = new FormData();
@@ -90,6 +89,16 @@ export const postAdminAlbum = (form, groupId) => {
   formData.append('image', form.image.file);
 
   return axios.post(`${BACKEND}/api/admin/album`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+// 앨범 데이터 수정 요청
+export const putAdminAlbum = (form, albumId) => {
+  let formData = new FormData();
+  formData.append('name', form.name);
+  formData.append('image', form.image.file);
+
+  return axios.put(`${BACKEND}/api/admin/album/${albumId}`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }

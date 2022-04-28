@@ -28,8 +28,8 @@ const MemberWriterPage = () => {
   const request = useRequest();
   const navigate = useNavigate();
 
-  // 화면 로드시
-  const onLoad = async (e) => {
+  // 화면 로드시 동작
+  const onLoad = async () => {
     // 기존의 멤버 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
     if (memberId) {
       try {
@@ -105,7 +105,7 @@ const MemberWriterPage = () => {
       try {
         const res = await request.call(api.putAdminMember, form, memberId);
         setMessage(res.message);
-        return navigate(`/admin/group/detail/${groupId}`);
+        return navigate(`/admin/member/detail/${memberId}?groupId=${groupId}`);
       } catch (err) {
         setMessage(err.response.data.message);
       }

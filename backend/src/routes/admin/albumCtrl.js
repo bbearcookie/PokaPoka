@@ -142,4 +142,81 @@ router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req,
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 앨범 수정 처리
+router.put('/album/:albumId', albumImageUpload.single('image'), verifyLogin, async (req, res) => {
+  const { albumId } = req.params;
+  const { name } = req.body;
+  const { accessToken, file } = req;
+
+  // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
+  function removeTempFile() {
+    if (file) {
+      try { fs.rm(file.path); }
+      catch (err) { console.error(err); }
+    }
+  }
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) {
+    removeTempFile();
+    return res.status(403).json({ message: '권한이 없습니다.' });
+  }
+
+  // 데이터 유효성 검사
+  if (!name) {
+    removeTempFile();
+    return res.status(400).json({ message: '이름을 입력해주세요.' });
+  }
+  if (!albumId) {
+    removeTempFile();
+    return res.status(400).json({ message: '앨범 번호를 입력해주세요.' });
+  }
+
+  const con = await db.getConnection();
+  try {
+    // 수정하려는 앨범 존재 유무 확인
+    let sql = `SELECT album_id, image_name FROM AlbumData WHERE album_id=${albumId}`;
+    let [[album]] = await con.query(sql);
+    if (!album) {
+      removeTempFile();
+      return res.status(404).json({ message: '수정하려는 앨범이 DB에 없습니다.' });
+    }
+
+    // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경하고 기존의 이미지 삭제
+    let filename = "";
+    if (file) {
+      // 이미지 이름 변경
+      filename = albumId + '.' + getExtension(file.mimetype);
+      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
+        if (err) console.error(err);
+      });
+      
+      // 기존 이미지 삭제
+      fsAsync.rm(path.join(file.destination, album.image_name), (err) => {
+        if (err) console.error(err);
+      });
+
+      // DB에 이미지 파일 이름 변경 내용 반영
+      sql = `UPDATE AlbumData SET image_name='${filename}' WHERE album_id=${albumId}`;
+      await con.execute(sql);
+    }
+
+    // 수정된 내용 DB에 저장
+    sql = `UPDATE AlbumData 
+    SET name = '${name}'
+    WHERE album_id = ${albumId}`;
+    await con.execute(sql);
+
+    return res.status(200).json({ message: '앨범 정보를 수정했습니다.' });
+  } catch (err) {
+    console.error(err);
+    removeTempFile();
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+  
+  return res.status(501).json({ message: 'end of line' });
+});
+
 module.exports = router;
