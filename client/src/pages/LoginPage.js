@@ -49,8 +49,13 @@ const LoginPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      // 기존 로그인 정보 로그아웃 처리
+      await request.call(api.postLogout);
+      authActions.logout();
+
+      // 새로 로그인 요청
       const res = await request.call(api.postLogin, form);
-      console.log(res);
       authActions.login(res);
       setMessage(res.message);
 
