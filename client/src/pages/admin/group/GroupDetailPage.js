@@ -141,6 +141,12 @@ const GroupDetailPage = () => {
           />
         ) : null}
       </section>
+      <section className="title_area">
+        <h1 className="title-label">앨범 목록</h1>
+        <Link to={`/admin/album/writer?groupId=${groupId}`}>
+          <Button className="add_button">추가</Button>
+        </Link>
+      </section>
     </AdminTemplate>
   );
 };
