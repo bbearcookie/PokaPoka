@@ -133,6 +133,7 @@ const GroupDetailPage = () => {
         {members ?
         members.map(member =>
           <MemberCard
+            groupId={groupId}
             key={member.member_id}
             id={member.member_id}
             name={member.name}

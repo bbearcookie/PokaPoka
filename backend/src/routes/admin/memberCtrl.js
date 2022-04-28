@@ -3,8 +3,9 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsAsync = require('fs');
 const { db } = require('../../config/database');
-const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { getExtension, memberImageUpload, IDOL_MEMBER_IMAGE_DIR } = require('../../config/multer');
+const { isAdmin, verifyLogin } = require('../../utils/jwt');
+const { isNull } = require('../../utils/common');
 
 // 특정 그룹의 아이돌 멤버 목록 조회 처리
 router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
@@ -36,6 +37,35 @@ router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
   } finally {
     con.release();
   }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 아이돌 멤버 상세 조회 처리
+router.get('/member/detail/:memberId' , verifyLogin, async (req, res) => {
+  const { memberId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (isNull(memberId)) return res.status(400).json({ message: '멤버 번호를 입력해주세요' });
+
+  // 아이돌 멤버 상세 조회
+  const con = await db.getConnection();
+  try {
+    let sql = `SELECT name, image_name FROM MemberData WHERE member_id=${memberId}`;
+    let [[member]] = await con.query(sql);
+    return res.status(200).json({ message: '아이돌 멤버 정보 상세 조회에 성공했습니다.', member });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
 });
 
 // 아이돌 멤버 등록 처리

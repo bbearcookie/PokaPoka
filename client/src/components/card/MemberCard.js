@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import './MemberCard.scss';
 
-const MemberCard = ({ className, id, src, name }) => {
+const MemberCard = ({ className, groupId, id, src, name }) => {
   return (
-    <Link className={classNames("MemberCard", className)} to={`/admin/member/detail/${id}`}>
+    <Link className={classNames("MemberCard", className)} to={`/admin/member/detail/${id}?groupId=${groupId}`}>
       <img 
         width="100%"
         height="200px"
