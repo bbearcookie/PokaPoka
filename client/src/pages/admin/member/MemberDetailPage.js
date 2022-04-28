@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import qs from 'qs';
-import useRequest from '../../utils/useRequest';
-import * as api from '../../utils/api';
-import { BACKEND } from '../../utils/api';
-import Button from '../../components/form/Button';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import AdminTemplate from '../../templates/AdminTemplate';
-import MessageLabel from '../../components/MessageLabel';
-import Modal from '../../components/modal/Modal';
-import ModalHeader from '../../components/modal/ModalHeader';
-import ModalBody from '../../components/modal/ModalBody';
-import ModalFooter from '../../components/modal/ModalFooter';
+import useRequest from '../../../utils/useRequest';
+import * as api from '../../../utils/api';
+import { BACKEND } from '../../../utils/api';
+import Button from '../../../components/form/Button';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import AdminTemplate from '../../../templates/AdminTemplate';
+import MessageLabel from '../../../components/MessageLabel';
+import Modal from '../../../components/modal/Modal';
+import ModalHeader from '../../../components/modal/ModalHeader';
+import ModalBody from '../../../components/modal/ModalBody';
+import ModalFooter from '../../../components/modal/ModalFooter';
 import './MemberDetailPage.scss';
 
 const MemberDetailPage = () => {

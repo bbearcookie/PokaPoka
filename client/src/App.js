@@ -8,11 +8,11 @@ import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
 import MainPage from './pages/admin/MainPage';
-import GroupListPage from './pages/admin/GroupListPage';
-import GroupDetailPage from './pages/admin/GroupDetailPage';
-import GroupWriterPage from './pages/admin/GroupWriterPage';
-import MemberWriterPage from './pages/admin/MemberWriterPage';
-import MemberDetailPage from './pages/admin/MemberDetailPage';
+import GroupListPage from './pages/admin/group/GroupListPage';
+import GroupDetailPage from './pages/admin/group/GroupDetailPage';
+import GroupWriterPage from './pages/admin/group/GroupWriterPage';
+import MemberWriterPage from './pages/admin/member/MemberWriterPage';
+import MemberDetailPage from './pages/admin/member/MemberDetailPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);

@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import produce from 'immer';
 import qs from 'qs';
-import AdminTemplate from '../../templates/AdminTemplate';
-import useRequest from '../../utils/useRequest';
-import * as api from '../../utils/api';
-import { BACKEND } from '../../utils/api';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import MessageLabel from '../../components/MessageLabel';
-import Input from '../../components/form/Input';
-import Button from '../../components/form/Button';
+import AdminTemplate from '../../../templates/AdminTemplate';
+import useRequest from '../../../utils/useRequest';
+import * as api from '../../../utils/api';
+import { BACKEND } from '../../../utils/api';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import MessageLabel from '../../../components/MessageLabel';
+import Input from '../../../components/form/Input';
+import Button from '../../../components/form/Button';
 import './MemberWriterPage.scss';
 
 const MemberWriterPage = () => {

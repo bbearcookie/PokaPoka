@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import produce from 'immer';
-import useRequest from '../../utils/useRequest';
-import * as api from '../../utils/api';
-import { BACKEND } from '../../utils/api';
-import AdminTemplate from '../../templates/AdminTemplate';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import MessageLabel from '../../components/MessageLabel';
-import Input from '../../components/form/Input';
-import Textarea from '../../components/form/Textarea';
-import Button from '../../components/form/Button';
+import useRequest from '../../../utils/useRequest';
+import * as api from '../../../utils/api';
+import { BACKEND } from '../../../utils/api';
+import AdminTemplate from '../../../templates/AdminTemplate';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import MessageLabel from '../../../components/MessageLabel';
+import Input from '../../../components/form/Input';
+import Textarea from '../../../components/form/Textarea';
+import Button from '../../../components/form/Button';
 import './GroupWriterPage.scss';
 
 // 그룹 내용 작성 페이지. 그룹 등록과 그룹 수정 작업이 가능하다.

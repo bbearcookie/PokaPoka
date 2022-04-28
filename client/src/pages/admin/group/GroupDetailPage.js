@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import useRequest from '../../utils/useRequest';
-import * as api from '../../utils/api';
-import { BACKEND } from '../../utils/api';
-import MemberCard from '../../components/card/MemberCard';
-import Button from '../../components/form/Button';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import MessageLabel from '../../components/MessageLabel';
-import Modal from '../../components/modal/Modal';
-import ModalHeader from '../../components/modal/ModalHeader';
-import ModalBody from '../../components/modal/ModalBody';
-import ModalFooter from '../../components/modal/ModalFooter';
-import AdminTemplate from '../../templates/AdminTemplate';
+import useRequest from '../../../utils/useRequest';
+import * as api from '../../../utils/api';
+import { BACKEND } from '../../../utils/api';
+import MemberCard from '../../../components/card/MemberCard';
+import Button from '../../../components/form/Button';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import MessageLabel from '../../../components/MessageLabel';
+import Modal from '../../../components/modal/Modal';
+import ModalHeader from '../../../components/modal/ModalHeader';
+import ModalBody from '../../../components/modal/ModalBody';
+import ModalFooter from '../../../components/modal/ModalFooter';
+import AdminTemplate from '../../../templates/AdminTemplate';
 import './GroupDetailPage.scss';
 
 // 성별 속성에 따라 화면에 보여줄 텍스트
