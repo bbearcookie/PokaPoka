@@ -14,6 +14,7 @@ import GroupWriterPage from './pages/admin/group/GroupWriterPage';
 import MemberWriterPage from './pages/admin/member/MemberWriterPage';
 import MemberDetailPage from './pages/admin/member/MemberDetailPage';
 import AlbumWriterPage from './pages/admin/album/AlbumWriterPage';
+import AlbumDetailPage from './pages/admin/album/AlbumDetailPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -48,6 +49,7 @@ function App() {
         <Route path="/admin/member/detail/:memberId" element={<MemberDetailPage />} />
         <Route path="/admin/album/writer" element={<AlbumWriterPage />} />
         <Route path="/admin/album/writer/:albumId" element={<AlbumWriterPage />} />
+        <Route path="/admin/album/detail/:albumId" element={<AlbumDetailPage />} />
       </Routes>
     </div>
   );

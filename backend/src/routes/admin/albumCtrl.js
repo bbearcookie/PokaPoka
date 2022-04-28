@@ -41,6 +41,33 @@ router.get('/album/list/:groupId', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 앨범 상세 조회 처리
+router.get('/album/detail/:albumId', verifyLogin, async (req, res) => {
+  const { albumId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (isNull(albumId)) return res.status(400).json({ message: '멤버 번호를 입력해주세요' });
+
+  // 앨범 상세 조회
+  const con = await db.getConnection();
+  try {
+    let sql = `SELECT name, image_name FROM AlbumData WHERE album_id=${albumId}`;
+    let [[album]] = await con.query(sql);
+    return res.status(200).json({ message: '앨범 정보 상세 조회에 성공했습니다.', album });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 앨범 등록 처리
 router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { groupId, name } = req.body;

@@ -158,8 +158,8 @@ const GroupDetailPage = () => {
         albums.map(album =>
           <AlbumCard
             groupId={groupId}
-            key={album.member_id}
-            id={album.member_id}
+            key={album.album_id}
+            id={album.album_id}
             name={album.name}
             src={`${BACKEND}/image/album/${album.image_name}`}
           />
