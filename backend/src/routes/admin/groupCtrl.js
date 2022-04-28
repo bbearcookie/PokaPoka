@@ -216,20 +216,22 @@ router.delete('/group/:groupId', verifyLogin, async (req, res) => {
   const { accessToken } = req;
 
   // 관리자 권한 확인
-  if (!isAdmin(accessToken)) {
-    removeTempFile();
-    return res.status(403).json({ message: '권한이 없습니다.' });
-  }
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
   const con = await db.getConnection();
   try {
     // 그룹 존재 유무 확인
-    let sql = `SELECT group_id, image_name from GroupData WHERE group_id = ${groupId}`;
+    let sql = `SELECT group_id, image_name from GroupData WHERE group_id=${groupId}`;
     let [[group]] = await con.query(sql);
     if (!group) return res.status(404).json({ message: '삭제하려는 그룹이 DB에 없습니다.' });
 
+    // 제약조건 있는지 확인
+    sql = `SELECT member_id from MemberData WHERE group_id=${groupId}`;
+    [[members]] = await con.query(sql);
+    if (members) return res.status(400).json({ message: '해당 그룹의 멤버 데이터가 남아있어서 삭제할 수 없습니다. 먼저 멤버를 정리해주세요.' });
+
     // DB에서 그룹 삭제
-    sql = `DELETE FROM GroupData WHERE group_id = ${groupId}`;
+    sql = `DELETE FROM GroupData WHERE group_id=${groupId}`;
     await con.execute(sql);
 
     // 이미지 파일 삭제

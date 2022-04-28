@@ -82,6 +82,9 @@ export const putAdminMember = (form, memberId) => {
   );
 }
 
+// 아이돌 멤버 데이터 삭제 요청
+export const deleteAdminMember = (memberId) => axios.delete(`${BACKEND}/api/admin/member/${memberId}`, options);
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 

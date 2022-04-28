@@ -211,4 +211,37 @@ router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, 
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 아이돌 멤버 삭제 처리
+router.delete('/member/:memberId', verifyLogin, async (req, res) => {
+  const { memberId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    // 멤버 존재 유무 확인
+    let sql = `SELECT member_id, image_name from MemberData WHERE member_id=${memberId}`;
+    let [[member]] = await con.query(sql);
+    if (!member) return res.status(404).json({ message: '삭제하려는 멤버가 DB에 없습니다.' });
+
+    // DB에서 멤버 삭제
+    sql = `DELETE FROM MemberData WHERE member_id=${memberId}`;
+    await con.execute(sql);
+
+    // 이미지 파일 삭제
+    fsAsync.rm(path.join(IDOL_MEMBER_IMAGE_DIR, member.image_name), (err) => {
+      if (err) console.error(err);
+    });
+
+    return res.status(200).json({ message: '아이돌 멤버 정보를 삭제했습니다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+});
+
 module.exports = router;

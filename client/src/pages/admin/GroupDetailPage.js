@@ -36,21 +36,6 @@ const GroupDetailPage = () => {
   const navigate = useNavigate();
   const request = useRequest();
 
-  // 삭제 모달 열기 / 닫기
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
-
-  // 삭제 버튼 클릭시
-  const onClickRemove = async () => {
-    try {
-      const res = await request.call(api.deleteAdminGroup, groupId);
-      return navigate('/admin/group');
-    } catch (err) {
-      setMessage(err.response.data.message);
-    }
-    closeModal();
-  }
-
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
@@ -72,6 +57,21 @@ const GroupDetailPage = () => {
     }
   };
   useEffect(() => { onLoad(); }, []);
+
+  // 삭제 모달 열기 / 닫기
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+  // 삭제 버튼 클릭시
+  const onClickRemove = async () => {
+    try {
+      const res = await request.call(api.deleteAdminGroup, groupId);
+      return navigate('/admin/group');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeModal();
+  }
 
   return (
     <AdminTemplate className="AdminGroupDetailPage">
