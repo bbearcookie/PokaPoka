@@ -77,6 +77,9 @@ export const putAdminMember = (form, memberId) => {
   );
 }
 
+// 앨범 목록 데이터 조회 요청
+export const getAdminAlbumList = (groupId) => axios.get(`${BACKEND}/api/admin/album/list/${groupId}`, options);
+
 // 앨범 데이터 등록 요청
 export const postAdminAlbum = (form, groupId) => {
   let formData = new FormData();

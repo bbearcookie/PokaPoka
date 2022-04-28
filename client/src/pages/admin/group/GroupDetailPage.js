@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import { BACKEND } from '../../../utils/api';
+import AlbumCard from '../../../components/card/AlbumCard';
 import MemberCard from '../../../components/card/MemberCard';
 import Button from '../../../components/form/Button';
 import LoadingSpinner from '../../../components/LoadingSpinner';
@@ -31,6 +32,7 @@ const GroupDetailPage = () => {
     image_name: ''
   });
   const [members, setMembers] = useState([]); // 그룹에 속한 멤버들 정보
+  const [albums, setAlbums] = useState([]); // 그룹에 속한 앨범들 정보
   const [showModal, setShowModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -52,6 +54,10 @@ const GroupDetailPage = () => {
       // 그룹에 속한 멤버 정보 가져오기
       res = await request.call(api.getAdminMemberList, groupId);
       setMembers(res.members);
+
+      // 그룹에 속한 앨범 정보 가져오기
+      res = await request.call(api.getAdminAlbumList, groupId);
+      setAlbums(res.albums);
     } catch (err) {
       console.error(err);
     }
@@ -146,6 +152,18 @@ const GroupDetailPage = () => {
         <Link to={`/admin/album/writer?groupId=${groupId}`}>
           <Button className="add_button">추가</Button>
         </Link>
+      </section>
+      <section className="card_section">
+        {albums ?
+        albums.map(album =>
+          <AlbumCard
+            groupId={groupId}
+            key={album.member_id}
+            id={album.member_id}
+            name={album.name}
+            src={`${BACKEND}/image/album/${album.image_name}`}
+          />
+        ) : null}
       </section>
     </AdminTemplate>
   );

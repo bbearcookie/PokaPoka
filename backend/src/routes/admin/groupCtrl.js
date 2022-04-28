@@ -227,8 +227,12 @@ router.delete('/group/:groupId', verifyLogin, async (req, res) => {
 
     // 제약조건 있는지 확인
     sql = `SELECT member_id from MemberData WHERE group_id=${groupId}`;
-    [[members]] = await con.query(sql);
-    if (members) return res.status(400).json({ message: '해당 그룹의 멤버 데이터가 남아있어서 삭제할 수 없습니다. 먼저 멤버를 정리해주세요.' });
+    [[member]] = await con.query(sql);
+    if (member) return res.status(400).json({ message: '해당 그룹의 멤버 데이터가 남아있어서 삭제할 수 없습니다. 먼저 멤버를 정리해주세요.' });
+
+    sql = `SELECT album_id from AlbumData WHERE group_id=${groupId}`;
+    [[album]] = await con.query(sql);
+    if (album) return res.status(400).json({ message: '해당 그룹의 앨범 데이터가 남아있어서 삭제할 수 없습니다. 먼저 앨범을 정리해주세요.' });
 
     // DB에서 그룹 삭제
     sql = `DELETE FROM GroupData WHERE group_id=${groupId}`;
