@@ -8,7 +8,7 @@ const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { isNull } = require('../../utils/common');
 
 // 아이돌 그룹 목록 조회 처리
-router.get('/list', verifyLogin, async (req, res) => {
+router.get('/group/list', verifyLogin, async (req, res) => {
   const { accessToken } = req;
 
   // 관리자 권한 확인
@@ -31,7 +31,7 @@ router.get('/list', verifyLogin, async (req, res) => {
 });
 
 // 아이돌 그룹 상세 조회 처리
-router.get('/detail/:groupId', verifyLogin, async (req, res) => {
+router.get('/group/detail/:groupId', verifyLogin, async (req, res) => {
   const { groupId } = req.params;
   const { accessToken } = req;
 
@@ -58,7 +58,7 @@ router.get('/detail/:groupId', verifyLogin, async (req, res) => {
 });
 
 // 아이돌 그룹 등록 처리
-router.post('/', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
+router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { name, description, gender } = req.body;
   const { accessToken, file } = req;
 
@@ -128,7 +128,7 @@ router.post('/', groupImageUpload.single('image'), verifyLogin, async (req, res)
 });
 
 // 아이돌 그룹 수정 처리
-router.put('/:groupId', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
+router.put('/group/:groupId', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { groupId } = req.params;
   const { name, description, gender } = req.body;
   const { accessToken, file } = req;
@@ -211,7 +211,7 @@ router.put('/:groupId', groupImageUpload.single('image'), verifyLogin, async (re
 });
 
 // 아이돌 그룹 삭제 처리
-router.delete('/:groupId', verifyLogin, async (req, res) => {
+router.delete('/group/:groupId', verifyLogin, async (req, res) => {
   const { groupId } = req.params;
   const { accessToken } = req;
 

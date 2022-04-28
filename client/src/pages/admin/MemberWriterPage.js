@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import produce from 'immer';
+import qs from 'qs';
 import AdminTemplate from '../../templates/AdminTemplate';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
@@ -11,6 +12,7 @@ import Button from '../../components/form/Button';
 import './MemberWriterPage.scss';
 
 const MemberWriterPage = () => {
+  const { groupId } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   const [form, setForm] = useState({
     name: '',
     image: {
@@ -62,14 +64,20 @@ const MemberWriterPage = () => {
     imageRef.current.click(); // 숨겨져 있는 file 타입의 input 클릭 처리
   }
 
+  // 작성 취소 버튼 클릭시
+  const onCancel = () => navigate(-1); // 뒤로 돌아가기
+
   // 작성 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-  }
 
-  // 작성 취소 버튼 클릭시
-  const onCancel = () => navigate(-1); // 뒤로 돌아가기
+    try {
+      const res = await request.call(api.postAdminMember, form, groupId);
+      setMessage(res.message);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
 
   return (
     <AdminTemplate className="AdminMemberWriterPage">

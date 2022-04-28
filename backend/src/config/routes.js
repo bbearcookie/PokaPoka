@@ -7,5 +7,6 @@ module.exports = (app) => {
   app.use('/api/suggestion', require('../routes/suggestionCtrl'));
   app.use('/api/trade', require('../routes/tradeCtrl'));
   app.use('/api/finding', require('../routes/findingCtrl'));
-  app.use('/api/admin/group', require('../routes/admin/groupCtrl'));
+  app.use('/api/admin', require('../routes/admin/groupCtrl'));
+  app.use('/api/admin', require('../routes/admin/memberCtrl'));
 }

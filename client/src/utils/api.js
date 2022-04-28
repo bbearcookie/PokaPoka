@@ -53,6 +53,18 @@ export const putAdminGroup = (form, groupId) => {
 // 아이돌 그룹 데이터 삭제 요청
 export const deleteAdminGroup = (groupId) => axios.delete(`${BACKEND}/api/admin/group/${groupId}`, options);
 
+// 아이돌 멤버 데이터 작성 요청
+export const postAdminMember = (form, groupId) => {
+  let formData = new FormData();
+  formData.append('groupId', groupId);
+  formData.append('name', form.name);
+  formData.append('image', form.image.file);
+
+  return axios.post(`${BACKEND}/api/admin/member`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 

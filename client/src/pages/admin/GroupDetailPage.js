@@ -117,7 +117,7 @@ const GroupDetailPage = () => {
       </section>
       <section className="title_area">
         <h1 className="title-label">멤버 목록</h1>
-        <Link to="/admin/member/writer">
+        <Link to={`/admin/member/writer?groupId=${groupId}`}>
           <Button className="add_button">추가</Button>
         </Link>
       </section>

@@ -15,32 +15,39 @@ function getExtension(mimeType) {
   return '';
 }
 
-const groupImageUpload = multer({
-  storage: multer.diskStorage({
-
-    // 파일이 저장될 디렉토리 경로 지정
-    destination: async (req, file, cb) => {
-
-      // 디렉토리가 아직 없으면 생성함
-      await fs.access(IDOL_GROUP_IMAGE_DIR, fsAsync.constants.F_OK).catch(async () => {
-        try {
-          await fs.mkdir(IDOL_GROUP_IMAGE_DIR, { recursive: true });
-        } catch (err) { console.error(err); }
-      });
-
-      // 파일이 저장될 디렉토리 지정
-      cb(null, IDOL_GROUP_IMAGE_DIR);
-    },
-
-    // 저장될 파일 이름 지정
-    filename: (req, file, cb) => {
-      let ext = getExtension(file.mimetype);
-      cb(null, 'temp_' + Date.now() + '.' + ext);
-    }
-
+// 해당 디렉터리에 파일을 저장하는 multer 업로더를 반환하는 함수
+function createUploader(dir) {
+  return multer({
+    storage: multer.diskStorage({
+  
+      // 파일이 저장될 디렉토리 경로 지정
+      destination: async (req, file, cb) => {
+  
+        // 디렉토리가 아직 없으면 생성함
+        await fs.access(dir, fsAsync.constants.F_OK).catch(async () => {
+          try {
+            await fs.mkdir(dir, { recursive: true });
+          } catch (err) { console.error(err); }
+        });
+  
+        // 파일이 저장될 디렉토리 지정
+        cb(null, dir);
+      },
+  
+      // 저장될 파일 이름 지정
+      filename: (req, file, cb) => {
+        let ext = getExtension(file.mimetype);
+        cb(null, 'temp_' + Date.now() + '.' + ext);
+      }
+    })
   })
-});
+}
+
+const groupImageUpload = createUploader(IDOL_GROUP_IMAGE_DIR); // 아이돌 그룹 이미지 업로더
+const memberImageUpload = createUploader(IDOL_MEMBER_IMAGE_DIR); // 아이돌 멤버 이미지 업로더
 
 module.exports.getExtension = getExtension;
 module.exports.groupImageUpload = groupImageUpload;
+module.exports.memberImageUpload = memberImageUpload;
 module.exports.IDOL_GROUP_IMAGE_DIR = IDOL_GROUP_IMAGE_DIR;
+module.exports.IDOL_MEMBER_IMAGE_DIR = IDOL_MEMBER_IMAGE_DIR;

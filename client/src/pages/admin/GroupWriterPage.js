@@ -100,7 +100,6 @@ const GroupWriterPage = () => {
   // 작성 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(groupId);
 
     // 새로 작성하는 경우
     if (!groupId) {
