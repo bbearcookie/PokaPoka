@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import Button from '../components/form/Button';
-import useRequest from '../utils/useRequest';
-import * as api from '../utils/api';
-import './certification.scss';
+import Button from '../../components/form/Button';
+import useRequest from '../../utils/useRequest';
+import * as api from '../../utils/api';
+import './CertificationPage.scss';
 import { useNavigate } from "react-router-dom";
 
-const Certification = () => {
+const CertificationPage = () => {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
@@ -83,4 +83,4 @@ const Certification = () => {
             </div>
     );
 }
-export default Certification;
+export default CertificationPage;

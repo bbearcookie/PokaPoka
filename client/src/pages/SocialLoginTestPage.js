@@ -22,7 +22,7 @@ const SocialLoginTestPage = () => {
   // 로그인 검증 테스트
   const onClickLoginTest = async () => {
     try {
-      const res = await request.call(api.postLoginTest);
+      const res = await request.call(api.postTokenTest);
       setMessage(res.message);
     } catch (err) {
       console.error(err);

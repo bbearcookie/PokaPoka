@@ -21,6 +21,7 @@
     "express-session": "^1.17.2",
     "iamport": "^0.3.4",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.4",
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.15",
     "passport": "^0.5.2",

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import qs from 'qs';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
-import { Link } from 'react-router-dom';
-import qs from 'qs';
+import AuthContext from '../contexts/Auth';
+import MessageLabel from '../components/MessageLabel';
+import Input from '../components/form/Input';
 import Button from '../components/form/Button';
+import Navbar from '../components/Navbar';
 import Kakao from '../assets/Kakao';
 import Naver from '../assets/Naver';
 import './LoginPage.scss';
@@ -23,8 +27,10 @@ const naverURL = `https://nid.naver.com/oauth2.0/authorize?` +
 
 // 로그인 페이지 컴포넌트
 const LoginPage = () => {
-  const request = useRequest();
+  const { state: authState, actions: authActions } = useContext(AuthContext);
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  const request = useRequest();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: '',
     password: ''
@@ -43,9 +49,18 @@ const LoginPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      // 기존 로그인 정보 로그아웃 처리
+      await request.call(api.postLogout);
+      authActions.logout();
+
+      // 새로 로그인 요청
       const res = await request.call(api.postLogin, form);
-      console.log(res);
+      authActions.login(res);
       setMessage(res.message);
+
+      // 관리자가 로그인 시 관리자 페이지로 리디렉션
+      if (res.role === 'admin') return navigate('/admin');
     } catch (err) {
       console.error(err);
       setMessage(err.response.data.message);
@@ -61,9 +76,9 @@ const LoginPage = () => {
       <section className="login_section">
         <form onSubmit={onSubmit}>
           <p className="title-label">로그인</p>
-          {message ? <p className="message-label">{message}</p> : null}
+          {message ? <MessageLabel>{message}</MessageLabel> : null}
 
-          <input
+          <Input
             type="text"
             name="username"
             placeholder="아이디"
@@ -71,7 +86,7 @@ const LoginPage = () => {
             value={form.username}
             onChange={onChangeInput}
           />
-          <input
+          <Input
             type="password"
             name="password"
             placeholder="비밀번호"
@@ -103,6 +118,8 @@ const LoginPage = () => {
           </section>
         </form>
       </section>
+
+      <Navbar />
 
     </div>
   );

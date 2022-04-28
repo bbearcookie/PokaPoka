@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import Button from '../components/form/Button';
-import './PwChangePage.scss';
+import './PwPage.scss';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
 import { useNavigate } from "react-router-dom";
 
-const PwChangePage = () => {
+const PwPage = () => {
   const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        password: '',
-        password_check: ''
+        username: '',
+        name: '',
+        phone: ''
     });
     const [message, setMessage] = useState('');
     const request = useRequest();
@@ -23,53 +24,60 @@ const PwChangePage = () => {
         });
     };
 
-    const onChangeButton = async () => {
+    const onFindButton = async () => {
       try {
-        const res = await request.call(api.postPassword, form.password, form.password_check);
+        const res = await request.call(api.postIdCheck, form.username, form.name, form.phone);
         setMessage(res.message);
-        if(res.message === "비밀 번호를 변경했습니다.") setTimeout(() => {  return navigate('/auth/login'); }, 2000);
+        if(res.message === "해당 회원이 존재합니다. 전화번호 인증 페이지로 이동.") setTimeout(() => {  return navigate('/finding/sms'); }, 2000);
       } catch (err) {
         console.error(err);
         setMessage(err.response.data.message);
       }
     }
-    
+
     return(
-        <div className="PwChangePage">
-        <header>
+        <div className="PwPage">
+      <header>
         <h1>PokaPoka</h1>
       </header>
-      <p className="title">비밀번호 변경</p>
-      <section className="PwChange_section">
-      <form>
-          <p className="title-label">비밀번호변경</p>
+      <p className="title">비밀번호 찾기</p>
+      <section className="PwPage_section">
+        <form>
+          <p className="title-label">비밀번호찾기</p>
         
           {message ? <p className="message-label">{message}</p> : null}
           <input
             type="text"
-            name="password"
-            placeholder="새 비밀번호"
+            name="username"
+            placeholder="아이디"
             autoComplete="off"
-            value={form.password} 
+            value={form.username} 
             onChange={onChangeInput}
        
           />
 
           <input
             type="text"
-            name="password_check"
-            placeholder="새 비밀번호 확인"
+            name="name"
+            placeholder="이름"
             autoComplete="off"
-            value={form.password_check} 
+            value={form.name} 
             onChange={onChangeInput}
        
           />    
-          
-          <Button className="find_btn" onClick={onChangeButton}>변경</Button>
+          <input
+            type="text"
+            name="phone"
+            placeholder="전화번호"
+            autoComplete="off"
+            value={form.phon} 
+            onChange={onChangeInput}
+         
+          />
+          <Button className="find_btn" onClick={onFindButton} >찾기</Button>
           </form>
           </section>
-      
         </div>
     );
 }
-export default PwChangePage;
+export default PwPage;
