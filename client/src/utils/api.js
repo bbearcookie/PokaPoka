@@ -71,6 +71,17 @@ export const postAdminMember = (form, groupId) => {
   );
 }
 
+// 아이돌 멤버 데이터 수정 요청
+export const putAdminMember = (form, memberId) => {
+  let formData = new FormData();
+  formData.append('name', form.name);
+  formData.append('image', form.image.file);
+
+  return axios.put(`${BACKEND}/api/admin/member/${memberId}`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 

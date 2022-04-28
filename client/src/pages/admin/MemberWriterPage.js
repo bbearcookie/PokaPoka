@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import produce from 'immer';
 import qs from 'qs';
 import AdminTemplate from '../../templates/AdminTemplate';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
+import { BACKEND } from '../../utils/api';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import MessageLabel from '../../components/MessageLabel';
 import Input from '../../components/form/Input';
@@ -12,7 +13,8 @@ import Button from '../../components/form/Button';
 import './MemberWriterPage.scss';
 
 const MemberWriterPage = () => {
-  const { groupId } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  const { groupId } = qs.parse(window.location.search, { ignoreQueryPrefix: true }); // 멤버가 소속된 그룹 ID
+  const { memberId } = useParams(); // URL에 포함된 memberId Params 정보
   const [form, setForm] = useState({
     name: '',
     image: {
@@ -25,6 +27,24 @@ const MemberWriterPage = () => {
   const imageRef = useRef(null); // 이미지 업로드시 img 태그를 조작하기 위한 ref
   const request = useRequest();
   const navigate = useNavigate();
+
+  // 화면 로드시
+  const onLoad = async (e) => {
+    // 기존의 멤버 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
+    if (memberId) {
+      try {
+        const res = await request.call(api.getAdminMemberDetail, memberId);
+        setForm(produce(draft => {
+          draft.name = res.member.name;
+          draft.image.previewURL = `${BACKEND}/image/member/${res.member.image_name}`;
+          draft.image.initialURL = `${BACKEND}/image/member/${res.member.image_name}`;
+        }));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+  useEffect(() => { onLoad(); }, []);
 
   // input 값 변경시
   const onChangeInput = (e) => {
@@ -71,11 +91,23 @@ const MemberWriterPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await request.call(api.postAdminMember, form, groupId);
-      setMessage(res.message);
-    } catch (err) {
-      setMessage(err.response.data.message);
+    // 새로 작성하는 경우
+    if (!memberId) {
+      try {
+        const res = await request.call(api.postAdminMember, form, groupId);
+        setMessage(res.message);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    // 내용을 수정하는 경우
+    } else {
+      try {
+        const res = await request.call(api.putAdminMember, form, memberId);
+        setMessage(res.message);
+        console.log(res);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
     }
   }
 
@@ -83,7 +115,10 @@ const MemberWriterPage = () => {
     <AdminTemplate className="AdminMemberWriterPage">
       {request.loading ? <LoadingSpinner /> : null}
       <form onSubmit={onSubmit}>
-        <h1 className="title-label">멤버 추가</h1>
+        {memberId ?
+        <h1 className="title-label">멤버 수정</h1> :
+        <h1 className="title-label">멤버 추가</h1>}
+        
         {message ? <MessageLabel>{message}</MessageLabel> : null}
         <p className="label">그룹 이미지</p>
         <section className="image_section">

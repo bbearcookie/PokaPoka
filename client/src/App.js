@@ -43,6 +43,7 @@ function App() {
         <Route path="/admin/group/writer/:groupId" element={<GroupWriterPage />} />
         <Route path="/admin/group/detail/:groupId" element={<GroupDetailPage />} />
         <Route path="/admin/member/writer" element={<MemberWriterPage />} />
+        <Route path="/admin/member/writer/:memberId" element={<MemberWriterPage />} />
         <Route path="/admin/member/detail/:memberId" element={<MemberDetailPage />} />
       </Routes>
     </div>

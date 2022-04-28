@@ -126,7 +126,10 @@ const GroupWriterPage = () => {
     <AdminTemplate className="AdminGroupWriterPage">
       {request.loading ? <LoadingSpinner /> : null}
       <form onSubmit={onSubmit}>
-        <h1 className="title-label">아이돌 그룹 추가</h1>
+        {groupId ?
+        <h1 className="title-label">아이돌 그룹 수정</h1> :
+        <h1 className="title-label">아이돌 그룹 추가</h1>}
+        
         {message ? <MessageLabel>{message}</MessageLabel> : null}
         <p className="label">그룹 이미지</p>
         <section className="image_section">
