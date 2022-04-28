@@ -228,14 +228,14 @@ router.delete('/group/:groupId', verifyLogin, async (req, res) => {
     let [[group]] = await con.query(sql);
     if (!group) return res.status(404).json({ message: '삭제하려는 그룹이 DB에 없습니다.' });
 
+    // DB에서 그룹 삭제
+    sql = `DELETE FROM GroupData WHERE group_id = ${groupId}`;
+    await con.execute(sql);
+
     // 이미지 파일 삭제
     fsAsync.rm(path.join(IDOL_GROUP_IMAGE_DIR, group.image_name), (err) => {
       if (err) console.error(err);
     });
-
-    // DB에서 그룹 삭제
-    sql = `DELETE FROM GroupData WHERE group_id = ${groupId}`;
-    await con.execute(sql);
 
     return res.status(200).json({ message: '아이돌 그룹 정보를 삭제했습니다.' });
 

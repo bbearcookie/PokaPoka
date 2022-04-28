@@ -46,6 +46,7 @@
       align-self: flex-start;
       font-size: 20px;
       margin: 5px 0 0 0;
+      white-space: pre-wrap;
     }
 
     .label {
@@ -86,6 +87,15 @@
 
     &:hover {
       background-color: #11badc;
+    }
+  }
+
+  .card_section {
+    margin-top: 10px;
+
+    .MemberCard {
+      margin: 0 50px 50px 0;
+      display: inline-block;
     }
   }
 

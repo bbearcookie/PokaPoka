@@ -38,7 +38,6 @@ const AdminTemplate = ({ className, children }) => {
           <ul className="nav_category">
             <li className="title-item"><NavLink to="/admin/group">데이터 관리</NavLink></li>
             <li className="link-item"><NavLink to="/admin/group">그룹 관리</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">멤버 관리</NavLink></li>
             <li className="link-item"><NavLink to="/admin/test1">앨범 관리</NavLink></li>
             <li className="link-item"><NavLink to="/admin/test1">포토카드 관리</NavLink></li>
           </ul>

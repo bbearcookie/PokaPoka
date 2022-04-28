@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
+import MemberCard from '../../components/card/MemberCard';
 import Button from '../../components/form/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import MessageLabel from '../../components/MessageLabel';
@@ -23,13 +24,14 @@ const gender = {
 // 그룹 상세 조회 페이지
 const GroupDetailPage = () => {
   const { groupId } = useParams(); // URL에 포함된 groupId Params 정보
-  const [group, setGroup] = useState({
+  const [group, setGroup] = useState({ // 그룹 상세 정보
     name: '',
     description: '',
     gender: '',
     image_name: ''
   });
-  const [showModal, setShowModal] = useState(false);
+  const [members, setMembers] = useState([]); // 그룹에 속한 멤버들 정보
+  const [showModal, setShowModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
@@ -52,13 +54,19 @@ const GroupDetailPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getAdminGroupDetail, groupId);
+
+      // 그룹 정보 가져오기
+      let res = await request.call(api.getAdminGroupDetail, groupId);
       setGroup({
         name: res.group.name,
         description: res.group.description,
         gender: res.group.gender,
         image_name: res.group.image_name
       });
+
+      // 그룹에 속한 멤버 정보 가져오기
+      res = await request.call(api.getAdminMemberList, groupId);
+      setMembers(res.members);
     } catch (err) {
       console.error(err);
     }
@@ -120,6 +128,17 @@ const GroupDetailPage = () => {
         <Link to={`/admin/member/writer?groupId=${groupId}`}>
           <Button className="add_button">추가</Button>
         </Link>
+      </section>
+      <section className="card_section">
+        {members ?
+        members.map(member =>
+          <MemberCard
+            key={member.member_id}
+            id={member.member_id}
+            name={member.name}
+            src={`${BACKEND}/image/member/${member.image_name}`}
+          />
+        ) : null}
       </section>
     </AdminTemplate>
   );
