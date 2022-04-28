@@ -7,8 +7,6 @@ module.exports = (app) => {
   app.use('/api/suggestion', require('../routes/suggestionCtrl'));
   app.use('/api/trade', require('../routes/tradeCtrl'));
 
-  //아이디 찾기
-  app.use('/findID', require('../routes/findIDCtrl'));
-  //비밀번호 재설정
-  app.use('/password', require('../routes/passwordCtrl'));
+  //아이디 비밀 번호 찾기
+  app.use('/api/finding', require('../routes/findingCtrl'));
 }

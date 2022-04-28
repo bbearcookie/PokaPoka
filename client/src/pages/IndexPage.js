@@ -10,7 +10,7 @@ const IndexPage = () => {
         <Link to="/test">테스트 페이지로 가기</Link>
       </div>
       <div>
-        <Link to="/findID">아이디 찾기</Link>
+        <Link to="/finding">아이디 찾기</Link>
       </div>
     </div>
   );

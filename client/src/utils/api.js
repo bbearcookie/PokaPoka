@@ -18,7 +18,7 @@ export const getTestDB = () => axios.get(`${BACKEND}/test/db`, options);
 
 //아이디 찾기 시작
 //백엔드 서버에 전화 번호 인증을 요청하는 기능
-export const postVerified = (phone) => axios.post(`${BACKEND}/sms/sending`,
+export const postVerified = (phone) => axios.post(`${BACKEND}/api/sms/sending`,
   { 
     phone: phone
   },
@@ -26,7 +26,7 @@ export const postVerified = (phone) => axios.post(`${BACKEND}/sms/sending`,
 );
 
 //백엔드 서버에 전화 번호 인증 여부를 확인하는 기능
-export const postVerifiedCheck = (verified) => axios.post(`${BACKEND}/sms/confirmation`,
+export const postVerifiedCheck = (verified) => axios.post(`${BACKEND}/api/sms/confirmation`,
   { 
     verified: verified
   },
@@ -34,7 +34,7 @@ export const postVerifiedCheck = (verified) => axios.post(`${BACKEND}/sms/confir
 );
 
 //백엔드 서버에 아이디 데이터를 요청하는 기능
-export const getFindID = (name, phone) => axios.get(`${BACKEND}/findID/db2?name=${name}&phone=${phone}`,
+export const getFindID = (name, phone) => axios.get(`${BACKEND}/finding/db2?name=${name}&phone=${phone}`,
   options
 );
 //아이디 찾기 끝
