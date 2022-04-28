@@ -59,7 +59,7 @@ const MemberDetailPage = () => {
       </section>
       <section className="submit_section">
         <Link to={`/admin/group/detail/${groupId}`}><Button className="cancel_button">뒤로 가기</Button></Link>
-        <Link to={`/admin/member/writer/${memberId}`}><Button className="edit_button">수정</Button></Link>
+        <Link to={`/admin/member/writer/${memberId}?groupId=${groupId}`}><Button className="edit_button">수정</Button></Link>
         <Button className="remove_button">삭제</Button>
       </section>
     </AdminTemplate>

@@ -96,6 +96,7 @@ const MemberWriterPage = () => {
       try {
         const res = await request.call(api.postAdminMember, form, groupId);
         setMessage(res.message);
+        return navigate(`/admin/group/detail/${groupId}`);
       } catch (err) {
         setMessage(err.response.data.message);
       }
@@ -104,7 +105,7 @@ const MemberWriterPage = () => {
       try {
         const res = await request.call(api.putAdminMember, form, memberId);
         setMessage(res.message);
-        console.log(res);
+        return navigate(`/admin/group/detail/${groupId}`);
       } catch (err) {
         setMessage(err.response.data.message);
       }
