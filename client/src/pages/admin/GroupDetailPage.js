@@ -78,7 +78,7 @@ const GroupDetailPage = () => {
 
       {/* 삭제 버튼 눌리면 삭제 모달 창 띄움 */}
       {showModal ?
-      <Modal className="remove_modal">
+      <Modal className="remove_modal" onClose={closeModal}>
         <ModalHeader onClose={closeModal}>
           <h1>아이돌 그룹 삭제</h1>
         </ModalHeader>
