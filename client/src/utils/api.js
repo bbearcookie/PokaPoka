@@ -106,6 +106,11 @@ export const putAdminAlbum = (form, albumId) => {
   );
 }
 
+// 포토카드 데이터 조회 요청
+export const getAdminPhotocardList = (groupId, memberId) => axios.get(
+  `${BACKEND}/api/admin/photocard/list?groupId=${groupId}&memberId=${memberId}`,
+  options
+);
 // 포토카드 데이터 등록 요청
 export const postAdminPhotocard = (form, groupId, memberId, albumId) => {
   let formData = new FormData();

@@ -7,6 +7,67 @@ const { getExtension, photocardImageUpload, PHOTOCARD_IMAGE_DIR } = require('../
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { isNull } = require('../../utils/common');
 
+// 포토카드 목록 반환
+router.get('/photocard/list', verifyLogin, async (req, res) => {
+  const { groupId, memberId } = req.query;
+  const { accessToken } = req;
+
+  console.log(req.query);
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (!memberId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
+
+
+  // 포토카드 목록 조회
+  const con = await db.getConnection();
+  try {
+    // 해당 그룹 존재 유무 확인
+    if (groupId !== 'all') {
+      let sql = `SELECT name FROM GroupData WHERE group_id=${groupId}`;
+      let [[group]] = await con.query(sql);
+      if (!group) return res.status(404).json({ message: '해당 그룹을 DB에서 찾지 못했습니다.' });
+    }
+
+    // 해당 멤버 존재 유무 확인
+    if (memberId !== 'all') {
+      let sql = `SELECT name FROM MemberData WHERE member_id=${memberId}`;
+      let [[member]] = await con.query(sql);
+      if (!member) return res.status(404).json({ message: '해당 멤버를 DB에서 찾지 못했습니다.' });
+    }
+
+    // 모든 그룹의 모든 멤버의 포토카드 목록 조회
+    let sql = "";
+    if (groupId === 'all' && memberId === 'all') {
+      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
+      FROM Photocard`;
+    // 특정 그룹의 모든 멤버의 포토카드 목록 조회
+    } else if (memberId === 'all') {
+      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
+      FROM Photocard
+      WHERE group_id=${groupId}`;
+    // 특정 멤버의 포토카드 목록 조회
+    } else {
+      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
+      FROM Photocard
+      WHERE member_id=${memberId}`;
+    }
+    let [photocards] = await con.query(sql);
+    console.log(photocards);
+    return res.status(200).json({ message: '포토카드 목록 조회에 성공했습니다.', photocards });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 포토카드 등록 처리
 router.post('/photocard', photocardImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { groupId, memberId, albumId, name } = req.body;
@@ -89,7 +150,7 @@ router.post('/photocard', photocardImageUpload.single('image'), verifyLogin, asy
   } finally {
     con.release();
   }
-  
+
   return res.status(501).json({ message: 'end of line' });
 });
 

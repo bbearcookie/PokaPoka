@@ -45,4 +45,14 @@
       }
     }
   }
+
+  .card_section {
+    margin-top: 10px;
+    text-align: center;
+
+    .PhotocardCard {
+      margin: 0 50px 50px 0;
+      display: inline-block;
+    }
+  }
 }
