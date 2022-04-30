@@ -6,4 +6,15 @@ function isNull(value) {
   return false;
 }
 
+// JS에서의 시간 형태를 mysql에서의 시간 형태로 변환하는 함수
+function convertToMysqlTime(date) {
+  return date.getUTCFullYear() + '-' +
+      ('00' + (date.getUTCMonth()+1)).slice(-2) + '-' +
+      ('00' + date.getUTCDate()).slice(-2) + ' ' + 
+      ('00' + date.getUTCHours()).slice(-2) + ':' + 
+      ('00' + date.getUTCMinutes()).slice(-2) + ':' + 
+      ('00' + date.getUTCSeconds()).slice(-2);
+};
+
 module.exports.isNull = isNull;
+module.exports.convertToMysqlTime = convertToMysqlTime;

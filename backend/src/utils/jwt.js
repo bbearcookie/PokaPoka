@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { db } = require('../config/database');
+const { convertToMysqlTime } = require('../utils/common');
 
 // JWT 토큰 생성
 function createToken(payload, expires) {
@@ -67,18 +68,14 @@ async function renewAccessToken(refreshToken, userAgent) {
             // 액세스 토큰 생성
             let accessExpires = new Date();
             accessExpires.setMilliseconds(accessExpires.getMilliseconds() + parseInt(process.env.ACCESS_TOKEN_EXPIRES));
+            accessExpires = convertToMysqlTime(accessExpires);
             const payload = { username: user.username, role: user.role, strategy: user.strategy };
             const accessToken = createToken(payload, process.env.ACCESS_TOKEN_EXPIRES);
 
-            // 기존에 보관된 로그인 토큰 정보 삭제
-            sql = `DELETE FROM LoginToken WHERE refresh='${refreshToken}'`;
+            // 발급한 액세스 토큰 정보 DB에 업데이트
+            sql = `UPDATE LoginToken SET access='${accessToken}', access_expire_time='${accessExpires}'`;
             await con.execute(sql);
-
-            // DB에 로그인 정보와 새로운 토큰 정보 저장
-            sql = `INSERT INTO 
-            LoginToken (username, access, refresh, user_agent, login_time, access_expire_time, refresh_expire_time) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)`;
-            await con.execute(sql, [user.username, accessToken, refreshToken, userAgent, token.login_time, accessExpires, token.refresh_expire_time]);
+            
             console.log(`${user.username} 사용자의 액세스 토큰을 재발급했습니다.`);
             
             return { accessToken, payload };
