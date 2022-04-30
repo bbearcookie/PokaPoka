@@ -50,6 +50,7 @@ export const putAdminGroup = (form, groupId) => {
 }
 
 // 아이돌 멤버 목록 데이터 조회 요청
+export const getAdminAllMemberList = () => axios.get(`${BACKEND}/api/admin/member/list`, options);
 export const getAdminMemberList = (groupId) => axios.get(`${BACKEND}/api/admin/member/list/${groupId}`, options);
 // 아이돌 멤버 상세 데이터 조회 요청
 export const getAdminMemberDetail = (memberId) => axios.get(`${BACKEND}/api/admin/member/detail/${memberId}`, options);

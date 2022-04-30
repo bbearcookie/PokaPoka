@@ -7,6 +7,31 @@ const { getExtension, memberImageUpload, IDOL_MEMBER_IMAGE_DIR } = require('../.
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { isNull } = require('../../utils/common');
 
+// 모든 아이돌 멤버 목록 반환
+router.get('/member/list', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 아이돌 그룹 목록 조회
+  const con = await db.getConnection();
+  try {
+    // 모든 멤버 목록 반환
+    sql = `SELECT member_id, group_id, name, image_name FROM MemberData`;
+    let [members] = await con.query(sql);
+    return res.status(200).json({ message: '아이돌 멤버 목록 조회에 성공했습니다.', members });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 특정 그룹의 아이돌 멤버 목록 조회 처리
 router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
   const { groupId } = req.params;
