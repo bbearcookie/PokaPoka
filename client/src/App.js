@@ -16,6 +16,7 @@ import MemberDetailPage from './pages/admin/member/MemberDetailPage';
 import AlbumWriterPage from './pages/admin/album/AlbumWriterPage';
 import AlbumDetailPage from './pages/admin/album/AlbumDetailPage';
 import PhotocardListPage from './pages/admin/photocard/PhotocardListPage';
+import PhotocardWriterPage from './pages/admin/photocard/PhotocardWriterPage';
 import SignupPage from './pages/SignupPage';
 import UsernamePage from './pages/UsernamePage';
 import PasswordPage from './pages/find_password/PwPage';
@@ -59,6 +60,8 @@ function App() {
         <Route path="/admin/album/writer/:albumId" element={<AlbumWriterPage />} />
         <Route path="/admin/album/detail/:albumId" element={<AlbumDetailPage />} />
         <Route path="/admin/photocard" element={<PhotocardListPage />} />
+        <Route path="/admin/photocard/writer" element={<PhotocardWriterPage />} />
+        <Route path="/admin/photocard/writer/:photocardId" element={<PhotocardWriterPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />

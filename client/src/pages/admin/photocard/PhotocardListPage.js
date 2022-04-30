@@ -12,8 +12,8 @@ import './PhotocardListPage.scss';
 
 const PhotocardListPage = () => {
   const request = useRequest();
-  const [groups, setGroups] = useState([]);
-  const [members, setMembers] = useState([]);
+  const [groups, setGroups] = useState([]); // Select 태그에서 사용할 그룹 목록
+  const [members, setMembers] = useState([]); // Select 태그에서 사용할 멤버 목록
   const [photocards, setPhotocards] = useState([]);
   const [message, setMessage] = useState('');
 
@@ -30,7 +30,7 @@ const PhotocardListPage = () => {
 
   // 그룹 선택 변경시 동작
   const onChangeGroupSelect = async (e) => {
-    if (e.target.value === 'none') {
+    if (e.target.value === '') {
       setMembers([]);
     } else if (e.target.value === 'all') {
       try {
@@ -55,7 +55,7 @@ const PhotocardListPage = () => {
   const onChangeMemberSelect = async (e) => {
     console.log(e.target.value);
 
-    if (e.target.value === 'none') {
+    if (e.target.value === '') {
 
     } else if (e.target.value === 'all') {
 
@@ -70,7 +70,7 @@ const PhotocardListPage = () => {
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="title_area">
         <h1 className="title-label">포토카드 목록</h1>
-        <Link to="#">
+        <Link to="/admin/photocard/writer">
           <Button className="add_button">추가</Button>
         </Link>
       </section>
@@ -78,7 +78,7 @@ const PhotocardListPage = () => {
         <article className="search">
           <p className="label">그룹</p>
           <Select name="group" onChange={onChangeGroupSelect}>
-            <option value="none">선택</option>
+            <option value="">선택</option>
             <option value="all">전체</option>
             {groups ?
             groups.map(group =>
@@ -89,7 +89,7 @@ const PhotocardListPage = () => {
         <article className="search">
           <p className="label">멤버</p>
           <Select name="member" onChange={onChangeMemberSelect}>
-            <option value="none">선택</option>
+            <option value="">선택</option>
             <option value="all">전체</option>
             {members ?
             members.map(member =>
