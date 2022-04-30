@@ -106,6 +106,20 @@ export const putAdminAlbum = (form, albumId) => {
   );
 }
 
+// 포토카드 데이터 등록 요청
+export const postAdminPhotocard = (form, groupId, memberId, albumId) => {
+  let formData = new FormData();
+  formData.append('groupId', form.group.id);
+  formData.append('memberId', form.member.id);
+  formData.append('albumId', form.album.id);
+  formData.append('name', form.name);
+  formData.append('image', form.image.file);
+
+  return axios.post(`${BACKEND}/api/admin/photocard`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+
 //아이디 찾기
 export const getUsername = (name, phone) => axios.get(`${BACKEND}/api/finding/username?name=${name}&phone=${phone}`, options);
 

@@ -12,7 +12,6 @@ import Select from '../../../components/form/Select';
 import AdminTemplate from '../../../templates/AdminTemplate';
 import './PhotocardWriterPage.scss';
 
-
 const PhotocardWriterPage = () => {
   const { photocardId } = useParams(); // URL에 포함된 photocardId Params 정보
   const [form, setForm] = useState({
@@ -168,7 +167,19 @@ const PhotocardWriterPage = () => {
   // 작성 버튼 클릭시 작동
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+
+    // 새로 작성하는 경우
+    if (!photocardId) {
+      try {
+        const res = await request.call(api.postAdminPhotocard, form);
+        setMessage(res.message);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    // 내용을 수정하는 경우
+    } else {
+
+    }
   }
 
   return (
