@@ -17,7 +17,7 @@ const LoginSuccessPage = () => {
     try {
       const res = await request.call(api.postTokenTest);
       authActions.login(res);
-      return navigate('/auth/login'); // 로그인 성공시 리디렉션할 페이지
+      return navigate('/main'); // 로그인 성공시 리디렉션할 페이지
     } catch (err) {
       console.error(err);
       return navigate('/auth/login');

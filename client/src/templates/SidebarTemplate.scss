@@ -1,0 +1,38 @@
+.SidebarTemplate {
+  width: 230px; min-height: calc(100vh - 83px);
+  color: white;
+  background-color: rgb(47, 52, 65);
+
+  .title_section {
+    height: 80px;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 80px;
+    font-size: 18px;
+    color: white;
+    background-color: #ec1b5a;
+    user-select: none;
+  }
+
+  .link {
+    width: 100%;
+    padding: 20px 0 20px 20px;
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    cursor: pointer;
+
+    a {
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+    }
+
+    &:hover, &.active {
+      background-color: rgb(23, 23, 25);
+      border-left: 5px solid #ec1b5a;
+
+      a {
+        color: white;
+      }
+    }
+  }
+}

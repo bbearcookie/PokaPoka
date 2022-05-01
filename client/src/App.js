@@ -7,7 +7,7 @@ import TestPage from './pages/TestPage';
 import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
-import MainPage from './pages/admin/MainPage';
+import AdminMainPage from './pages/admin/MainPage';
 import GroupListPage from './pages/admin/group/GroupListPage';
 import GroupDetailPage from './pages/admin/group/GroupDetailPage';
 import GroupWriterPage from './pages/admin/group/GroupWriterPage';
@@ -24,6 +24,7 @@ import SignupCompletePage from './pages/SignupCompletePage';
 import PwChangePage from './pages/find_password/PwChangePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import CertificationPage from './pages/find_password/CertificationPage';
+import UserMainPage from './pages/MainPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -44,11 +45,12 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<IndexPage /> } />
+        <Route path="/main" element={<UserMainPage /> } />
         <Route path="/test" element={<TestPage />} />
         <Route path="/social" element={<SocialLoginTestPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />
-        <Route path="/admin" element={<MainPage />} />
+        <Route path="/admin" element={<AdminMainPage />} />
         <Route path="/admin/group" element={<GroupListPage />} />
         <Route path="/admin/group/writer" element={<GroupWriterPage />} />
         <Route path="/admin/group/writer/:groupId" element={<GroupWriterPage />} />
