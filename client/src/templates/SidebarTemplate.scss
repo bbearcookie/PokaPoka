@@ -1,5 +1,5 @@
 .SidebarTemplate {
-  width: 230px; min-height: calc(100vh - 83px);
+  width: 230px; min-height: calc(100vh - 90px);
   color: white;
   background-color: rgb(47, 52, 65);
 
@@ -14,25 +14,30 @@
     user-select: none;
   }
 
+  .subtitle_section {
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    color: white;
+    background-color: rgb(52, 152, 219);
+    user-select: none;
+  }
+
   .link {
     width: 100%;
     padding: 20px 0 20px 20px;
-    border-left: 5px solid rgba(0, 0, 0, 0);
+    display: block;
     box-sizing: border-box;
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
     cursor: pointer;
 
-    a {
-      color: rgba(255, 255, 255, 0.5);
-      text-decoration: none;
-    }
-
     &:hover, &.active {
+      color: white;
       background-color: rgb(23, 23, 25);
       border-left: 5px solid #ec1b5a;
-
-      a {
-        color: white;
-      }
     }
   }
 }
