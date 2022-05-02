@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsAsync = require('fs');
 const { db } = require('../../config/database');
-const { getExtension, memberImageUpload, IDOL_MEMBER_IMAGE_DIR } = require('../../config/multer');
+const { getTimestampFilename, memberImageUpload, IDOL_MEMBER_IMAGE_DIR } = require('../../config/multer');
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { isNull } = require('../../utils/common');
 
@@ -147,7 +147,7 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
     let filename = "";
     if (file) {
-      filename = result.insertId + '.' + getExtension(file.mimetype);
+      filename = getTimestampFilename(result.insertId, file.mimetype);
       fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
         if (err) console.error(err);
       });
@@ -210,14 +210,14 @@ router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, 
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경하고 기존의 이미지 삭제
     let filename = "";
     if (file) {
-      // 이미지 이름 변경
-      filename = memberId + '.' + getExtension(file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
-      
       // 기존 이미지 삭제
       fsAsync.rm(path.join(file.destination, member.image_name), (err) => {
+        if (err) console.error(err);
+      });
+
+      // 이미지 이름 변경
+      filename = getTimestampFilename(memberId, file.mimetype);
+      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
         if (err) console.error(err);
       });
 

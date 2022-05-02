@@ -211,6 +211,7 @@ const PhotocardWriterPage = () => {
       try {
         const res = await request.call(api.postAdminPhotocard, form);
         setMessage(res.message);
+        return navigate('/admin/photocard');
       } catch (err) {
         setMessage(err.response.data.message);
       }
@@ -220,7 +221,7 @@ const PhotocardWriterPage = () => {
         console.log(form);
         const res = await request.call(api.putAdminPhotocard, form, photocardId);
         setMessage(res.message);
-        // return navigate(`/admin/photocard/detail/${photocardId}`);
+        return navigate(`/admin/photocard/detail/${photocardId}`);
       } catch (err) {
         setMessage(err.response.data.message);
       }

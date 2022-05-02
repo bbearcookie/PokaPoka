@@ -16,6 +16,11 @@ function getExtension(mimeType) {
   return '';
 }
 
+// (파일 이름_timestamp.확장자) 문자열을 반환하는 함수
+function getTimestampFilename(filename, mimeType) {
+  return `${filename}_${Date.now()}.${getExtension(mimeType)}`;
+}
+
 // 해당 디렉터리에 파일을 저장하는 multer 업로더를 반환하는 함수
 function createUploader(dir) {
   return multer({
@@ -50,6 +55,7 @@ const albumImageUpload = createUploader(ALBUM_IMAGE_DIR); // 앨범 이미지 �
 const photocardImageUpload = createUploader(PHOTOCARD_IMAGE_DIR); // 포토카드 이미지 업로더
 
 module.exports.getExtension = getExtension;
+module.exports.getTimestampFilename = getTimestampFilename;
 module.exports.groupImageUpload = groupImageUpload;
 module.exports.memberImageUpload = memberImageUpload;
 module.exports.albumImageUpload = albumImageUpload;
