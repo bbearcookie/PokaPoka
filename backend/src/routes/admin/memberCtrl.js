@@ -67,7 +67,7 @@ router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
 });
 
 // 아이돌 멤버 상세 조회 처리
-router.get('/member/detail/:memberId' , verifyLogin, async (req, res) => {
+router.get('/member/detail/:memberId', verifyLogin, async (req, res) => {
   const { memberId } = req.params;
   const { accessToken } = req;
 

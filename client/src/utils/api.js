@@ -106,13 +106,15 @@ export const putAdminAlbum = (form, albumId) => {
   );
 }
 
-// 포토카드 데이터 조회 요청
+// 포토카드 데이터 목록 조회 요청
 export const getAdminPhotocardList = (groupId, memberId) => axios.get(
   `${BACKEND}/api/admin/photocard/list?groupId=${groupId}&memberId=${memberId}`,
   options
 );
+// 포토카드 데이터 상세 조회 요청
+export const getAdminPhotocardDetail = (photocardId) => axios.get(`${BACKEND}/api/admin/photocard/detail/${photocardId}`, options);
 // 포토카드 데이터 등록 요청
-export const postAdminPhotocard = (form, groupId, memberId, albumId) => {
+export const postAdminPhotocard = (form) => {
   let formData = new FormData();
   formData.append('groupId', form.group.id);
   formData.append('memberId', form.member.id);

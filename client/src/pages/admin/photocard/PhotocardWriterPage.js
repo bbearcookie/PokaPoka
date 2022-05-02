@@ -256,7 +256,7 @@ const PhotocardWriterPage = () => {
 
         <p className="label">앨범</p>
         <Select name="album" onChange={onChangeAlbumSelect}>
-          <option value="">없음</option>
+          <option value="">선택</option>
           {albums ?
           albums.map(album =>
             <option key={album.album_id} value={album.album_id}>{album.name}</option>

@@ -12,14 +12,11 @@ router.get('/photocard/list', verifyLogin, async (req, res) => {
   const { groupId, memberId } = req.query;
   const { accessToken } = req;
 
-  console.log(req.query);
-
   // 관리자 권한 확인
   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
   // 유효성 검사
   if (!memberId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
-
 
   // 포토카드 목록 조회
   const con = await db.getConnection();
@@ -55,9 +52,50 @@ router.get('/photocard/list', verifyLogin, async (req, res) => {
       WHERE member_id=${memberId}`;
     }
     let [photocards] = await con.query(sql);
-    console.log(photocards);
     return res.status(200).json({ message: '포토카드 목록 조회에 성공했습니다.', photocards });
 
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 포토카드 상세 조회 처리
+router.get('/photocard/detail/:photocardId', verifyLogin, async (req, res) => {
+  const { photocardId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (isNull(photocardId)) return res.status(400).json({ message: '포토카드 번호를 입력해주세요' });
+
+  // 포토카드 상세 조회
+  const con = await db.getConnection();
+  try {
+    // 포토카드 내용 조회
+    let sql = `SELECT name, image_name, group_id, member_id, album_id
+    FROM Photocard WHERE photocard_id=${photocardId}`;
+    let [[photocard]] = await con.query(sql);
+
+    // 그룹 내용 조회
+    sql = `SELECT name, description, gender, image_name FROM GroupData WHERE group_id=${photocard.group_id}`;
+    let [[group]] = await con.query(sql);
+
+    // 멤버 내용 조회
+    sql = `SELECT name, description, image_name FROM MemberData WHERE member_id=${photocard.member_id}`;
+    let [[member]] = await con.query(sql);
+
+    // 앨범 내용 조회
+    sql = `SELECT name, description, image_name FROM AlbumData WHERE album_id=${photocard.album_id}`;
+    let [[album]] = await con.query(sql);
+
+    return res.status(200).json({ message: '포토카드 상세 조회에 성공했습니다.', photocard, group, member, album });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -94,11 +132,15 @@ router.post('/photocard', photocardImageUpload.single('image'), verifyLogin, asy
   }
   if (!groupId) {
     removeTempFile();
-    return res.status(400).json({ message: '그룹 번호를 입력해주세요.' });
+    return res.status(400).json({ message: '그룹을 선택해주세요.' });
   }
   if (!memberId) {
     removeTempFile();
-    return res.status(400).json({ message: '멤버 번호를 입력해주세요.' });
+    return res.status(400).json({ message: '멤버를 선택해주세요.' });
+  }
+  if (!albumId) {
+    removeTempFile();
+    return res.status(400).json({ message: '앨범을 선택해주세요.' });
   }
   
   const con = await db.getConnection();

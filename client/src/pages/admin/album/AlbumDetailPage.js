@@ -81,7 +81,7 @@ const AlbumDetailPage = () => {
       <h1 className="title-label">앨범 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="label_area">
-        <p className="label">이미지</p>
+        <p className="label">앨범 이미지</p>
         <img 
             width="200px"
             height="200px"
