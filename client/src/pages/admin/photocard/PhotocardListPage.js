@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelect, setGroups, setMembers, setPhotocards } from '../../../modules/photocardListPage';
 import { Link } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
@@ -12,22 +14,23 @@ import AdminTemplate from '../../../templates/AdminTemplate';
 import './PhotocardListPage.scss';
 
 const PhotocardListPage = () => {
-  const request = useRequest();
-  const [select, setSelect] = useState({
-    groupId: '',
-    memberId: ''
-  });
-  const [groups, setGroups] = useState([]); // Select 태그에 보여줄 그룹 목록
-  const [members, setMembers] = useState([]); // Select 태그에 보여줄 멤버 목록
-  const [photocards, setPhotocards] = useState([]); // 화면에 보여줄 포토카드 목록
+  // 리덕스 스토어에 저장한 상태값. 페이지 이동시에도 상태를 보관해두기 위함.
+  const { select, groups, members, photocards } = useSelector(state => ({
+    select: state.photocardListPage.select,
+    groups: state.photocardListPage.groups,
+    members: state.photocardListPage.members,
+    photocards: state.photocardListPage.photocards
+  }));
+  const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [message, setMessage] = useState('');
   const memberSelectRef = useRef();
+  const request = useRequest();
 
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
       const res = await request.call(api.getAdminGroupList);
-      setGroups(res.groups);
+      dispatch(setGroups(res.groups));
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -40,7 +43,7 @@ const PhotocardListPage = () => {
 
     try {
       const res = await request.call(api.getAdminPhotocardList, select.groupId, select.memberId);
-      setPhotocards(res.photocards);
+      dispatch(setPhotocards(res.photocards));
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -49,23 +52,24 @@ const PhotocardListPage = () => {
 
   // 그룹 선택 변경시 동작
   const onChangeGroupSelect = async (e) => {
-    setSelect({ ...select, groupId: e.target.value, memberId: '' });
-    setPhotocards([]);
+    dispatch(setSelect({ ...select, groupId: e.target.value, memberId: '' }));
+    dispatch(setPhotocards([]));
     memberSelectRef.current.selectedIndex = 0;
 
     if (e.target.value === '') {
-      setMembers([]);
+      dispatch(setMembers([]));
+      // setMembers([]);
     } else if (e.target.value === 'all') {
       try {
         const res = await request.call(api.getAdminAllMemberList);
-        setMembers(res.members);
+        dispatch(setMembers(res.members));
       } catch (err) {
         setMessage(err.response.data.message);
       }
     } else {
       try {
         const res = await request.call(api.getAdminMemberList, e.target.value);
-        setMembers(res.members);
+        dispatch(setMembers(res.members));
       } catch (err) {
         setMessage(err.response.data.message);
       }
@@ -74,28 +78,30 @@ const PhotocardListPage = () => {
 
   // 멤버 선택 변경시 동작
   const onChangeMemberSelect = async (e) => {
-    setSelect({ ...select, memberId: e.target.value});
+    dispatch(setSelect({ ...select, memberId: e.target.value}));
   }
 
   return (
     <AdminTemplate className="AdminPhotocardListPage">
+
       {request.loading ? <LoadingSpinner /> : null}
       {message ? <MessageLabel>{message}</MessageLabel> : null}
+
       <section className="title_area">
         <h1 className="title-label">포토카드 목록</h1>
         <Link to="/admin/photocard/writer">
           <Button className="add_button">추가</Button>
         </Link>
       </section>
-      <section className="search_area">
 
+      <section className="search_area">
         <article className="search">
           <p className="label">그룹</p>
-          <Select name="group" onChange={onChangeGroupSelect}>
+          <Select name="group" value={select.groupId} onChange={onChangeGroupSelect}>
             <option value="">선택</option>
             <option value="all">전체</option>
             {groups ?
-            groups.map(group =>
+            groups.map(group => 
               <option key={group.group_id} value={group.group_id}>{group.name}</option>
             ) : null}
           </Select>
@@ -103,7 +109,7 @@ const PhotocardListPage = () => {
 
         <article className="search">
           <p className="label">멤버</p>
-          <Select name="member" onChange={onChangeMemberSelect} ref={memberSelectRef}>
+          <Select name="member" value={select.memberId} onChange={onChangeMemberSelect} ref={memberSelectRef}>
             <option value="">선택</option>
             {select.groupId ? <option value="all">전체</option> : null}
             {members ?
@@ -125,6 +131,7 @@ const PhotocardListPage = () => {
             />
           ) : null}
       </section>
+
     </AdminTemplate>
   );
 };

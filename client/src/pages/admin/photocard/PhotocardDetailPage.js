@@ -126,7 +126,8 @@ const PhotocardDetailPage = () => {
               onError={e => e.target.src = '/no_image.jpg'}
               alt="그룹"
             />
-            <p className="label">[그룹] <span>{group.name}</span></p>
+            <p className="label">[그룹]</p>
+            <p>{group.name}</p>
           </section>
           <section className="detail_info_area">
             <img 
@@ -136,7 +137,8 @@ const PhotocardDetailPage = () => {
               onError={e => e.target.src = '/no_image.jpg'}
               alt="멤버"
             />
-            <p className="label">[멤버] <span>{member.name}</span></p>
+            <p className="label">[멤버]</p>
+            <p>{member.name}</p>
           </section>
           <section className="detail_info_area">
             <img 
@@ -146,7 +148,8 @@ const PhotocardDetailPage = () => {
               onError={e => e.target.src = '/no_image.jpg'}
               alt="앨범"
             />
-            <p className="label">[앨범] <span>{album.name}</span></p>
+            <p className="label">[앨범]</p>
+            <p>{album.name}</p>
           </section>
         </section>
       </section>
