@@ -44,6 +44,42 @@ const PhotocardWriterPage = () => {
 
   // 페이지 로드시 동작
   const onLoad = async () => {
+
+    // 기존의 포토카드 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
+    if (photocardId) {
+      try {
+        // 기본 폼 내용 가져옴
+        const res = await request.call(api.getAdminPhotocardDetail, photocardId);
+        setForm(produce(draft => {
+          draft.name = res.photocard.name;
+          draft.group = {
+            id: res.photocard.group_id,
+            previewURL: res.group.image_name
+          };
+          draft.member = {
+            id: res.photocard.member_id,
+            previewURL: res.member.image_name
+          };
+          draft.album = {
+            id: res.photocard.album_id,
+            previewURL: res.album.image_name
+          };
+          draft.image.previewURL = `${BACKEND}/image/photocard/${res.photocard.image_name}`;
+          draft.image.initialURL = `${BACKEND}/image/photocard/${res.photocard.image_name}`;
+        }));
+
+        // select 태그에 보여줄 멤버와 앨범 목록 가져옴
+        let res2 = await request.call(api.getAdminMemberList, res.photocard.group_id);
+        setMembers(res2.members);
+        res2 = await request.call(api.getAdminAlbumList, res.photocard.group_id);
+        setAlbums(res2.albums);
+      } catch (err) {
+        console.error(err);
+        setMessage(err.response.data.message);
+      }
+    }
+
+    // 존재하는 모든 그룹 목록 가져옴
     try {
       const res = await request.call(api.getAdminGroupList);
       setGroups(res.groups);
@@ -73,8 +109,10 @@ const PhotocardWriterPage = () => {
     // 선택 option을 눌러서 초기화 됬을 때
     if (e.target.value === '') {
       setMembers([]);
+      setAlbums([]);
       setForm(produce(draft => {
         draft.group.previewURL = "";
+        draft.album.previewURL = "";
       }));
     // 특정 그룹을 선택했을 때
     } else {
@@ -178,7 +216,14 @@ const PhotocardWriterPage = () => {
       }
     // 내용을 수정하는 경우
     } else {
-
+      try {
+        console.log(form);
+        const res = await request.call(api.putAdminPhotocard, form, photocardId);
+        setMessage(res.message);
+        // return navigate(`/admin/photocard/detail/${photocardId}`);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
     }
   }
 
@@ -219,7 +264,7 @@ const PhotocardWriterPage = () => {
         />
 
         <p className="label">그룹</p>
-        <Select name="group" onChange={onChangeGroupSelect}>
+        <Select name="group" value={form.group.id} onChange={onChangeGroupSelect}>
           <option value="">선택</option>
           {groups ?
           groups.map(group =>
@@ -237,7 +282,7 @@ const PhotocardWriterPage = () => {
         : null}
 
         <p className="label">멤버</p>
-        <Select name="member" onChange={onChangeMemberSelect}>
+        <Select name="member" value={form.member.id}  onChange={onChangeMemberSelect}>
           <option value="">선택</option>
           {members ?
           members.map(member =>
@@ -255,7 +300,7 @@ const PhotocardWriterPage = () => {
         : null}
 
         <p className="label">앨범</p>
-        <Select name="album" onChange={onChangeAlbumSelect}>
+        <Select name="album"value={form.album.id} onChange={onChangeAlbumSelect}>
           <option value="">선택</option>
           {albums ?
           albums.map(album =>
