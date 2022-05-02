@@ -23,7 +23,6 @@ const PhotocardListPage = () => {
   }));
   const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [message, setMessage] = useState('');
-  const memberSelectRef = useRef();
   const request = useRequest();
 
   // 페이지 로드시 동작
@@ -39,8 +38,6 @@ const PhotocardListPage = () => {
 
   // 화면에 보여줄 포토카드 목록 업데이트
   const onUpdatePhotocards = async (e) => {
-    console.log(select);
-
     try {
       const res = await request.call(api.getAdminPhotocardList, select.groupId, select.memberId);
       dispatch(setPhotocards(res.photocards));
@@ -52,13 +49,10 @@ const PhotocardListPage = () => {
 
   // 그룹 선택 변경시 동작
   const onChangeGroupSelect = async (e) => {
-    dispatch(setSelect({ ...select, groupId: e.target.value, memberId: '' }));
-    dispatch(setPhotocards([]));
-    memberSelectRef.current.selectedIndex = 0;
+    dispatch(setSelect({ ...select, groupId: e.target.value }));
 
     if (e.target.value === '') {
       dispatch(setMembers([]));
-      // setMembers([]);
     } else if (e.target.value === 'all') {
       try {
         const res = await request.call(api.getAdminAllMemberList);
@@ -109,7 +103,7 @@ const PhotocardListPage = () => {
 
         <article className="search">
           <p className="label">멤버</p>
-          <Select name="member" value={select.memberId} onChange={onChangeMemberSelect} ref={memberSelectRef}>
+          <Select name="member" value={select.memberId} onChange={onChangeMemberSelect}>
             <option value="">선택</option>
             {select.groupId ? <option value="all">전체</option> : null}
             {members ?

@@ -16,6 +16,7 @@ router.get('/photocard/list', verifyLogin, async (req, res) => {
   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
   // 유효성 검사
+  if (!groupId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
   if (!memberId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
 
   // 포토카드 목록 조회
@@ -45,11 +46,16 @@ router.get('/photocard/list', verifyLogin, async (req, res) => {
       sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
       FROM Photocard
       WHERE group_id=${groupId}`;
+    // 모든 그룹의 특정 멤버의 포토카드 목록 조회
+    } else if (groupId === 'all') {
+      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
+      FROM Photocard
+      WHERE member_id=${memberId}`;
     // 특정 멤버의 포토카드 목록 조회
     } else {
       sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
       FROM Photocard
-      WHERE member_id=${memberId}`;
+      WHERE group_id=${groupId} AND member_id=${memberId}`;
     }
     let [photocards] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 목록 조회에 성공했습니다.', photocards });
