@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { STORAGE_KEY_NAME } from '../contexts/Auth';
 import Navbar from '../components/Navbar';
+import AdminSidebar from '../components/sidebar/AdminSidebar';
 import './AdminTemplate.scss';
 
 const AdminTemplate = ({ className, children }) => {
@@ -20,27 +21,7 @@ const AdminTemplate = ({ className, children }) => {
     <div className="AdminTemplate">
       <Navbar />
       <section className="middle_section">
-        <article className="sidebar">
-          <ul className="nav_category">
-            <li className="title-item"><NavLink to="/admin">사용자 관리</NavLink></li>
-          </ul>
-          <ul className="nav_category">
-            <li className="title-item"><NavLink to="/admin/test1">커뮤니티 관리</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">문의사항</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">공지사항</NavLink></li>
-          </ul>
-          <ul className="nav_category">
-            <li className="title-item"><NavLink to="/admin/test1">포토카드 관리</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">교환글</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">소유권</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">배송</NavLink></li>
-          </ul>
-          <ul className="nav_category">
-            <li className="title-item"><NavLink to="/admin/group">데이터 관리</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/group">아이돌 관리</NavLink></li>
-            <li className="link-item"><NavLink to="/admin/test1">포토카드 관리</NavLink></li>
-          </ul>
-        </article>
+        <AdminSidebar />
         <section className={classNames("content_section", className)}>
           {children}
         </section>

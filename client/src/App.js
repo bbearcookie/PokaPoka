@@ -7,7 +7,7 @@ import TestPage from './pages/TestPage';
 import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
-import MainPage from './pages/admin/MainPage';
+import AdminMainPage from './pages/admin/MainPage';
 import GroupListPage from './pages/admin/group/GroupListPage';
 import GroupDetailPage from './pages/admin/group/GroupDetailPage';
 import GroupWriterPage from './pages/admin/group/GroupWriterPage';
@@ -15,6 +15,9 @@ import MemberWriterPage from './pages/admin/member/MemberWriterPage';
 import MemberDetailPage from './pages/admin/member/MemberDetailPage';
 import AlbumWriterPage from './pages/admin/album/AlbumWriterPage';
 import AlbumDetailPage from './pages/admin/album/AlbumDetailPage';
+import PhotocardListPage from './pages/admin/photocard/PhotocardListPage';
+import PhotocardWriterPage from './pages/admin/photocard/PhotocardWriterPage';
+import PhotocardDetailPage from './pages/admin/photocard/PhotocardDetailPage';
 import SignupPage from './pages/SignupPage';
 import UsernamePage from './pages/UsernamePage';
 import PasswordPage from './pages/find_password/PwPage';
@@ -22,6 +25,7 @@ import SignupCompletePage from './pages/SignupCompletePage';
 import PwChangePage from './pages/find_password/PwChangePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import CertificationPage from './pages/find_password/CertificationPage';
+import UserMainPage from './pages/MainPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -42,11 +46,12 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<IndexPage /> } />
+        <Route path="/main" element={<UserMainPage /> } />
         <Route path="/test" element={<TestPage />} />
         <Route path="/social" element={<SocialLoginTestPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />
-        <Route path="/admin" element={<MainPage />} />
+        <Route path="/admin" element={<AdminMainPage />} />
         <Route path="/admin/group" element={<GroupListPage />} />
         <Route path="/admin/group/writer" element={<GroupWriterPage />} />
         <Route path="/admin/group/writer/:groupId" element={<GroupWriterPage />} />
@@ -57,6 +62,10 @@ function App() {
         <Route path="/admin/album/writer" element={<AlbumWriterPage />} />
         <Route path="/admin/album/writer/:albumId" element={<AlbumWriterPage />} />
         <Route path="/admin/album/detail/:albumId" element={<AlbumDetailPage />} />
+        <Route path="/admin/photocard" element={<PhotocardListPage />} />
+        <Route path="/admin/photocard/writer" element={<PhotocardWriterPage />} />
+        <Route path="/admin/photocard/writer/:photocardId" element={<PhotocardWriterPage />} />
+        <Route path="/admin/photocard/detail/:photocardId" element={<PhotocardDetailPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />

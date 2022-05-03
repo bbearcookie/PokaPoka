@@ -59,8 +59,9 @@ const LoginPage = () => {
       authActions.login(res);
       setMessage(res.message);
 
-      // 관리자가 로그인 시 관리자 페이지로 리디렉션
+      // 사용자와 관리자 각각 메인 페이지로 리디렉션
       if (res.role === 'admin') return navigate('/admin');
+      if (res.role === 'user') return navigate('/main');
     } catch (err) {
       console.error(err);
       setMessage(err.response.data.message);
@@ -118,8 +119,6 @@ const LoginPage = () => {
           </section>
         </form>
       </section>
-
-      <Navbar />
 
     </div>
   );

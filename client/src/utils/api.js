@@ -18,6 +18,22 @@ export const postLogout = () => axios.post(`${BACKEND}/api/auth/logout`, undefin
 // 토큰 유효성 검사. 성공시 payload 내용 반환
 export const postTokenTest = () => axios.post(`${BACKEND}/api/auth/token/test`, undefined, options);
 
+// 아이디 중복 확인 요청
+export const getAuthUsername = (username) => axios.get(`${BACKEND}/api/auth/username/?username=${username}`, options);
+// 회원가입 요청
+export const postAuthSignup = (form) => axios.post(`${BACKEND}/api/auth/signup`,
+  {
+    username: form.username,
+    password: form.password,
+    password_check: form.password_check,
+    name: form.name,
+    nickname: form.nickname,
+    favorite: form.favorite,
+    phone: form.phone
+  }, 
+  options
+);
+
 // 아이돌 그룹 목록 데이터 조회 요청
 export const getAdminGroupList = () => axios.get(`${BACKEND}/api/admin/group/list`, options);
 // 아이돌 그룹 상세 데이터 조회 요청
@@ -50,6 +66,7 @@ export const putAdminGroup = (form, groupId) => {
 }
 
 // 아이돌 멤버 목록 데이터 조회 요청
+export const getAdminAllMemberList = () => axios.get(`${BACKEND}/api/admin/member/list`, options);
 export const getAdminMemberList = (groupId) => axios.get(`${BACKEND}/api/admin/member/list/${groupId}`, options);
 // 아이돌 멤버 상세 데이터 조회 요청
 export const getAdminMemberDetail = (memberId) => axios.get(`${BACKEND}/api/admin/member/detail/${memberId}`, options);
@@ -101,6 +118,42 @@ export const putAdminAlbum = (form, albumId) => {
   formData.append('image', form.image.file);
 
   return axios.put(`${BACKEND}/api/admin/album/${albumId}`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+
+// 포토카드 데이터 목록 조회 요청
+export const getAdminPhotocardList = (groupId, memberId) => axios.get(
+  `${BACKEND}/api/admin/photocard/list?groupId=${groupId}&memberId=${memberId}`,
+  options
+);
+// 포토카드 데이터 상세 조회 요청
+export const getAdminPhotocardDetail = (photocardId) => axios.get(`${BACKEND}/api/admin/photocard/detail/${photocardId}`, options);
+// 포토카드 데이터 삭제 요청
+export const deleteAdminPhotocard = (photocardId) => axios.delete(`${BACKEND}/api/admin/photocard/${photocardId}`, options);
+// 포토카드 데이터 등록 요청
+export const postAdminPhotocard = (form) => {
+  let formData = new FormData();
+  formData.append('groupId', form.group.id);
+  formData.append('memberId', form.member.id);
+  formData.append('albumId', form.album.id);
+  formData.append('name', form.name);
+  formData.append('image', form.image.file);
+
+  return axios.post(`${BACKEND}/api/admin/photocard`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+// 포토카드 데이터 수정 요청
+export const putAdminPhotocard = (form, photocardId) => {
+  let formData = new FormData();
+  formData.append('groupId', form.group.id);
+  formData.append('memberId', form.member.id);
+  formData.append('albumId', form.album.id);
+  formData.append('name', form.name);
+  formData.append('image', form.image.file);
+
+  return axios.put(`${BACKEND}/api/admin/photocard/${photocardId}`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }

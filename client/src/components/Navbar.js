@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../contexts/Auth';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
@@ -21,20 +21,66 @@ const Navbar = () => {
   return (
     <nav className="Navbar">
       <div className="nav-logo">PokaPoka</div>
-      {authState.user ?
       <section className="nav-items">
-        <span className="nav-item">{authState.user.username}</span>
-        <span className="nav-item">{authState.user.role}</span>
-        <span className="nav-item">{authState.user.strategy}</span>
-        {authState.user.role === 'user' ?
+        {authState.user ?
         <>
-          <span className="nav-item">포토카드 보관함</span>
-          <span className="nav-item">마이페이지</span>
-        </>
-        : null}
-        <span className="nav-item logout" onClick={onClickLogout}>로그아웃</span>
+          <section className="link_section">
+            {authState.user.role === 'user' ?
+            <>
+              <Link className="nav-item link" to="#">포토카드 탐색</Link>
+              <Link className="nav-item link" to="#">포토카드 교환</Link>
+              <Link className="nav-item link" to="#">포토카드 보관함</Link>
+            </>
+            : null}
+            </section>
+            <section className="user_section">
+            {authState.user.role === 'user' ?
+              <img width="50px" height="50px" src="/user.png" alt="사용자" /> : null}
+            {authState.user.role === 'admin' ?
+              <img width="50px" height="50px" src="/admin.png" alt="관리자" /> : null}
+
+            <span className="nav-item">{authState.user.username}</span>
+            <span className="nav-item logout" onClick={onClickLogout}>로그아웃</span>
+          </section>
+        </> :
+        <>
+          <section className="link_section"></section>
+          <section className="user_section">
+            <Link className="nav-item link" to="/auth/login">로그인</Link>
+          </section>
+        </>}
+
+
+
       </section>
-      : null}
+
+
+
+
+      {/* {authState.user ?
+      <section className="nav-items">
+        <section className="link_section">
+          {authState.user.role === 'user' ?
+          <>
+            <Link className="nav-item link" to="#">포토카드 탐색</Link>
+            <Link className="nav-item link" to="#">포토카드 교환</Link>
+            <Link className="nav-item link" to="#">포토카드 보관함</Link>
+          </>
+          : null}
+        </section>
+        <section className="user_section">
+          {authState.user.role === 'user' ?
+            <img width="50px" height="50px" src="/user.png" alt="사용자" /> : null}
+          {authState.user.role === 'admin' ?
+            <img width="50px" height="50px" src="/admin.png" alt="관리자" /> : null}
+          
+          <span className="nav-item">{authState.user.username}</span>
+          <span className="nav-item logout" onClick={onClickLogout}>로그아웃</span>
+        </section>
+      </section>
+      : null} */}
+
+
     </nav>
   );
 };

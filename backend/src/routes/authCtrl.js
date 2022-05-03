@@ -7,6 +7,31 @@ const { createLoginToken, verifyLogin } = require('../utils/jwt');
 const { getURIEncode } = require('../utils/encode');
 const { getOAuthToken, OAuthLogin } = require('../utils/OAuth');
 
+// 아이디 중복 확인
+router.get('/username', async (req, res) => {
+  const { username } = req.query;
+
+  // 데이터 유효성 검사
+  if (!username) return res.status(400).json({ message: '아이디를 입력해주세요.' });
+
+  const con = await db.getConnection();
+  try {
+    // 중복한 아이디 확인
+    let sql = `SELECT username FROM User where username='${username}'`;
+    let [[user]] = await con.query(sql);
+    if (user) return res.status(200).json({ message: `${username}은(는) 이미 가입된 아이디입니다.` });
+
+    return res.status(200).json({ message: `${username}은(는) 가입 가능한 아이디입니다.` });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 회원가입 처리
 router.post('/signup', async (req, res) => {
   const { password, password_check, name, nickname, favorite } = req.body;
@@ -25,7 +50,6 @@ router.post('/signup', async (req, res) => {
   if (name.length > 10) return res.status(400).json({ message: '이름은 최대 10글자까지 입력할 수 있습니다.' });
   if (!nickname) return res.status(400).json({ message: '닉네임을 입력해주세요.' });
   if (nickname.length > 20) return res.status(400).json({ message: '닉네임은 최대 20글자까지 입력할 수 있습니다.' });
-  if (!favorite) return res.status(400).json({ message: '최애그룹을 입력해주세요.' });
 
   // 전화번호 유효성 검사
   if (!phone) return res.status(400).json({ message: '전화번호를 입력해주세요.' });
@@ -46,10 +70,10 @@ router.post('/signup', async (req, res) => {
     let [[user]] = await con.query(sql);
     if (user) return res.status(400).json({ message: '이미 가입된 아이디입니다.' });
 
-    // 중복한 휴대폰번호 확인
-    sql = `SELECT phone FROM User where phone='${phone}'`;
-    [[user]] = await con.query(sql);
-    if (user) return res.status(400).json({ message: '이미 해당 휴대폰번호로 가입한 계정이 있습니다.' });
+    // // 중복한 휴대폰번호 확인 (중복 가능 유무 고민중)
+    // sql = `SELECT phone FROM User where phone='${phone}'`;
+    // [[user]] = await con.query(sql);
+    // if (user) return res.status(400).json({ message: '이미 해당 휴대폰번호로 가입한 계정이 있습니다.' });
 
     // 중복한 닉네임 확인
     sql = `SELECT nickname FROM User where nickname='${nickname}'`;

@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import './Input.scss'
+import './Input.scss';
 
 const Input = ({className, type, name, value, placeholder, autoComplete, maxLength, onChange}) => {
   return (
