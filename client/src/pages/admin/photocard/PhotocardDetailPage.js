@@ -69,12 +69,13 @@ const PhotocardDetailPage = () => {
 
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
-    // try {
-    //   const res = await request.call(api.deleteAdminAlbum, albumId);
-    //   return navigate(`/admin/group/detail/${groupId}`);
-    // } catch (err) {
-    //   setMessage(err.response.data.message);
-    // }
+    try {
+      const res = await request.call(api.deleteAdminPhotocard, photocardId);
+      setMessage(res.message);
+      return navigate(`/admin/photocard`);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
     closeModal();
   }
 

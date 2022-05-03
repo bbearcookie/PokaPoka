@@ -113,6 +113,8 @@ export const getAdminPhotocardList = (groupId, memberId) => axios.get(
 );
 // 포토카드 데이터 상세 조회 요청
 export const getAdminPhotocardDetail = (photocardId) => axios.get(`${BACKEND}/api/admin/photocard/detail/${photocardId}`, options);
+// 포토카드 데이터 삭제 요청
+export const deleteAdminPhotocard = (photocardId) => axios.delete(`${BACKEND}/api/admin/photocard/${photocardId}`, options);
 // 포토카드 데이터 등록 요청
 export const postAdminPhotocard = (form) => {
   let formData = new FormData();

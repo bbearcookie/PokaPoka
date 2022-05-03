@@ -292,4 +292,39 @@ router.put('/photocard/:photocardId', photocardImageUpload.single('image'), veri
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 포토카드 삭제 처리
+router.delete('/photocard/:photocardId', verifyLogin, async (req, res) => {
+  const { photocardId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    // 포토카드 존재 유무 확인
+    let sql = `SELECT photocard_id, image_name from Photocard WHERE photocard_id=${photocardId}`;
+    let [[photocard]] = await con.query(sql);
+    if (!photocard) return res.status(404).json({ message: '삭제하려는 포토카드가 DB에 없습니다.' });
+
+    // DB에서 멤버 삭제
+    sql = `DELETE FROM Photocard WHERE photocard_id=${photocardId}`;
+    await con.execute(sql);
+
+    // 이미지 파일 삭제
+    fsAsync.rm(path.join(PHOTOCARD_IMAGE_DIR, photocard.image_name), (err) => {
+      if (err) console.error(err);
+    });
+
+    return res.status(200).json({ message: '포토카드 정보를 삭제했습니다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 module.exports = router;
