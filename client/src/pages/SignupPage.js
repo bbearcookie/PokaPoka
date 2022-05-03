@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import produce from 'immer';
+import useRequest from '../utils/useRequest';
+import * as api from '../utils/api';
 import Input from '../components/form/Input';
 import Button from '../components/form/Button';
-import Textarea from '../components/form/Textarea';
+import Select from '../components/form/Select';
+import LoadingSpinner from '../components/LoadingSpinner';
+import MessageLabel from '../components/MessageLabel';
+import Modal from '../components/modal/Modal';
+import ModalHeader from '../components/modal/ModalHeader';
+import ModalBody from '../components/modal/ModalBody';
+import ModalFooter from '../components/modal/ModalFooter';
 import './SignupPage.scss';
 
 const SignupPage = () => {
@@ -18,12 +27,45 @@ const SignupPage = () => {
     cert_num: '',
     favorite: ''
   });
+  const [groups, setGroups] = useState([]);
+  const [showModal, setShowModal] = useState(false); // 모달 창 화면에 띄우기 on/off
+  const [modalContent, setModalContent] = useState({ // 모달의 header, body에 보여줄 메시지
+    header: '',
+    body: ''
+  });
+  const [message, setMessage] = useState("");
+  const request = useRequest();
+  const navigate = useNavigate();
+
+  // 페이지 로드시 동작
+  const onLoad = async () => {
+    try {
+      const res = await request.call(api.getAdminGroupList);
+      setGroups(res.groups);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+  useEffect(() => { onLoad(); }, []);
 
   // input 값 변경시
   const onChangeInput = (e) => {
     setForm(produce(draft => {
       draft[e.target.name] = e.target.value;
     }));
+  }
+
+  // 아이디 중복 확인 모달 열기 / 닫기
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+  // username input 값 변경시 영어와 숫자인 경우에만 상태 업데이트
+  const onChangeUsernameInput = (e) => {
+    if (!/([^A-Za-z0-9])/.test(e.target.value)) {
+      setForm(produce(draft => {
+        draft[e.target.name] = e.target.value;
+      }));
+    }
   }
 
   // checkbox input 값 변경시
@@ -42,14 +84,100 @@ const SignupPage = () => {
     }
   }
 
+  // 아이디 중복 확인 버튼 클릭시 작동
+  const onClickCheckUsername = async () => {
+    try {
+      const res = await request.call(api.getAuthUsername, form.username);
+      setModalContent({
+        header: '아이디 중복 확인',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '아이디 중복 확인',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 인증번호 발송 버튼 클릭시 작동
+  const onClickSendingButton = async () => {
+    try {
+      const res = await request.call(api.postSending, form.phone);
+      setModalContent({
+        header: '인증번호 발송',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '인증번호 발송',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 인증번호 확인 버튼 클릭시 작동
+  const onClickCertifyButton = async () => {
+    try {
+      const res = await request.call(api.postConfirmation, form.cert_num);
+      setModalContent({
+        header: '인증번호 확인',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '인증번호 확인',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 뒤로가기 버튼 클릭시 작동
+  const onClickBackButton = () => {
+    return navigate(-1);
+  }
+
   // 전송 버튼 클릭시 작동
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+
+    if (!form.terms1) return setMessage("이용 약관에 동의해주세요.");
+    if (!form.terms2) return setMessage("개인정보 수집 및 이용에 동의해주세요.");
+
+    try {
+      const res = await request.call(api.postAuthSignup, form);
+      console.log(res);
+      setMessage(res.message);
+      return navigate('/auth/login');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
   }
 
   return (
     <div className="SignupPage">
+      {request.loading ? <LoadingSpinner /> : null}
+
+      {/* 모달 창 */}
+      {showModal ?
+      <Modal onClose={closeModal}>
+        <ModalHeader onClose={closeModal}>
+          <h1>{modalContent.header}</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>{modalContent.body}</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="submit_button" onClick={closeModal}>확인</Button>
+        </ModalFooter>
+      </Modal> : null}
+
       <header>
         <h1>PokaPoka</h1>
       </header>
@@ -58,7 +186,7 @@ const SignupPage = () => {
           <h1 className="title-label">약관 동의</h1>
 
           <p className="label"><b>[필수]</b> 이용약관 동의</p>
-          <textarea cols="30" rows="10" readOnly>{terms_text1}</textarea>
+          <textarea cols="30" rows="10" readOnly value={terms_text1} />
           <div className="label_section">
             <span className="label">이용약관에 동의하십니까?</span>
             <input id="terms1" type="checkbox" name="terms1" value={form.term1} onChange={onChangeCheckboxInput} />
@@ -66,7 +194,7 @@ const SignupPage = () => {
           </div>
 
           <p className="label"><b>[필수]</b> 개인정보 수집 및 이용 동의</p>
-          <textarea cols="30" rows="10" readOnly>{terms_text2}</textarea>
+          <textarea cols="30" rows="10" readOnly value={terms_text2} />
           <div className="label_section">
             <span className="label">개인정보 수집 및 이용에 동의하십니까?</span>
             <input id="terms2" type="checkbox" name="terms2" value={form.term2} onChange={onChangeCheckboxInput} />
@@ -76,6 +204,7 @@ const SignupPage = () => {
 
         <section className="form_section">
           <h1 className="title-label">정보 입력</h1>
+          {message ? <MessageLabel>{message}</MessageLabel> : null}
 
           <section className="input_section">
             <div className="label_section">
@@ -84,16 +213,17 @@ const SignupPage = () => {
                 type="text"
                 name="username"
                 value={form.username}
+                maxLength="20"
                 autoComplete="off"
-                placeholder="아이디를 입력하세요"
-                onChange={onChangeInput}
+                placeholder="아이디를 입력하세요 (영문자와 숫자)"
+                onChange={onChangeUsernameInput}
               />
-              <Button className="cancel_button" type="button">중복 확인</Button>
+              <Button className="cancel_button" type="button" onClick={onClickCheckUsername}>중복 확인</Button>
             </div>
             <div className="label_section">
               <span className="label">비밀번호</span>
               <Input
-                type="text"
+                type="password"
                 name="password"
                 value={form.password}
                 autoComplete="off"
@@ -104,7 +234,7 @@ const SignupPage = () => {
             <div className="label_section">
               <span className="label">비밀번호 확인</span>
               <Input
-                type="text"
+                type="password"
                 name="password_check"
                 value={form.password_check}
                 autoComplete="off"
@@ -142,10 +272,10 @@ const SignupPage = () => {
                 value={form.phone}
                 maxLength="11"
                 autoComplete="off"
-                placeholder="휴대폰 번호를 입력하세요"
+                placeholder="휴대폰 번호를 입력하세요 (숫자)"
                 onChange={onChangeNumberInput}
               />
-              <Button className="cancel_button" type="button">인증번호 발송</Button>
+              <Button className="cancel_button" type="button" onClick={onClickSendingButton}>인증번호 발송</Button>
             </div>
             <div className="label_section">
               <span className="label">인증번호</span>
@@ -155,16 +285,26 @@ const SignupPage = () => {
                 value={form.cert_num}
                 maxLength="6"
                 autoComplete="off"
-                placeholder="인증번호를 입력하세요"
+                placeholder="인증번호를 입력하세요 (숫자)"
                 onChange={onChangeNumberInput}
               />
-              <Button className="submit_button" type="button">확인</Button>
+              <Button className="submit_button" type="button" onClick={onClickCertifyButton}>확인</Button>
+            </div>
+            <div className="label_section">
+              <span className="label">최애그룹</span>
+              <Select name="favorite" value={form.favorite} onChange={onChangeInput}>
+                <option value="">없음</option>
+                {groups ?
+                groups.map(group => 
+                  <option key={group.name} value={group.name}>{group.name}</option>
+                ) : null} 
+              </Select>
             </div>
           </section>
         </section>
 
         <section className="submit_section">
-          <Button className="cancel_button" type="button">취소</Button>
+          <Button className="cancel_button" type="button" onClick={onClickBackButton}>뒤로가기</Button>
           <Button className="submit_button" type="submit">회원가입</Button>
         </section>
 

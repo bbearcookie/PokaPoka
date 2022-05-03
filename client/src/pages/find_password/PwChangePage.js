@@ -39,14 +39,13 @@ const PwChangePage = () => {
         <header>
         <h1>PokaPoka</h1>
       </header>
-      <p className="title">비밀번호 변경</p>
       <section className="PwChange_section">
       <form>
           <p className="title-label">비밀번호변경</p>
         
           {message ? <p className="message-label">{message}</p> : null}
           <input
-            type="text"
+            type="password"
             name="password"
             placeholder="새 비밀번호"
             autoComplete="off"
@@ -56,7 +55,7 @@ const PwChangePage = () => {
           />
 
           <input
-            type="text"
+            type="password"
             name="password_check"
             placeholder="새 비밀번호 확인"
             autoComplete="off"

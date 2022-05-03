@@ -58,7 +58,7 @@ router.post('/sending', async (req, res) => {
       },
       data: smsData
     });
-    return res.status(200).json({ message: '인증번호가 발송되었습니다.' });
+    return res.status(200).json({ message: '인증번호가 발송되었습니다. 3분 내로 인증을 완료해주세요.' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: '서버 문제로 인증번호를 발송하지 못했습니다.' });

@@ -18,6 +18,22 @@ export const postLogout = () => axios.post(`${BACKEND}/api/auth/logout`, undefin
 // 토큰 유효성 검사. 성공시 payload 내용 반환
 export const postTokenTest = () => axios.post(`${BACKEND}/api/auth/token/test`, undefined, options);
 
+// 아이디 중복 확인 요청
+export const getAuthUsername = (username) => axios.get(`${BACKEND}/api/auth/username/?username=${username}`, options);
+// 회원가입 요청
+export const postAuthSignup = (form) => axios.post(`${BACKEND}/api/auth/signup`,
+  {
+    username: form.username,
+    password: form.password,
+    password_check: form.password_check,
+    name: form.name,
+    nickname: form.nickname,
+    favorite: form.favorite,
+    phone: form.phone
+  }, 
+  options
+);
+
 // 아이돌 그룹 목록 데이터 조회 요청
 export const getAdminGroupList = () => axios.get(`${BACKEND}/api/admin/group/list`, options);
 // 아이돌 그룹 상세 데이터 조회 요청

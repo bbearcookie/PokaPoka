@@ -7,14 +7,8 @@ const { getTimestampFilename, groupImageUpload, IDOL_GROUP_IMAGE_DIR } = require
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { isNull } = require('../../utils/common');
 
-// 아이돌 그룹 목록 조회 처리
-router.get('/group/list', verifyLogin, async (req, res) => {
-  const { accessToken } = req;
-
-  // 관리자 권한 확인
-  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
-
-  // 아이돌 그룹 목록 조회
+// 아이돌 그룹 목록 조회 처리 (관리자 아니어도 사용 가능)
+router.get('/group/list', async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `SELECT group_id, name, image_name FROM GroupData`;

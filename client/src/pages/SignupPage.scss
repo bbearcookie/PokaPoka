@@ -1,14 +1,30 @@
 .SignupPage {
 
   header {
-    height: 7.38rem;
     display: flex;
-    background: #c4c4c4;
+    justify-content: center;
+    align-items: center;
+    height: 7.38rem;
+    background: rgb(47, 52, 65);
+    text-align: center;
 
     h1 {
-      color: #c1392b;
+      margin: 0;
+      padding: 0;
+      color: #ec1b5a;
       font-family: Inter, sans-serif;
       font-size: 3rem;
+    }
+  }
+
+  .Modal {
+    .submit_button {
+      color: white;
+      background-color: rgb(206, 28, 73);
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
     }
   }
 
@@ -109,6 +125,10 @@
       .Input {
         width: calc(70% - 15px); height: 50px;
         font-size: 16px;
+      }
+
+      .Select {
+        width: calc(70% - 15px); height: 50px;
       }
 
       .Button {

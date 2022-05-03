@@ -1,12 +1,14 @@
 .PwChangePage{
     
-        header {
+          header {
             height: 7.38rem;
             display: flex;
-            background: #c4c4c4;
-        
+            align-items: center;
+            justify-content: center;
+            background: rgb(47, 52, 65);
+
             h1 {
-              color: #c1392b;
+              color: #ec1b5a;
               font-family: Inter, sans-serif;
               font-size: 3rem;
             }
