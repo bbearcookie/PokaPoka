@@ -5,6 +5,10 @@
   color: white;
   background-color: rgb(47, 52, 65);
 
+  a {
+    text-decoration: none;
+  }
+
   .nav-logo {
     margin-left: 15px;
     color: #ec1b5a;
@@ -45,7 +49,9 @@
         margin-right: 15px;
       }
 
-      .link {
+      a {
+        display: flex;
+        align-items: center;
         color: white;
         text-decoration: none;
       }

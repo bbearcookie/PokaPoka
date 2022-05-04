@@ -26,6 +26,7 @@ import PwChangePage from './pages/find_password/PwChangePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import CertificationPage from './pages/find_password/CertificationPage';
 import UserMainPage from './pages/MainPage';
+import VoucherRequestPage from './pages/mypage/VoucherRequestPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -74,6 +75,7 @@ function App() {
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
         <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
         <Route path="/finding/sms" element={<CertificationPage />}/>
+        <Route path="/mypage/voucher" element={<VoucherRequestPage />}/>
       </Routes>
     </div>
   );
