@@ -14,7 +14,8 @@ const AdminSidebar = () => {
     <Link className="link" to="#">사용자</Link>
     <section className="subtitle_section">커뮤니티 관리</section>
     <Link className="link" to="#">공지사항</Link>
-    <Link className="link" to="#">문의사항</Link>
+    <Link className={classNames("link", {"active": URI.includes('/suggestion')})}
+      to="/suggestion">문의사항</Link>
     <section className="subtitle_section">교환 관리</section>
     <Link className="link" to="#">포토카드 교환글</Link>
     <Link className="link" to="#">포토카드 소유권</Link>

@@ -1,0 +1,97 @@
+.AdminGroupWriterPage {
+  margin: 0 10%;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    .title-label {
+      margin-top: 20px;
+      font-size: 36px;
+    }
+
+    .MessageLabel {
+      margin: 0 0 20px 0;
+    }
+  
+    .label {
+      align-self: flex-start;
+      font-size: 20px;
+      margin: 15px 0 15px 0;
+    }
+  
+    .Input {
+      width: 100%; height: 50px;
+      font-size: 16px;
+    }
+  
+    .Textarea {
+      width: 100%;
+      min-height: 200px;
+    }
+  
+    .cancel_button {
+      background-color: #ececec;
+  
+      &:hover {
+        background: gainsboro;
+      }
+    }
+  
+    .submit_button {
+      color: white;
+      background-color: rgb(206, 28, 73);
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  
+    .image_section {
+      display: flex;
+
+      img {
+        object-fit: cover;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+  
+      .button_section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+  
+        .Button {
+          width: 80px; height: 30px;
+          margin: 0 0 10px 10px;
+        }
+      }
+    }
+  
+    .gender_section {
+      display: flex;
+  
+      input[type="radio"] {
+        transform: scale(1.5);
+      }
+  
+      label {
+        font-size: 20px;
+        padding: 0 15px 0 7px;
+      }
+    }
+  
+    .submit_section {
+      margin-top: 10px;
+      align-self: flex-end;
+  
+      .Button {
+        width: 100px; height: 50px;
+        margin-left: 15px;
+      }
+    }
+  }
+}
