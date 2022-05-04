@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelect, setGroups, setMembers, setPhotocards } from '../../../modules/photocardListPage';
-import { Link } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import { BACKEND } from '../../../utils/api';
-import PhotocardCard from '../../../components/card/PhotocardCard';
+import ImageCard from '../../../components/card/ImageCard';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
 import Button from '../../../components/form/Button';
@@ -117,12 +117,13 @@ const PhotocardListPage = () => {
       <section className="card_section">
         {photocards ?
           photocards.map(photocard =>
-            <PhotocardCard
-              key={photocard.photocard_id}
-              id={photocard.photocard_id}
-              name={photocard.name}
-              src={`${BACKEND}/image/photocard/${photocard.image_name}`}
-            />
+            <Link to={`/admin/photocard/detail/${photocard.photocard_id}`}>
+              <ImageCard
+                key={photocard.photocard_id}
+                name={photocard.name}
+                src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+              />
+            </Link>
           ) : null}
       </section>
 

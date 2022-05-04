@@ -4,9 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
+import { BACKEND } from '../../utils/api';
 import Input from '../../components/form/Input';
 import Button from '../../components/form/Button';
+import Select from '../../components/form/Select';
 import UserTemplate from '../../templates/UserTemplate';
+import ImageCard from '../../components/card/ImageCard';
 import MessageLabel from '../../components/MessageLabel';
 import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
 import './VoucherRequestWriterPage.scss';
@@ -22,10 +25,67 @@ const VoucherRequestWriterPage = () => {
       initialURL: '', // 브라우저에 보여줄 초기 이미지 URL. 작성시에는 빈 값이고 수정시에는 원래 있는 이미지가 된다.
     }
   });
+  const [select, setSelect] = useState({
+    groupId: '',
+    memberId: ''
+  });
+  const [groups, setGroups] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [photocards, setPhotocards] = useState([]);
   const [message, setMessage] = useState('');
   const imageRef = useRef(null);
   const request = useRequest();
   const navigate = useNavigate();
+
+  // 페이지 로드시 동작
+  const onLoad = async () => {
+    try {
+      const res = await request.call(api.getGroupList);
+      setGroups(res.groups);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+  useEffect(() => { onLoad(); }, []);
+
+  // 화면에 보여줄 포토카드 목록 업데이트
+  const onUpdatePhotocards = async (e) => {
+    try {
+      const res = await request.call(api.getPhotocardList, select.groupId, select.memberId);
+      setPhotocards(res.photocards);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  };
+  useEffect(() => { onUpdatePhotocards(); }, [select]);
+
+  // 그룹 선택 변경시 동작
+  const onChangeGroupSelect = async (e) => {
+    setSelect({ ...select, groupId: e.target.value });
+
+    if (e.target.value === '') {
+      setMembers([]);
+    } else if (e.target.value === 'all') {
+      try {
+        const res = await request.call(api.getAllMemberList);
+        setMembers(res.members);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    } else {
+      try {
+        const res = await request.call(api.getMemberList, e.target.value);
+        setMembers(res.members);
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    }
+  }
+
+  // 멤버 선택 변경시 동작
+  const onChangeMemberSelect = async (e) => {
+    setSelect({ ...select, memberId: e.target.value});
+  }
 
   // input 값 변경시
   const onChangeInput = (e) => {
@@ -127,6 +187,46 @@ const VoucherRequestWriterPage = () => {
           placeholder="운송장 번호를 입력하세요"
           onChange={onChangeInput}
         />
+
+        <p className="label">포토카드 선택</p>
+
+        <section className="search_area">
+          <article className="search">
+            <p className="label">그룹</p>
+            <Select name="group" value={select.groupId} onChange={onChangeGroupSelect}>
+              <option value="">선택</option>
+              <option value="all">전체</option>
+              {groups ?
+              groups.map(group => 
+                <option key={group.group_id} value={group.group_id}>{group.name}</option>
+              ) : null}
+            </Select>
+          </article>
+
+          <article className="search">
+            <p className="label">멤버</p>
+            <Select name="member" value={select.memberId} onChange={onChangeMemberSelect}>
+              <option value="">선택</option>
+              {select.groupId ? <option value="all">전체</option> : null}
+              {members ?
+              members.map(member =>
+                <option key={member.member_id} value={member.member_id}>{member.name}</option>
+              ) : null}
+            </Select>
+          </article>
+        </section>
+
+        <section className="card_section">
+          {photocards ?
+            photocards.map(photocard =>
+              <ImageCard
+                key={photocard.photocard_id}
+                name={photocard.name}
+                src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+              />
+            ) : null}
+        </section>
+
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
           <Button className="submit_button" type="submit">작성</Button>
