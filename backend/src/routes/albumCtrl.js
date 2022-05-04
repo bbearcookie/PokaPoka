@@ -1,49 +1,20 @@
-const router = require('../../config/express').router;
+const router = require('../config/express').router;
 const path = require('path');
 const fs = require('fs').promises;
 const fsAsync = require('fs');
-const { db } = require('../../config/database');
-const { getTimestampFilename, memberImageUpload, IDOL_MEMBER_IMAGE_DIR } = require('../../config/multer');
-const { isAdmin, verifyLogin } = require('../../utils/jwt');
-const { isNull } = require('../../utils/common');
+const { db } = require('../config/database');
+const { getTimestampFilename, albumImageUpload, ALBUM_IMAGE_DIR } = require('../config/multer');
+const { isAdmin, verifyLogin } = require('../utils/jwt');
+const { isNull } = require('../utils/common');
 
-// 모든 아이돌 멤버 목록 반환
-router.get('/member/list', verifyLogin, async (req, res) => {
-  const { accessToken } = req;
-
-  // 관리자 권한 확인
-  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
-
-  // 아이돌 그룹 목록 조회
-  const con = await db.getConnection();
-  try {
-    // 모든 멤버 목록 반환
-    sql = `SELECT member_id, group_id, name, image_name FROM MemberData`;
-    let [members] = await con.query(sql);
-    return res.status(200).json({ message: '아이돌 멤버 목록 조회에 성공했습니다.', members });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
-  } finally {
-    con.release();
-  }
-
-  return res.status(501).json({ message: 'end of line' });
-});
-
-// 특정 그룹의 아이돌 멤버 목록 조회 처리
-router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
+// 특정 그룹의 앨범 목록 조회 처리
+router.get('/album/list/:groupId', async (req, res) => {
   const { groupId } = req.params;
-  const { accessToken } = req;
-
-  // 관리자 권한 확인
-  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
   
   // 유효성 검사
   if (!groupId) return res.status(400).json({ message: '그룹 번호를 입력해주세요.' });
 
-  // 아이돌 그룹 목록 조회
+  // 앨범 목록 조회
   const con = await db.getConnection();
   try {
     // 해당 그룹 존재 유무 확인
@@ -51,10 +22,10 @@ router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
     let [[group]] = await con.query(sql);
     if (!group) return res.status(404).json({ message: '조회하려는 멤버의 그룹을 DB에서 찾지 못했습니다.' });
 
-    // 해당 그룹의 모든 멤버 목록 반환
-    sql = `SELECT member_id, group_id, name, image_name FROM MemberData WHERE group_id=${groupId}`;
-    let [members] = await con.query(sql);
-    return res.status(200).json({ message: '아이돌 멤버 목록 조회에 성공했습니다.', members });
+    // 해당 그룹의 모든 앨범 목록 반환
+    sql = `SELECT album_id, group_id, name, image_name FROM AlbumData WHERE group_id=${groupId}`;
+    let [albums] = await con.query(sql);
+    return res.status(200).json({ message: '앨범 목록 조회에 성공했습니다.', albums });
 
   } catch (err) {
     console.error(err);
@@ -62,27 +33,23 @@ router.get('/member/list/:groupId', verifyLogin, async (req, res) => {
   } finally {
     con.release();
   }
-
+  
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 아이돌 멤버 상세 조회 처리
-router.get('/member/detail/:memberId', verifyLogin, async (req, res) => {
-  const { memberId } = req.params;
-  const { accessToken } = req;
-
-  // 관리자 권한 확인
-  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+// 앨범 상세 조회 처리
+router.get('/album/detail/:albumId', async (req, res) => {
+  const { albumId } = req.params;
 
   // 유효성 검사
-  if (isNull(memberId)) return res.status(400).json({ message: '멤버 번호를 입력해주세요' });
+  if (isNull(albumId)) return res.status(400).json({ message: '멤버 번호를 입력해주세요' });
 
-  // 아이돌 멤버 상세 조회
+  // 앨범 상세 조회
   const con = await db.getConnection();
   try {
-    let sql = `SELECT name, image_name FROM MemberData WHERE member_id=${memberId}`;
-    let [[member]] = await con.query(sql);
-    return res.status(200).json({ message: '아이돌 멤버 정보 상세 조회에 성공했습니다.', member });
+    let sql = `SELECT name, image_name FROM AlbumData WHERE album_id=${albumId}`;
+    let [[album]] = await con.query(sql);
+    return res.status(200).json({ message: '앨범 정보 상세 조회에 성공했습니다.', album });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -93,8 +60,8 @@ router.get('/member/detail/:memberId', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 아이돌 멤버 등록 처리
-router.post('/member', memberImageUpload.single('image'), verifyLogin, async (req, res) => {
+// 앨범 등록 처리
+router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { groupId, name } = req.body;
   const { accessToken, file } = req;
 
@@ -133,15 +100,15 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
     }
 
     // 멤버 이름 중복 검사
-    sql = `SELECT name, image_name FROM MemberData WHERE name='${name}'`;
-    let [[member]] = await con.query(sql);
-    if (member) {
+    sql = `SELECT name, image_name FROM AlbumData WHERE name='${name}'`;
+    let [[album]] = await con.query(sql);
+    if (album) {
       removeTempFile();
-      return res.status(400).json({ message: '이미 있는 멤버 이름입니다.' });
+      return res.status(400).json({ message: '이미 있는 앨범 이름입니다.' });
     }
 
     // DB에 저장
-    sql = `INSERT INTO MemberData (name, group_id) VALUES (?, ?)`;
+    sql = `INSERT INTO AlbumData (name, group_id) VALUES (?, ?)`;
     let [result] = await con.execute(sql, [name, groupId]);
 
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
@@ -152,10 +119,10 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
         if (err) console.error(err);
       });
     }
-    sql = `UPDATE MemberData SET image_name = '${filename}' WHERE member_id = ${result.insertId}`;
+    sql = `UPDATE AlbumData SET image_name = '${filename}' WHERE album_id = ${result.insertId}`;
     await con.execute(sql);
 
-    return res.status(200).json({ message: '새로운 멤버를 등록했습니다.' });
+    return res.status(200).json({ message: '새로운 앨범을 등록했습니다.' });
   } catch (err) {
     console.error(err);
     removeTempFile();
@@ -167,9 +134,9 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 아이돌 멤버 수정 처리
-router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, async (req, res) => {
-  const { memberId } = req.params;
+// 앨범 수정 처리
+router.put('/album/:albumId', albumImageUpload.single('image'), verifyLogin, async (req, res) => {
+  const { albumId } = req.params;
   const { name } = req.body;
   const { accessToken, file } = req;
 
@@ -192,47 +159,47 @@ router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, 
     removeTempFile();
     return res.status(400).json({ message: '이름을 입력해주세요.' });
   }
-  if (!memberId) {
+  if (!albumId) {
     removeTempFile();
-    return res.status(400).json({ message: '멤버 번호를 입력해주세요.' });
+    return res.status(400).json({ message: '앨범 번호를 입력해주세요.' });
   }
 
   const con = await db.getConnection();
   try {
-    // 수정하려는 멤버 존재 유무 확인
-    let sql = `SELECT member_id, image_name FROM MemberData WHERE member_id=${memberId}`;
-    let [[member]] = await con.query(sql);
-    if (!member) {
+    // 수정하려는 앨범 존재 유무 확인
+    let sql = `SELECT album_id, image_name FROM AlbumData WHERE album_id=${albumId}`;
+    let [[album]] = await con.query(sql);
+    if (!album) {
       removeTempFile();
-      return res.status(404).json({ message: '수정하려는 멤버가 DB에 없습니다.' });
+      return res.status(404).json({ message: '수정하려는 앨범이 DB에 없습니다.' });
     }
 
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경하고 기존의 이미지 삭제
     let filename = "";
     if (file) {
       // 기존 이미지 삭제
-      fsAsync.rm(path.join(file.destination, member.image_name), (err) => {
+      fsAsync.rm(path.join(file.destination, album.image_name), (err) => {
         if (err) console.error(err);
       });
 
       // 이미지 이름 변경
-      filename = getTimestampFilename(memberId, file.mimetype);
+      filename = getTimestampFilename(albumId, file.mimetype);
       fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
         if (err) console.error(err);
       });
 
       // DB에 이미지 파일 이름 변경 내용 반영
-      sql = `UPDATE MemberData SET image_name='${filename}' WHERE member_id=${memberId}`;
+      sql = `UPDATE AlbumData SET image_name='${filename}' WHERE album_id=${albumId}`;
       await con.execute(sql);
     }
 
     // 수정된 내용 DB에 저장
-    sql = `UPDATE MemberData 
+    sql = `UPDATE AlbumData 
     SET name = '${name}'
-    WHERE member_id = ${memberId}`;
+    WHERE album_id = ${albumId}`;
     await con.execute(sql);
 
-    return res.status(200).json({ message: '멤버 정보를 수정했습니다.' });
+    return res.status(200).json({ message: '앨범 정보를 수정했습니다.' });
   } catch (err) {
     console.error(err);
     removeTempFile();
@@ -240,13 +207,13 @@ router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, 
   } finally {
     con.release();
   }
-
+  
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 아이돌 멤버 삭제 처리
-router.delete('/member/:memberId', verifyLogin, async (req, res) => {
-  const { memberId } = req.params;
+// 앨범 삭제 처리
+router.delete('/album/:albumId', verifyLogin, async (req, res) => {
+  const { albumId } = req.params;
   const { accessToken } = req;
 
   // 관리자 권한 확인
@@ -254,21 +221,21 @@ router.delete('/member/:memberId', verifyLogin, async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    // 멤버 존재 유무 확인
-    let sql = `SELECT member_id, image_name from MemberData WHERE member_id=${memberId}`;
-    let [[member]] = await con.query(sql);
-    if (!member) return res.status(404).json({ message: '삭제하려는 멤버가 DB에 없습니다.' });
+    // 앨범 존재 유무 확인
+    let sql = `SELECT album_id, image_name from AlbumData WHERE album_id=${albumId}`;
+    let [[album]] = await con.query(sql);
+    if (!album) return res.status(404).json({ message: '삭제하려는 앨범이 DB에 없습니다.' });
 
     // DB에서 멤버 삭제
-    sql = `DELETE FROM MemberData WHERE member_id=${memberId}`;
+    sql = `DELETE FROM AlbumData WHERE album_id=${albumId}`;
     await con.execute(sql);
 
     // 이미지 파일 삭제
-    fsAsync.rm(path.join(IDOL_MEMBER_IMAGE_DIR, member.image_name), (err) => {
+    fsAsync.rm(path.join(ALBUM_IMAGE_DIR, album.image_name), (err) => {
       if (err) console.error(err);
     });
 
-    return res.status(200).json({ message: '아이돌 멤버 정보를 삭제했습니다.' });
+    return res.status(200).json({ message: '앨범 정보를 삭제했습니다.' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });

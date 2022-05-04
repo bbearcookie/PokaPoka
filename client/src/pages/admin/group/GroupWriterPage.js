@@ -40,7 +40,7 @@ const GroupWriterPage = () => {
     // 기존의 그룹 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
     if (groupId) {
       try {
-        const res = await request.call(api.getAdminGroupDetail, groupId);
+        const res = await request.call(api.getGroupDetail, groupId);
         setForm(produce(draft => {
           draft.name = res.group.name;
           draft.description = res.group.description;
@@ -104,7 +104,7 @@ const GroupWriterPage = () => {
     // 새로 작성하는 경우
     if (!groupId) {
       try {
-        const res = await request.call(api.postAdminGroup, form);
+        const res = await request.call(api.postGroup, form);
         setMessage(res.message);
         return navigate('/admin/group');
       } catch (err) {
@@ -113,7 +113,7 @@ const GroupWriterPage = () => {
     // 내용을 수정하는 경우
     } else {
       try {
-        const res = await request.call(api.putAdminGroup, form, groupId);
+        const res = await request.call(api.putGroup, form, groupId);
         setMessage(res.message);
         return navigate(`/admin/group/detail/${groupId}`);
       } catch (err) {

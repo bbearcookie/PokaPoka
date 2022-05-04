@@ -28,7 +28,7 @@ const PhotocardListPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getAdminGroupList);
+      const res = await request.call(api.getGroupList);
       dispatch(setGroups(res.groups));
     } catch (err) {
       setMessage(err.response.data.message);
@@ -39,7 +39,7 @@ const PhotocardListPage = () => {
   // 화면에 보여줄 포토카드 목록 업데이트
   const onUpdatePhotocards = async (e) => {
     try {
-      const res = await request.call(api.getAdminPhotocardList, select.groupId, select.memberId);
+      const res = await request.call(api.getPhotocardList, select.groupId, select.memberId);
       dispatch(setPhotocards(res.photocards));
     } catch (err) {
       setMessage(err.response.data.message);
@@ -55,14 +55,14 @@ const PhotocardListPage = () => {
       dispatch(setMembers([]));
     } else if (e.target.value === 'all') {
       try {
-        const res = await request.call(api.getAdminAllMemberList);
+        const res = await request.call(api.getAllMemberList);
         dispatch(setMembers(res.members));
       } catch (err) {
         setMessage(err.response.data.message);
       }
     } else {
       try {
-        const res = await request.call(api.getAdminMemberList, e.target.value);
+        const res = await request.call(api.getMemberList, e.target.value);
         dispatch(setMembers(res.members));
       } catch (err) {
         setMessage(err.response.data.message);

@@ -49,7 +49,7 @@ const PhotocardWriterPage = () => {
     if (photocardId) {
       try {
         // 기본 폼 내용 가져옴
-        const res = await request.call(api.getAdminPhotocardDetail, photocardId);
+        const res = await request.call(api.getPhotocardDetail, photocardId);
         setForm(produce(draft => {
           draft.name = res.photocard.name;
           draft.group = {
@@ -69,9 +69,9 @@ const PhotocardWriterPage = () => {
         }));
 
         // select 태그에 보여줄 멤버와 앨범 목록 가져옴
-        let res2 = await request.call(api.getAdminMemberList, res.photocard.group_id);
+        let res2 = await request.call(api.getMemberList, res.photocard.group_id);
         setMembers(res2.members);
-        res2 = await request.call(api.getAdminAlbumList, res.photocard.group_id);
+        res2 = await request.call(api.getAlbumList, res.photocard.group_id);
         setAlbums(res2.albums);
       } catch (err) {
         console.error(err);
@@ -81,7 +81,7 @@ const PhotocardWriterPage = () => {
 
     // 존재하는 모든 그룹 목록 가져옴
     try {
-      const res = await request.call(api.getAdminGroupList);
+      const res = await request.call(api.getGroupList);
       setGroups(res.groups);
     } catch (err) {
       setMessage(err.response.data.message);
@@ -117,9 +117,9 @@ const PhotocardWriterPage = () => {
     // 특정 그룹을 선택했을 때
     } else {
       try {
-        let res = await request.call(api.getAdminMemberList, e.target.value);
+        let res = await request.call(api.getMemberList, e.target.value);
         setMembers(res.members);
-        res = await request.call(api.getAdminAlbumList, e.target.value);
+        res = await request.call(api.getAlbumList, e.target.value);
         setAlbums(res.albums);
         setForm(produce(draft => {
           draft.group.previewURL = groups.find(group => group.group_id === parseInt(e.target.value)).image_name;
@@ -209,7 +209,7 @@ const PhotocardWriterPage = () => {
     // 새로 작성하는 경우
     if (!photocardId) {
       try {
-        const res = await request.call(api.postAdminPhotocard, form);
+        const res = await request.call(api.postPhotocard, form);
         setMessage(res.message);
         return navigate('/admin/photocard');
       } catch (err) {
@@ -219,7 +219,7 @@ const PhotocardWriterPage = () => {
     } else {
       try {
         console.log(form);
-        const res = await request.call(api.putAdminPhotocard, form, photocardId);
+        const res = await request.call(api.putPhotocard, form, photocardId);
         setMessage(res.message);
         return navigate(`/admin/photocard/detail/${photocardId}`);
       } catch (err) {

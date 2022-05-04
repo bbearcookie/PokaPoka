@@ -17,7 +17,7 @@ const GroupListPage = () => {
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      const res = await request.call(api.getAdminGroupList);
+      const res = await request.call(api.getGroupList);
       setGroups(res.groups);
     } catch (err) {
       console.error(err);
