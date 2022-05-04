@@ -19,7 +19,7 @@ const MyPageSidebar = () => {
       <Link className="link" to="#">문의사항</Link>
       <Link
         className={classNames("link", {"active": URI.includes('/mypage/voucher')})}
-        to="#">포토카드 소유권</Link>
+        to="/mypage/voucher">포토카드 소유권</Link>
       <Link className="link" to="#">포토카드 배송</Link>
     </SidebarTemplate>
   );

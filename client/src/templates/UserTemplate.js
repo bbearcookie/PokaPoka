@@ -5,11 +5,11 @@ import './UserTemplate.scss';
 
 const UserTemplate = ({ className, sidebar, children }) => {
   return (
-    <div className={classNames("UserTemplate", className)}>
+    <div className="UserTemplate">
       <Navbar />
       <section className="middle_section">
         {sidebar}
-        <section className="content_section">
+        <section className={classNames("content_section", className)}>
           {children}
         </section>
       </section>

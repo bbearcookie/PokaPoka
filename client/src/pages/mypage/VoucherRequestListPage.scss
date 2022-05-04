@@ -1,0 +1,35 @@
+.VoucherRequestListPage {
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .title_area {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+
+    .title-label {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    .add_button {
+      width: 50px; height: 35px;
+      margin-left: 10px;
+      border-radius: 50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  }
+}
