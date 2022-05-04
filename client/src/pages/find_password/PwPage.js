@@ -24,6 +24,11 @@ const PwPage = () => {
         });
     };
 
+    // 뒤로가기 버튼 클릭시
+    const onClickBackButton = () => {
+      return navigate(-1);
+    }
+
     const onFindButton = async () => {
       try {
         const res = await request.call(api.postIdCheck, form.username, form.name, form.phone);
@@ -40,7 +45,6 @@ const PwPage = () => {
       <header>
         <h1>PokaPoka</h1>
       </header>
-      <p className="title">비밀번호 찾기</p>
       <section className="PwPage_section">
         <form>
           <p className="title-label">비밀번호찾기</p>
@@ -75,6 +79,7 @@ const PwPage = () => {
          
           />
           <Button className="find_btn" onClick={onFindButton} >찾기</Button>
+          <Button className="cancel_button" onClick={onClickBackButton}>뒤로가기</Button>
           </form>
           </section>
         </div>

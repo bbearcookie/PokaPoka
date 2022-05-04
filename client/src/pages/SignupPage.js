@@ -1,23 +1,321 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import produce from 'immer';
+import useRequest from '../utils/useRequest';
+import * as api from '../utils/api';
+import Input from '../components/form/Input';
+import Button from '../components/form/Button';
+import Select from '../components/form/Select';
+import LoadingSpinner from '../components/LoadingSpinner';
+import MessageLabel from '../components/MessageLabel';
+import Modal from '../components/modal/Modal';
+import ModalHeader from '../components/modal/ModalHeader';
+import ModalBody from '../components/modal/ModalBody';
+import ModalFooter from '../components/modal/ModalFooter';
 import './SignupPage.scss';
-//import Table from 'react-bootstrap/Table';
+
 const SignupPage = () => {
+  const [form, setForm] = useState({
+    terms1: false,
+    terms2: false,
+    username: '',
+    password: '',
+    password_check: '',
+    name: '',
+    nickname: '',
+    phone: '',
+    cert_num: '',
+    favorite: ''
+  });
+  const [groups, setGroups] = useState([]);
+  const [showModal, setShowModal] = useState(false); // 모달 창 화면에 띄우기 on/off
+  const [modalContent, setModalContent] = useState({ // 모달의 header, body에 보여줄 메시지
+    header: '',
+    body: ''
+  });
+  const [message, setMessage] = useState("");
+  const request = useRequest();
+  const navigate = useNavigate();
 
-return(
+  // 페이지 로드시 동작
+  const onLoad = async () => {
+    try {
+      const res = await request.call(api.getAdminGroupList);
+      setGroups(res.groups);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+  useEffect(() => { onLoad(); }, []);
 
+  // input 값 변경시
+  const onChangeInput = (e) => {
+    setForm(produce(draft => {
+      draft[e.target.name] = e.target.value;
+    }));
+  }
 
-<div className="LoginPage">
+  // 아이디 중복 확인 모달 열기 / 닫기
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+  // username input 값 변경시 영어와 숫자인 경우에만 상태 업데이트
+  const onChangeUsernameInput = (e) => {
+    if (!/([^A-Za-z0-9])/.test(e.target.value)) {
+      setForm(produce(draft => {
+        draft[e.target.name] = e.target.value;
+      }));
+    }
+  }
+
+  // checkbox input 값 변경시
+  const onChangeCheckboxInput = (e) => {
+    setForm(produce(draft => {
+      draft[e.target.name] = e.target.checked;
+    }));
+  }
+ 
+  // input에 입력된 값이 숫자인 경우에만 상태 업데이트
+  const onChangeNumberInput = (e) => {
+    if (!/[^0-9]/.test(e.target.value)) {
+      setForm(produce(draft => {
+        draft[e.target.name] = e.target.value;
+      }));
+    }
+  }
+
+  // 아이디 중복 확인 버튼 클릭시 작동
+  const onClickCheckUsername = async () => {
+    try {
+      const res = await request.call(api.getAuthUsername, form.username);
+      setModalContent({
+        header: '아이디 중복 확인',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '아이디 중복 확인',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 인증번호 발송 버튼 클릭시 작동
+  const onClickSendingButton = async () => {
+    try {
+      const res = await request.call(api.postSending, form.phone);
+      setModalContent({
+        header: '인증번호 발송',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '인증번호 발송',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 인증번호 확인 버튼 클릭시 작동
+  const onClickCertifyButton = async () => {
+    try {
+      const res = await request.call(api.postConfirmation, form.cert_num);
+      setModalContent({
+        header: '인증번호 확인',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '인증번호 확인',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 뒤로가기 버튼 클릭시 작동
+  const onClickBackButton = () => {
+    return navigate(-1);
+  }
+
+  // 전송 버튼 클릭시 작동
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.terms1) return setMessage("이용 약관에 동의해주세요.");
+    if (!form.terms2) return setMessage("개인정보 수집 및 이용에 동의해주세요.");
+
+    try {
+      const res = await request.call(api.postAuthSignup, form);
+      console.log(res);
+      setMessage(res.message);
+      return navigate('/auth/login');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+
+  return (
+    <div className="SignupPage">
+      {request.loading ? <LoadingSpinner /> : null}
+
+      {/* 모달 창 */}
+      {showModal ?
+      <Modal onClose={closeModal}>
+        <ModalHeader onClose={closeModal}>
+          <h1>{modalContent.header}</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>{modalContent.body}</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="submit_button" onClick={closeModal}>확인</Button>
+        </ModalFooter>
+      </Modal> : null}
+
       <header>
         <h1>PokaPoka</h1>
       </header>
-    <p>회원가입</p>
-    <p>전체동의</p>
- 
-      <section className="signup_section">
-      
-      <li>이용약관 및 개인정보수집 및 이용약관에 모두 동의합니다.</li>
-      <li>[필수] 이용약관 동의</li>
-      <li>제1조(목적) 이 약관은 OO 회사(전자상거래 사업자)가 운영하는 OO 사이버 몰(이하 “몰”이라 한다)에서 제공하는 인터넷 관련 서비스(이하 “서비스”라 한다)를 이용함에 있어 사이버 몰과 이용자의 권리․의무 및 책임사항을 규정함을 목적으로 합니다.
+      <form onSubmit={onSubmit}>
+        <section className="terms_section">
+          <h1 className="title-label">약관 동의</h1>
+
+          <p className="label"><b>[필수]</b> 이용약관 동의</p>
+          <textarea cols="30" rows="10" readOnly value={terms_text1} />
+          <div className="label_section">
+            <span className="label">이용약관에 동의하십니까?</span>
+            <input id="terms1" type="checkbox" name="terms1" value={form.term1} onChange={onChangeCheckboxInput} />
+            <label htmlFor="terms1">동의</label>
+          </div>
+
+          <p className="label"><b>[필수]</b> 개인정보 수집 및 이용 동의</p>
+          <textarea cols="30" rows="10" readOnly value={terms_text2} />
+          <div className="label_section">
+            <span className="label">개인정보 수집 및 이용에 동의하십니까?</span>
+            <input id="terms2" type="checkbox" name="terms2" value={form.term2} onChange={onChangeCheckboxInput} />
+            <label htmlFor="terms2">동의</label>
+          </div>
+        </section>
+
+        <section className="form_section">
+          <h1 className="title-label">정보 입력</h1>
+          {message ? <MessageLabel>{message}</MessageLabel> : null}
+
+          <section className="input_section">
+            <div className="label_section">
+              <span className="label">아이디</span>
+              <Input
+                type="text"
+                name="username"
+                value={form.username}
+                maxLength="20"
+                autoComplete="off"
+                placeholder="아이디를 입력하세요 (영문자와 숫자)"
+                onChange={onChangeUsernameInput}
+              />
+              <Button className="cancel_button" type="button" onClick={onClickCheckUsername}>중복 확인</Button>
+            </div>
+            <div className="label_section">
+              <span className="label">비밀번호</span>
+              <Input
+                type="password"
+                name="password"
+                value={form.password}
+                autoComplete="off"
+                placeholder="비밀번호를 입력하세요"
+                onChange={onChangeInput}
+              />
+            </div>
+            <div className="label_section">
+              <span className="label">비밀번호 확인</span>
+              <Input
+                type="password"
+                name="password_check"
+                value={form.password_check}
+                autoComplete="off"
+                placeholder="비밀번호 확인을 입력하세요"
+                onChange={onChangeInput}
+              />
+            </div>
+            <div className="label_section">
+              <span className="label">이름</span>
+              <Input
+                type="text"
+                name="name"
+                value={form.name}
+                autoComplete="off"
+                placeholder="이름을 입력하세요"
+                onChange={onChangeInput}
+              />
+            </div>
+            <div className="label_section">
+              <span className="label">닉네임</span>
+              <Input
+                type="text"
+                name="nickname"
+                value={form.nickname}
+                autoComplete="off"
+                placeholder="닉네임을 입력하세요"
+                onChange={onChangeInput}
+              />
+            </div>
+            <div className="label_section">
+              <span className="label">휴대폰 번호</span>
+              <Input
+                type="text"
+                name="phone"
+                value={form.phone}
+                maxLength="11"
+                autoComplete="off"
+                placeholder="휴대폰 번호를 입력하세요 (숫자)"
+                onChange={onChangeNumberInput}
+              />
+              <Button className="cancel_button" type="button" onClick={onClickSendingButton}>인증번호 발송</Button>
+            </div>
+            <div className="label_section">
+              <span className="label">인증번호</span>
+              <Input
+                type="text"
+                name="cert_num"
+                value={form.cert_num}
+                maxLength="6"
+                autoComplete="off"
+                placeholder="인증번호를 입력하세요 (숫자)"
+                onChange={onChangeNumberInput}
+              />
+              <Button className="submit_button" type="button" onClick={onClickCertifyButton}>확인</Button>
+            </div>
+            <div className="label_section">
+              <span className="label">최애그룹</span>
+              <Select name="favorite" value={form.favorite} onChange={onChangeInput}>
+                <option value="">없음</option>
+                {groups ?
+                groups.map(group => 
+                  <option key={group.name} value={group.name}>{group.name}</option>
+                ) : null} 
+              </Select>
+            </div>
+          </section>
+        </section>
+
+        <section className="submit_section">
+          <Button className="cancel_button" type="button" onClick={onClickBackButton}>뒤로가기</Button>
+          <Button className="submit_button" type="submit">회원가입</Button>
+        </section>
+
+      </form>
+    </div>
+  );
+};
+
+export default SignupPage;
+
+const terms_text1 = `제1조(목적) 이 약관은 OO 회사(전자상거래 사업자)가 운영하는 OO 사이버 몰(이하 “몰”이라 한다)에서 제공하는 인터넷 관련 서비스(이하 “서비스”라 한다)를 이용함에 있어 사이버 몰과 이용자의 권리․의무 및 책임사항을 규정함을 목적으로 합니다.
 
 ※「PC통신, 무선 등을 이용하는 전자상거래에 대해서도 그 성질에 반하지 않는 한 이 약관을 준용합니다.」
 
@@ -255,16 +553,31 @@ return(
 
 ① “몰”과 이용자 간에 발생한 전자상거래 분쟁에 관한 소송은 제소 당시의 이용자의 주소에 의하고, 주소가 없는 경우에는 거소를 관할하는 지방법원의 전속관할로 합니다. 다만, 제소 당시 이용자의 주소 또는 거소가 분명하지 않거나 외국 거주자의 경우에는 민사소송법상의 관할법원에 제기합니다.
 
-② “몰”과 이용자 간에 제기된 전자상거래 소송에는 한국법을 적용합니다.
-</li>
+② “몰”과 이용자 간에 제기된 전자상거래 소송에는 한국법을 적용합니다.`;
 
-</section>
+const terms_text2 = `1. 개인정보의 수집·이용 목적
+가. 회원관리회원제 서비스 제공, 개인식별, 불량회원의 부정 이용 방지와 비인가 사용방지, 가입의사 확인, 연령확인, 미성년자 결제 시 법정대리인 동의여부 확인, 불만처리 등 민원처리, 고지사항 전달 등
 
-<li>[필수] 개인정보 수집 및 이용 동의</li>
+나. 서비스 이용서비스 제공에 관한 계약 이행 및 서비스 제공에 따른 요금 정산, 콘텐츠 제공, 구매 및 요금 결제, 물품배송 또는 청구지 발송
 
+다. 서비스 개발 및 마케팅 광고에의 활용이벤트 등 광고성 정보 전달, 인구통계학적 특성에 따른 서비스 제공 및 광고 게재, 접속 빈도 파악 또는 회원의 서비스 이용에 대한 통계
 
+2. 수집하려는 개인정보의 항목① 회사는 회원가입, 원활한 고객상담, 각종 서비스의 제공을 위해 최초 회원가입 당시 아래와 같은 최소한의 개인정보를 수집하고 있습니다.회원가입 시- 일반 회원가입 시 : 성명, 생년월일, 아이디, 비밀번호, 핸드폰 번호, 이메일(해외거주시)- 선택항목 : 이메일, 주소지
 
-</div>
-);
-}
-export default SignupPage;
+② 서비스 이용과정에서 아래와 같은 정보들이 자동으로 생성되어 수집될 수 있습니다.- PC : IP주소, 쿠키, 방문 일시, 서비스이용기록- 모바일 : 핸드폰번호, 단말기(스마트폰, 태블릿PC 등)의 기기 정보
+
+③ 유료 서비스 이용 과정에서 아래와 같은 결제 정보들이 수집될 수 있습니다.- 신용카드 결제 시 : 거래자명, 카드사명, 카드번호, 카드유효기간- 계좌이체 시 : 은행명, 계좌번호
+
+④ 회원의 상담을 위하여 다음과 같은 정보를 수집합니다.전화상담시 : 이름, 연락처, 통화가능시간, 관심분야
+
+3. 개인정보의 보유 및 이용 기간원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당정보를 지체없이 파기합니다. 단, 관계법령의 규정에 의하여 보존할 필요가 있는 경우 회사는 아래와 같이 관계법령에서 정한 일정한기간 동안 회원정보를 보유합니다. (단, 기타 개별적으로 동의를 받은 경우에는 동의한 약정 기간 동안 보유합니다.)- 계약 또는 청약 철회 등에 관한 기록보존이유 : 전자상거래 등에서의 소비자보호에 관한 법률보존기간 : 5년
+
+- 대금결제 및 재화 등의 공급에 관한 기록보존이유 : 전자상거래 등에서의 소비자보호에 관한 법률보존기간 : 5년
+
+- 전자금융거래에 관한 기록보존이유 : 전자금융거래법보존기간 : 5년
+
+- 소비자의 불만 또는 분쟁처리에 관한 기록보존이유 : 전자상거래 등에서의 소비자보호에 관한 법률보존기간 : 3년
+
+- 부정이용 등에 관한 기록보존이유 : 재가입 방지보존기간 : 1년
+
+4. 동의를 거부할 권리가 있다는 사실 및 동의 거부에 따른 불이익이 있는 경우에는 그 불이익의 내용개인정보 수집 및 이용에 대해 동의를 거부할 권리가 있습니다. 단, 동의 거부 시에는 회원가입 서비스를 이용할 수 없습니다.`;

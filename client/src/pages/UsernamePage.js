@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/form/Button';
 import './UsernamePage.scss';
 import useRequest from '../utils/useRequest';
@@ -11,6 +12,7 @@ const UsernamePage = () =>{
     });
     const [message, setMessage] = useState('');
     const request = useRequest();
+    const navigate = useNavigate();
       
     // input 값 변경시 상태 변수값 업데이트
     const onChangeInput = (e) => {
@@ -30,13 +32,17 @@ const UsernamePage = () =>{
         setMessage(err.response.data.message);
       }
     }
+
+    // 뒤로가기 버튼 클릭시
+    const onClickBackButton = () => {
+      return navigate(-1);
+    }
   
     return(
     <div className="UsernamePage">
       <header>
         <h1>PokaPoka</h1>
       </header>
-      <p className="title">아이디 찾기</p>
 
       <section className="username_section">
       <form>
@@ -62,6 +68,7 @@ const UsernamePage = () =>{
          
           />
           <Button className="find_btn" onClick={onFindButton}>찾기</Button>
+          <Button className="cancel_button" onClick={onClickBackButton}>뒤로가기</Button>
           </form>
           </section>
 

@@ -2,11 +2,12 @@
   padding: 20px 0;
   display: flex;
   align-items: center;
-  background-color: #c4c4c4;
+  color: white;
+  background-color: rgb(47, 52, 65);
 
   .nav-logo {
     margin-left: 15px;
-    color: #c1392b;
+    color: #ec1b5a;
     font-family: Inter, sans-serif;
     font-size: 2rem;
     font-weight: bold;
@@ -15,8 +16,40 @@
   }
 
   .nav-items {
-    margin-left: auto;
-    justify-self: flex-end;
+    width: 100%;
+    display: flex;
+    font-size: 20px;
+
+    .link_section {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .link {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+  
+        &:hover {
+          color: white;
+        }
+      }
+    }
+
+    .user_section {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      
+      img {
+        margin-right: 15px;
+      }
+
+      .link {
+        color: white;
+        text-decoration: none;
+      }
+    }
 
     .nav-item {
       margin-right: 15px;

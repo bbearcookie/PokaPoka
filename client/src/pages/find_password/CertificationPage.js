@@ -52,7 +52,6 @@ const CertificationPage = () => {
         <header>
             <h1>PokaPoka</h1>
         </header>
-        <p className="title">전화번호 인증</p>
         <section className="certification">
             <form>
             <p className="title-label">전화번호 인증</p>

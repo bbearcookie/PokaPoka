@@ -3,18 +3,12 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsAsync = require('fs');
 const { db } = require('../../config/database');
-const { getExtension, groupImageUpload, IDOL_GROUP_IMAGE_DIR } = require('../../config/multer');
+const { getTimestampFilename, groupImageUpload, IDOL_GROUP_IMAGE_DIR } = require('../../config/multer');
 const { isAdmin, verifyLogin } = require('../../utils/jwt');
 const { isNull } = require('../../utils/common');
 
-// 아이돌 그룹 목록 조회 처리
-router.get('/group/list', verifyLogin, async (req, res) => {
-  const { accessToken } = req;
-
-  // 관리자 권한 확인
-  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
-
-  // 아이돌 그룹 목록 조회
+// 아이돌 그룹 목록 조회 처리 (관리자 아니어도 사용 가능)
+router.get('/group/list', async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `SELECT group_id, name, image_name FROM GroupData`;
@@ -107,7 +101,7 @@ router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req,
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
     let filename = "";
     if (file) {
-      filename = result.insertId + '.' + getExtension(file.mimetype);
+      filename = getTimestampFilename(result.insertId, file.mimetype);
       fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
         if (err) console.error(err);
       });
@@ -174,14 +168,14 @@ router.put('/group/:groupId', groupImageUpload.single('image'), verifyLogin, asy
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경하고 기존의 이미지 삭제
     let filename = "";
     if (file) {
-      // 이미지 이름 변경
-      filename = groupId + '.' + getExtension(file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
-      
       // 기존 이미지 삭제
       fsAsync.rm(path.join(file.destination, group.image_name), (err) => {
+        if (err) console.error(err);
+      });
+
+      // 이미지 이름 변경
+      filename = getTimestampFilename(groupId, file.mimetype);
+      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
         if (err) console.error(err);
       });
 

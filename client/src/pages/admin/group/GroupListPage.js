@@ -15,9 +15,6 @@ const GroupListPage = () => {
   const [groups, setGroups] = useState([]);
 
   // 화면 로드시 작동
-  useEffect(() => {
-    onLoad();
-  }, []);
   const onLoad = async (e) => {
     try {
       const res = await request.call(api.getAdminGroupList);
@@ -26,6 +23,7 @@ const GroupListPage = () => {
       console.error(err);
     }
   };
+  useEffect(() => { onLoad(); }, []);
 
   return (
     <AdminTemplate className="AdminGroupListPage">

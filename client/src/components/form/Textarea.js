@@ -3,7 +3,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import classNames from 'classnames';
 import './Textarea.scss';
 
-const TextArea = ({ className, name, value, placeholder, onChange }) => {
+const Textarea = ({ className, name, value, placeholder, onChange }) => {
   return (
     <TextareaAutosize
       className={classNames("Textarea")}
@@ -15,4 +15,4 @@ const TextArea = ({ className, name, value, placeholder, onChange }) => {
   );
 };
 
-export default TextArea;
+export default Textarea;

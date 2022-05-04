@@ -1,0 +1,43 @@
+.SidebarTemplate {
+  width: 230px; min-height: calc(100vh - 90px);
+  color: white;
+  background-color: rgb(47, 52, 65);
+
+  .title_section {
+    height: 80px;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 80px;
+    font-size: 18px;
+    color: white;
+    background-color: #ec1b5a;
+    user-select: none;
+  }
+
+  .subtitle_section {
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    color: white;
+    background-color: rgb(52, 152, 219);
+    user-select: none;
+  }
+
+  .link {
+    width: 100%;
+    padding: 20px 0 20px 20px;
+    display: block;
+    box-sizing: border-box;
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover, &.active {
+      color: white;
+      background-color: rgb(23, 23, 25);
+      border-left: 5px solid #ec1b5a;
+    }
+  }
+}

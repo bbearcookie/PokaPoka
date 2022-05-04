@@ -1,0 +1,87 @@
+.AdminPhotocardDetailPage {
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .label_area {
+    margin-bottom: 50px;
+
+    .info_area {
+      display: flex;
+
+      .detail_info_area {
+        margin-right: 10px;
+        flex-basis: calc(33% - 10px);
+
+        .label {
+          max-width: 33vh;
+          word-break: break-all;
+        }
+      }
+    }
+
+    img {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    p {
+      align-self: flex-start;
+      font-size: 20px;
+      margin: 5px 0 0 0;
+      white-space: pre-wrap;
+    }
+
+    span {
+      font-weight: normal;
+    }
+
+    .label {
+      font-size: 26px;
+      font-weight: bold;
+    }
+  }
+
+  .submit_section {
+    align-self: flex-end;
+    
+    .Button {
+      width: 100px; height: 50px;
+      margin: 15px 0 0 15px;
+    }
+  }
+
+  .remove_button {
+    color: white;
+    background-color: rgb(206, 28, 73);
+
+    &:hover {
+      background-color: rgb(163, 33, 66);
+    }
+  }
+
+  .cancel_button {
+    background-color: #ececec;
+
+    &:hover {
+      background: gainsboro;
+    }
+  }
+
+  .edit_button {
+    color: white;
+    background-color: #0dcaf0;
+
+    &:hover {
+      background-color: #11badc;
+    }
+  }
+  
+}

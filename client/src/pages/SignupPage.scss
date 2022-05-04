@@ -1,14 +1,153 @@
 .SignupPage {
-    header {
-      height: 7.38rem;
-      display: flex;
-      background: #c4c4c4;
+
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 7.38rem;
+    background: rgb(47, 52, 65);
+    text-align: center;
+
+    h1 {
+      margin: 0;
+      padding: 0;
+      color: #ec1b5a;
+      font-family: Inter, sans-serif;
+      font-size: 3rem;
+    }
+  }
+
+  .Modal {
+    .submit_button {
+      color: white;
+      background-color: rgb(206, 28, 73);
   
-      h1 {
-        color: #c1392b;
-        font-family: Inter, sans-serif;
-        font-size: 3rem;
+      &:hover {
+        background-color: rgb(163, 33, 66);
       }
     }
+  }
+
+  form {
+    width: 70%;
+    margin: 0 auto;
+    display: flex; flex-direction: column;
+    align-items: center;
+
+    .label {
+      align-self: flex-start;
+      font-size: 20px;
+      margin: 15px 0 15px 0;
+    }
+
+    .title-label {
+      margin-top: 20px;
+      font-size: 36px;
+      text-align: center;
+    }
+
+    .cancel_button {
+      background-color: #ececec;
+  
+      &:hover {
+        background: gainsboro;
+      }
+    }
+  
+    .submit_button {
+      color: white;
+      background-color: rgb(206, 28, 73);
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+    
+    .terms_section {
+      width: 100%;
+      display: flex; flex-direction: column;
+      align-items: center;
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        box-sizing: border-box;
+        border: 1px solid hsl(222, 9%, 78%);
+        border-radius: 5px;
+      
+        font-family: 'sans-serif';
+        font-size: 16px;
+        line-height: 24px;
+      
+        outline: none;
+        resize: none; // textarea 크기 수동조절 불가능 설정
+      
+        &:focus {
+          border: 1px solid rgb(206, 28, 73);
+          box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+          transition: all 0.25s;
+        }
+      }
+
+      .label_section {
+        width: 100%;
+        margin: 5px 0 50px 0;
+        font-size: 20px;
+
+        input[type="checkbox"] {
+          margin-left: 15px;
+          zoom: 1.25;
+        }
+
+      }
+    }
+
+    .form_section {
+      width: 100%;
+
+      .label_section {
+        margin-bottom: 5px;
+      }
+
+      .input_section {
+        padding: 10px;
+      }
+
+      .label {
+        width: 12%;
+        margin-right: 15px;
+        display: inline-block;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .Input {
+        width: calc(70% - 15px); height: 50px;
+        font-size: 16px;
+      }
+
+      .Select {
+        width: calc(70% - 15px); height: 50px;
+      }
+
+      .Button {
+        width: 10%; max-width: 100px; height: 30px;
+        margin-left: 15px;
+      }
+    }
+
+    .submit_section {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      align-self: flex-end;
+  
+      .Button {
+        width: 100px; height: 50px;
+        margin-left: 15px;
+      }
+    }
+
+  }
 
 }
