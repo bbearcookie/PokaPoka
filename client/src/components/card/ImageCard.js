@@ -2,9 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import './ImageCard.scss';
 
-const ImageCard = ({ className, src, name }) => {
+const ImageCard = ({ className, src, name, value, onClick }) => {
   return (
-    <div className={classNames("ImageCard", className)}>
+    <div className={classNames("ImageCard", className)} value={value} onClick={onClick}>
       <img 
         width="100%"
         height="200px"
@@ -18,7 +18,8 @@ const ImageCard = ({ className, src, name }) => {
 };
 
 ImageCard.defaultProps = {
-  name: '이름'
-}
+  name: '이름',
+  onClick: () => {}
+};
 
 export default ImageCard;

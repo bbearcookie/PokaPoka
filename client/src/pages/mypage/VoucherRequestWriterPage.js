@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import produce from 'immer';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import produce from 'immer';
+import classNames from 'classnames';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
@@ -19,15 +19,14 @@ const VoucherRequestWriterPage = () => {
   const [form, setForm] = useState({
     delivery: '',
     trackingNumber: '',
+    groupId: '',
+    memberId: '',
+    photocardId: '',
     image: {
       file: '', // 업로드 된 실제 이미지 파일
       previewURL: '', // 브라우저에 임시로 보여줄 이미지 URL
       initialURL: '', // 브라우저에 보여줄 초기 이미지 URL. 작성시에는 빈 값이고 수정시에는 원래 있는 이미지가 된다.
-    }
-  });
-  const [select, setSelect] = useState({
-    groupId: '',
-    memberId: ''
+    },
   });
   const [groups, setGroups] = useState([]);
   const [members, setMembers] = useState([]);
@@ -51,17 +50,19 @@ const VoucherRequestWriterPage = () => {
   // 화면에 보여줄 포토카드 목록 업데이트
   const onUpdatePhotocards = async (e) => {
     try {
-      const res = await request.call(api.getPhotocardList, select.groupId, select.memberId);
+      const res = await request.call(api.getPhotocardList, form.groupId, form.memberId);
       setPhotocards(res.photocards);
     } catch (err) {
       setMessage(err.response.data.message);
     }
   };
-  useEffect(() => { onUpdatePhotocards(); }, [select]);
+  useEffect(() => { onUpdatePhotocards(); }, [form.groupId, form.memberId]);
 
   // 그룹 선택 변경시 동작
   const onChangeGroupSelect = async (e) => {
-    setSelect({ ...select, groupId: e.target.value });
+    setForm(produce(draft => {
+      draft.groupId = e.target.value;
+    }));
 
     if (e.target.value === '') {
       setMembers([]);
@@ -84,7 +85,9 @@ const VoucherRequestWriterPage = () => {
 
   // 멤버 선택 변경시 동작
   const onChangeMemberSelect = async (e) => {
-    setSelect({ ...select, memberId: e.target.value});
+    setForm(produce(draft => {
+      draft.memberId = e.target.value;
+    }));
   }
 
   // input 값 변경시
@@ -123,6 +126,16 @@ const VoucherRequestWriterPage = () => {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  // 포토카드 선택시
+  const onClickPhotocard = (e) => {
+    const target = e.currentTarget;
+    const photocardId = target.getAttribute('value');
+
+    setForm(produce(draft => {
+      draft.photocardId = photocardId;
+    }));
   }
 
   // 작성 취소 버튼 클릭시
@@ -193,7 +206,7 @@ const VoucherRequestWriterPage = () => {
         <section className="search_area">
           <article className="search">
             <p className="label">그룹</p>
-            <Select name="group" value={select.groupId} onChange={onChangeGroupSelect}>
+            <Select name="group" value={form.groupId} onChange={onChangeGroupSelect}>
               <option value="">선택</option>
               <option value="all">전체</option>
               {groups ?
@@ -205,9 +218,9 @@ const VoucherRequestWriterPage = () => {
 
           <article className="search">
             <p className="label">멤버</p>
-            <Select name="member" value={select.memberId} onChange={onChangeMemberSelect}>
+            <Select name="member" value={form.memberId} onChange={onChangeMemberSelect}>
               <option value="">선택</option>
-              {select.groupId ? <option value="all">전체</option> : null}
+              {form.groupId ? <option value="all">전체</option> : null}
               {members ?
               members.map(member =>
                 <option key={member.member_id} value={member.member_id}>{member.name}</option>
@@ -220,9 +233,12 @@ const VoucherRequestWriterPage = () => {
           {photocards ?
             photocards.map(photocard =>
               <ImageCard
+                className={classNames({"active": photocard.photocard_id === parseInt(form.photocardId) })}
                 key={photocard.photocard_id}
+                value={photocard.photocard_id}
                 name={photocard.name}
                 src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+                onClick={onClickPhotocard}
               />
             ) : null}
         </section>

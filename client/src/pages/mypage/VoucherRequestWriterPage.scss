@@ -95,6 +95,13 @@
       .ImageCard {
         margin: 0 50px 50px 0;
         display: inline-block;
+
+        &.active {
+          outline: none;
+          border: 1px solid rgb(206, 28, 73);
+          box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+          transition: all 0.25s;
+        }
       }
     }
 
