@@ -37,7 +37,7 @@ const SuggestionListPage = () => {
   const onLoad = async (e) => {
     try {
       const res = await request.call(api.getSuggestionList);
-      setSuggestion(res.suggestion_admin);
+      setSuggestion(res.suggestion);
       // setSuggestion(createDummyList()); // 페이지네이션 기능 테스트를 위한 더미 데이터
     } catch (err) {
       console.error(err);

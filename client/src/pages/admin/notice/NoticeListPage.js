@@ -24,7 +24,7 @@ const NoticeListPage = () => {
     }
   };
   useEffect(() => { onLoad(); }, []);
-
+  console.log(notice);
   return (
     <AdminTemplate className="NoticeListPage">
       {request.loading ? <LoadingSpinner /> : null}
