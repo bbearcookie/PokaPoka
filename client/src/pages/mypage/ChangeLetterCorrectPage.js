@@ -7,10 +7,12 @@ import './ChangeLetterCorrectPage.scss';
 
 const ChangeLetterCorrectPage = () =>{
 
-    const Users=[{
-    writer:'작성자',
-    day:'등록일',
-    divide:'분류'}];
+const[users,setUsers]=useState([
+{
+    writer:'BYSFOREVER',
+    day:'2022-05-18'
+}
+]);
 
     return(
         
@@ -30,16 +32,16 @@ const ChangeLetterCorrectPage = () =>{
                         </tr>
                         <tr>
                             <td>작성자</td>
-                            <td> {Users[0].writer} </td>
+                            <td> {users.writer} </td>
                         </tr>
                         <tr>
                             <td>등록일</td>
-                            <td>{Users[0].day}</td>
+                            <td>{users.day}</td>
                         </tr>
                         <tr>
                             <td>분류</td>
                             <td>
-                                {Users[0].divide}
+                                {users.divide}
                         </td>
                         </tr>
                     </Table>    

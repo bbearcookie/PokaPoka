@@ -6,14 +6,9 @@ import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
 import UserTemplate from '../../templates/UserTemplate';
 const InfoCorrectPage = () => {
 
-    const [text, setText] = useState('');
 
-    const Users=[{
-        id:'아이디',
-        name:'이름',
-    number:'전화번호',
-    nickname:'닉네임',
-    group:'최애그룹'}];
+
+   
 
     return(
         <UserTemplate className="InfoCorrectPage"
@@ -31,7 +26,6 @@ const InfoCorrectPage = () => {
                             <input type="text"
                         name="username"
                         placeholder=""
-                        value={Users[0].id}
                         autoComplete="off" />
                         </td>
                     </tr>
@@ -42,7 +36,6 @@ const InfoCorrectPage = () => {
                         <td><input type="text"
                         name="name"
                         placeholder=""
-                        value={Users[0].name}
                         autoComplete="off"/>
                         </td>
                     </tr>
@@ -54,7 +47,6 @@ const InfoCorrectPage = () => {
                         <input type="text"
                         name="number"
                         placeholder=""
-                        value={Users[0].number}
                         autoComplete="off"/>
                         </td>
                     </tr>
@@ -66,7 +58,6 @@ const InfoCorrectPage = () => {
                         <input type="text"
                         name="nickname"
                         placeholder=""
-                        value={Users[0].nickname}
                         autoComplete="off"/>
                         </td>
                     </tr>
@@ -78,7 +69,6 @@ const InfoCorrectPage = () => {
                         <input type="text"
                         name="group"
                         placeholder=""
-                        value={Users[0].group}
                         autoComplete="off"/>
                         </td>
                     </tr>

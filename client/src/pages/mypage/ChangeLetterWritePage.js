@@ -9,12 +9,12 @@ const selectList = ["1대1 교환","다중 교환"];
 
     const ChangeLetterWritePage = () => {
         
-    const Users = [{
-        title:'제목',
-        writer:'작성자',
-        day:'등록일'
-
-    }];
+    const [users,setUsers]=([
+    {
+        writer:'BTSFOREVER',
+        day:'2022-05-18'
+    }
+    ]);
 
     const [Selected, setSelected] = useState("");
 
@@ -36,16 +36,15 @@ const selectList = ["1대1 교환","다중 교환"];
                                 <td className="title"><input type="text"
                                 name="title"
                                 placeholder=""
-                                value={Users[0].title}
                                 autoComplete="off"/></td>
                             </tr>
                             <tr>
                                 <td>작성자</td>
-                                <td> {Users[0].writer} </td>
+                                <td> {users.writer} </td>
                             </tr>
                             <tr>
                                 <td>등록일</td>
-                                <td>{Users[0].day}</td>
+                                <td>{users.day}</td>
                             </tr>
                             <tr>
                                 <td>분류</td>

@@ -5,10 +5,13 @@ import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
 import UserTemplate from '../../templates/UserTemplate';
 const DeliveryInfoPage = () => {
    
-    const Users=[{name:'이름',
-    number:'번호',
-    address:'주소'
-    }];
+    const [users,setUsers]=([
+    {   
+        name:'홍길동',
+        number:'010-1234-5678',
+        address:'경기도 구리시 검배로 142 205동 207호'
+    }
+    ]);
 
     return(
         <UserTemplate className="DeliveryInfoPage"
@@ -17,9 +20,9 @@ const DeliveryInfoPage = () => {
             <h1 className="h">배송정보 관리</h1>
                 <section className="delivery">
                     <form>
-                        <h1>{Users[0].name}</h1>
-                        <h1>{Users[0].number}</h1>
-                        <h1>{Users[0].address}</h1>
+                        <h1>{users.name}</h1>
+                        <h1>{users.number}</h1>
+                        <h1>{users.address}</h1>
                         <Button className="btn" >삭제하기</Button>
                     
                     </form>

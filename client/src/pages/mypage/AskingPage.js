@@ -16,12 +16,14 @@ const AskingPage = () => {
     setSelected(e.target.value);
     };
 
-    const Users=[{
-        title:'제목',
-        writer:'작성자',
-        day:'등록일',
-        divide:'분류',
-        content:'내용'}];
+    const [users,setUsers]=useState([
+    {   
+        title:'닉네임 변경은 어떻게 하나요?',
+        writer:'user01',
+        day:'2022-05-10',
+        content:'안녕하세요 BTS최애인 아미인데요 이거 설정에서 닉네임은 한번 정하면 못바꾸나요?? 여기서 어디를 들어가야 하는지 모르겠어요 ㅠㅠㅠ'
+    }
+    ])
 
     return(
         
@@ -37,16 +39,16 @@ const AskingPage = () => {
                             <td className="title"><input type="text"
                             name="title"
                             placeholder=""
-                            value={Users[0].title}
+                            value={users.title}
                             autoComplete="off"/></td>
                         </tr>
                         <tr>
                             <td>작성자</td>
-                            <td> {Users[0].writer} </td>
+                            <td> {users.writer} </td>
                         </tr>                           
                         <tr>
                             <td>등록일</td>
-                            <td>{Users[0].day}</td>
+                            <td>{users.day}</td>
                         </tr>
                         <tr>
                             <td>분류</td>
@@ -56,7 +58,8 @@ const AskingPage = () => {
                             <option value="1"> 일반</option>
                             <option value="2">교환</option>
                             <option value="3">계정</option>
-                            <option value="4">배송</option> 
+                             <option value="4">배송</option> 
+
                         </select>
                         </td>
                         </tr>
@@ -70,9 +73,9 @@ const AskingPage = () => {
 
                     <form className="f">
                         <input type="text"
-                            name="divide"
+                            name="content"
                             placeholder=""
-                            value={Users[0].divide}
+                            value={users.content}
                             autoComplete="off"/>
                     </form>
 

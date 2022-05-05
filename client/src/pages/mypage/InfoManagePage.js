@@ -7,12 +7,14 @@ import UserTemplate from '../../templates/UserTemplate';
 import {Link} from 'react-router-dom';
 
 const InfoManagePage = () => {
-    const Users=[{
-        id:'아이디',
-       name:'이름',
-   number:'전화번호',
-   nickname:'닉네임',
-   group:'최애그룹'}];
+    const [users,setUsers]=([
+     {
+        id:'user01',
+        name:'홍길동',
+        number:'01012345678',
+        nickname:'BTSFOREVER',
+        group:'BTS'}
+   ]);
    
 
 
@@ -29,7 +31,7 @@ const InfoManagePage = () => {
                                 아이디
                             </th>
                             <th>
-                                <p>{Users[0].id}</p>
+                                <p>{users.id}</p>
                             </th>
                         </tr>
                         <tr>
@@ -37,7 +39,7 @@ const InfoManagePage = () => {
                                 이름
                             </th>
                             <th>
-                                <p>{Users[0].name}</p>
+                                <p>{users.name}</p>
                             </th>
                         </tr>
                         <tr>
@@ -45,7 +47,7 @@ const InfoManagePage = () => {
                                 전화번호
                             </th>
                             <th>
-                                <p>{Users[0].number}</p>
+                                <p>{users.number}</p>
                             </th>
                         </tr>
                         <tr>
@@ -53,7 +55,7 @@ const InfoManagePage = () => {
                                 닉네임
                             </th>
                             <th>
-                                <p>{Users[0].nickname}</p>
+                                <p>{users.nickname}</p>
                             </th>
                         </tr>
                         <tr>
@@ -61,7 +63,7 @@ const InfoManagePage = () => {
                                 최애그룹
                             </th>
                             <th>
-                                <p>{Users[0].group}</p>
+                                <p>{users.group}</p>
                             </th>
                         </tr>
                     </Table>
