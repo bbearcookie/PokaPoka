@@ -28,9 +28,9 @@ const SuggestionList = ({ className, suggestions, perPage }) => {
   // 해당 문의사항이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.
   const isInCurrentPage = (suggestionId) => {
     const first = (currentPage - 1) * parseInt(perPage); // 현재 페이지에서 가장 처음으로 보여줄 문의사항의 id
-    const last = first + parseInt(perPage) - 1; // 현재 페이지에서 가장 마지막으로 보여줄 문의사항의 id
+    const last = first + parseInt(perPage); // 현재 페이지에서 가장 마지막으로 보여줄 문의사항의 id const last = first + parseInt(perPage) - 1
 
-    if (suggestionId >= first && suggestionId <= last) return true;
+    if (suggestionId > first && suggestionId <= last) return true; // if (suggestionId >= first && suggestionId <= last) return true;
     return false;
   }
 

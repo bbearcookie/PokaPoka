@@ -11,6 +11,7 @@ const NoticeList = ({ className, notices, perPage }) => {
   const numPages = Math.ceil(notices.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
   let count = 0;
+  
   // 공지사항 상세 보기시 작동
   const onClickDetailView = (e) => {
     const noticeId = e.currentTarget.getAttribute('notice_id');
@@ -20,9 +21,9 @@ const NoticeList = ({ className, notices, perPage }) => {
   // 해당 공지사항이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.
   const isInCurrentPage = (noticeId) => {
     const first = (currentPage - 1) * parseInt(perPage); // 현재 페이지에서 가장 처음으로 보여줄 문의사항의 id
-    const last = first + parseInt(perPage) - 1; // 현재 페이지에서 가장 마지막으로 보여줄 문의사항의 id
+    const last = first + parseInt(perPage); // 현재 페이지에서 가장 마지막으로 보여줄 문의사항의 id / 수정 전 const last = first + parseInt(perPage) - 1;
 
-    if (noticeId >= first && noticeId <= last) return true;
+    if (noticeId > first && noticeId <= last) return true;  //수정 전 if (noticeId >= first && noticeId <= last) return true;
     return false;
   }
 
