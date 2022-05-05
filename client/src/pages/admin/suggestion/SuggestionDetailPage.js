@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
+import { getFormattedDate } from '../../../utils/common';
 import Button from '../../../components/form/Button';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
@@ -15,19 +16,28 @@ import './SuggestionDetailPage.scss';
 // 문의 타입에 따라 화면에 보여줄 텍스트
 const category = {
   'normal': '일반',
-  'shippping': '배송',
+  'shipping': '배송',
   'voucher': '소유권',
   'contents': '새로운 데이터 추가',
   'trade': '거래'
+}
+
+// 문의 사항의 처리 상태에 따라 화면에 보여줄 텍스트
+const suggestionState = {
+  'waiting': '답변 대기중',
+  'commented': '답변 완료'
 }
 
 // 문의사항 상세 조회 페이지
 const SuggestionDetailPage = () => {
   const { suggestionId } = useParams(); // URL에 포함된 suggestionId Params 정보
   const [suggestion, setSuggestion] = useState({ // 문의사항 상세 정보
+    username: '', // 작성자
     title: '',
-    contnet: '',
-    category: ''
+    content: '',
+    category: '',
+    state: '', // 문의 사항 처리 상태
+    write_time: ''
   });
   const [showModal, setShowModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
@@ -41,9 +51,12 @@ const SuggestionDetailPage = () => {
       // 문의사항 정보 가져오기
       let res = await request.call(api.getSuggestionDetail, suggestionId);
       setSuggestion({
+        username: res.suggestion.username,
         title: res.suggestion.title,
         content: res.suggestion.content,
-        category: res.suggestion.category
+        category: res.suggestion.category,
+        state: res.suggestion.state,
+        write_time: res.suggestion.write_time
       });
     } catch (err) {
       console.error(err);
@@ -90,16 +103,28 @@ const SuggestionDetailPage = () => {
       <h1 className="title-label">문의사항 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="label_area">
+        <p className="label">작성자</p>
+        <p>{suggestion.username}</p>
+      </section>
+      <section className="label_area">
         <p className="label">제목</p>
         <p>{suggestion.title}</p>
       </section>
       <section className="label_area">
         <p className="label">내용</p>
-        <p>{suggestion.contnet}</p>
+        <p>{suggestion.content}</p>
       </section>
       <section className="label_area">
         <p className="label">문의 타입</p>
         <p>{category[suggestion.category]}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">처리 상태</p>
+        <p>{suggestionState[suggestion.state]}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">작성일</p>
+        <p>{getFormattedDate(suggestion.write_time)}</p>
       </section>
       <section className="submit_section">
         <Link to="/admin/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
