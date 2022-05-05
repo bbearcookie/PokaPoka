@@ -11,9 +11,9 @@ const MyPageSidebar = () => {
     <SidebarTemplate>
       <section className="title_section">마이페이지</section>
       <section className="subtitle_section">정보 관리</section>
-      <Link className="link" to="#">회원정보 관리</Link>
-      <Link className="link" to="#">배송정보 관리</Link>
-      <Link className="link" to="#">교환글 관리</Link>
+      <Link className="link" to="/mypage/infomanage">회원정보 관리</Link>
+      <Link className="link" to="/mypage/deliveryinfo">배송정보 관리</Link>
+      <Link className="link" to="/mypage/changeletterlist">교환글 관리</Link>
       <section className="subtitle_section">관리자에게 요청</section>
       <Link 
         className={classNames("link", {"active": URI.includes('/mypage/suggestion')})}
