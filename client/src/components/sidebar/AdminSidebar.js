@@ -13,9 +13,11 @@ const AdminSidebar = () => {
       <section className="subtitle_section">사용자 관리</section>
       <Link className="link" to="#">사용자</Link>
       <section className="subtitle_section">커뮤니티 관리</section>
-      <Link className={classNames("link", {"active": URI.includes('/admin/notice')})}
+      <Link 
+        className={classNames("link", {"active": URI.includes('/admin/notice')})}
         to="/admin/notice">공지사항</Link>
-      <Link className={classNames("link", {"active": URI.includes('/admin/suggestion')})}
+      <Link
+        className={classNames("link", {"active": URI.includes('/admin/suggestion')})}
         to="/admin/suggestion">문의사항</Link>
       <section className="subtitle_section">교환 관리</section>
       <Link className="link" to="#">포토카드 교환글</Link>

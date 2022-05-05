@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
+import { getFormattedDate } from '../../../utils/common';
 import Button from '../../../components/form/Button';
 import Textarea from '../../../components/form/Textarea';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
+import Badge from '../../../components/Badge';
 import Modal from '../../../components/modal/Modal';
 import ModalHeader from '../../../components/modal/ModalHeader';
 import ModalBody from '../../../components/modal/ModalBody';
@@ -23,8 +25,8 @@ const category = {
   'trade': '거래'
 }
 
-// 처리 상태에 따라 화면에 보여줄 텍스트
-const state = {
+// 문의 사항의 처리 상태에 따라 화면에 보여줄 텍스트
+const suggestionState = {
   'waiting': '답변 대기중',
   'commented': '답변 완료'
 }
@@ -33,11 +35,11 @@ const state = {
 const SuggestionDetailPage = () => {
   const { suggestionId } = useParams(); // URL에 포함된 suggestionId Params 정보
   const [suggestion, setSuggestion] = useState({ // 문의사항 상세 정보
+    username: '', // 작성자
     title: '',
-    suggestionContent: '',
+    content: '',
     category: '',
-    username: '',
-    state: '',
+    state: '', // 문의 사항 처리 상태
     write_time: ''
   });
   const [reply, setReply] = useState({  //답변 정보
@@ -64,10 +66,10 @@ const SuggestionDetailPage = () => {
       console.log(res);
       console.log("작성일: "+res.suggestion.write_time);
       setSuggestion({
-        title: res.suggestion.title,
-        suggestionContent: res.suggestion.content,
-        category: res.suggestion.category,
         username: res.suggestion.username,
+        title: res.suggestion.title,
+        content: res.suggestion.content,
+        category: res.suggestion.category,
         state: res.suggestion.state,
         write_time: res.suggestion.write_time
       });
@@ -97,7 +99,7 @@ const SuggestionDetailPage = () => {
     closeModal();
   }
 
-  // 작성 버튼 클릭시
+  // (답변) 작성 버튼 클릭시
   const onClickReply = async () => {
     try {
       const res = await request.call(api.postReply, reply, suggestionId);
@@ -132,16 +134,16 @@ const SuggestionDetailPage = () => {
       <h1 className="title-label">문의사항 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="label_area">
-        <p className="label">제목</p>
-        <p>{suggestion.title}</p>
-      </section>
-      <section className="label_area">
         <p className="label">작성자</p>
         <p>{suggestion.username}</p>
       </section>
       <section className="label_area">
-        <p className="label">작성일</p>
-        <p>{suggestion.write_time}</p>
+        <p className="label">제목</p>
+        <p>{suggestion.title}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">내용</p>
+        <p>{suggestion.content}</p>
       </section>
       <section className="label_area">
         <p className="label">문의 타입</p>
@@ -149,11 +151,11 @@ const SuggestionDetailPage = () => {
       </section>
       <section className="label_area">
         <p className="label">처리 상태</p>
-        <p>{state[suggestion.state]}</p>
+        <p>{suggestionState[suggestion.state]}</p>
       </section>
       <section className="label_area">
-        <p className="label">내용</p>
-        <p>{suggestion.suggestionContent}</p>
+        <p className="label">작성일</p>
+        <p>{getFormattedDate(suggestion.write_time)}</p>
       </section>
       <section className="submit_section">
         <Link to="/admin/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>

@@ -75,6 +75,9 @@ function App() {
         <Route path="/admin/photocard/writer" element={<PhotocardWriterPage />} />
         <Route path="/admin/photocard/writer/:photocardId" element={<PhotocardWriterPage />} />
         <Route path="/admin/photocard/detail/:photocardId" element={<PhotocardDetailPage />} />
+        <Route path="/admin/suggestion" element={<SuggestionListPage />}/>
+        <Route path="/admin/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
+        <Route path="/admin/suggestion/writer/" element={<SuggestionWriterPage />}/>
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />

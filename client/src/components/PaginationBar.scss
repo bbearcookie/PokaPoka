@@ -1,0 +1,27 @@
+.PaginationBar {
+  width: 60vh;
+  padding: 10px 20px;
+  border-radius: 50px;
+  margin: 15px 0;
+  background-color: #f758809c;
+
+  .page_button {
+    display: inline-block;
+    margin: 0 5px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    color: black;
+    background-color: white;
+    border: 1px solid #e7708d;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.05s;
+
+    &:hover, &.active {
+      color: white;
+      background-color: #ec1b5a;
+    }
+  }
+}

@@ -67,7 +67,7 @@ const SuggestionWriterPage = () => {
       try {
         const res = await request.call(api.postSuggestion, form);
         setMessage(res.message);
-        return navigate('/suggestion');
+        return navigate('/admin/suggestion');
       } catch (err) {
         setMessage(err.response.data.message);
       }

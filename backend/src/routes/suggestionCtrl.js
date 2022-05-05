@@ -51,12 +51,12 @@ router.get('/list', verifyLogin, async (req, res) => {
     const con = await db.getConnection();
     try {
       if(isAdmin(accessToken)){ // 관리자 일 경우
-        let sql = `SELECT suggestion_id, category, title, username, DATE_FORMAT(write_time, '%Y년 %m월 %d일') write_time FROM suggestion`;
+        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion`;
         let [suggestion_admin] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion_admin });
       }
       else if(user){  // 일반 사용자일 경우
-        let sql = `SELECT suggestion_id, category, title, username, DATE_FORMAT(write_time, '%Y년 %m월 %d일') write_time FROM suggestion WHERE username='${user.username}'`;
+        let sql = `SELECT suggestion_id, category, title, username, write_time FROM suggestion WHERE username='${user.username}'`;
         let [suggestion] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
@@ -92,7 +92,7 @@ router.get('/viewing/:suggestionId', verifyLogin, async (req, res) => {
       if (!isSuggestion) return res.status(404).json({ message: '조회하려는 문의사항이 DB에 없습니다.' });
 
       //문의 사항 상세
-      sql = `SELECT username, category, state, title, content, DATE_FORMAT(write_time, '%Y년 %m월 %d일') write_time FROM suggestion WHERE suggestion_id=${suggestionId}`;
+      sql = `SELECT username, category, state, title, content, write_time FROM suggestion WHERE suggestion_id=${suggestionId}`;
       let [[suggestion]] = await con.query(sql);
 
       //문의 사항 답변 내용
