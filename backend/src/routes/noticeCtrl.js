@@ -137,8 +137,13 @@ router.get('/detail/:noticeId', verifyLogin, async (req, res) => {
     // 공지사항 상세 조회
     const con = await db.getConnection();
     try {
-      let sql = `SELECT username, title, content, write_time FROM notice WHERE notice_id=${noticeId}`;
+      //공지사항 존재 유무 확인
+      let sql = `SELECT notice_id from notice WHERE notice_id=${noticeId}`;
       let [[notice]] = await con.query(sql);
+      if (!notice) return res.status(404).json({ message: '조회하려는 공지사항이 DB에 없습니다.' });
+
+      sql = `SELECT username, title, content, write_time FROM notice WHERE notice_id=${noticeId}`;
+      [[notice]] = await con.query(sql);
       return res.status(200).json({ message: '공지사항 상세 조회에 성공했습니다.', notice });
     } catch (err) {
       console.error(err);
