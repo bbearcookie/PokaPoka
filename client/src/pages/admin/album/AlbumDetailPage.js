@@ -30,7 +30,7 @@ const AlbumDetailPage = () => {
   const onLoad = async () => {
     try {
       // 앨범 정보 가져오기
-      const res = await request.call(api.getAdminAlbumDetail, albumId);
+      const res = await request.call(api.getAlbumDetail, albumId);
       setAlbum({
         name: res.album.name,
         image_name: res.album.image_name
@@ -49,7 +49,7 @@ const AlbumDetailPage = () => {
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
     try {
-      const res = await request.call(api.deleteAdminAlbum, albumId);
+      const res = await request.call(api.deleteAlbum, albumId);
       return navigate(`/admin/group/detail/${groupId}`);
     } catch (err) {
       setMessage(err.response.data.message);
@@ -64,7 +64,7 @@ const AlbumDetailPage = () => {
       {showModal ?
       <Modal className="remove_modal" onClose={closeModal}>
         <ModalHeader onClose={closeModal}>
-          <h1>멤버 삭제</h1>
+          <h1>앨범 삭제</h1>
         </ModalHeader>
         <ModalBody>
           <p>정말로 {album.name}을(를) 삭제하시겠습니까?</p>

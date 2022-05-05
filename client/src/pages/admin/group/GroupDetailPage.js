@@ -3,8 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import { BACKEND } from '../../../utils/api';
-import AlbumCard from '../../../components/card/AlbumCard';
-import MemberCard from '../../../components/card/MemberCard';
+import ImageCard from '../../../components/card/ImageCard';
 import Button from '../../../components/form/Button';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
@@ -43,7 +42,7 @@ const GroupDetailPage = () => {
     try {
 
       // 그룹 정보 가져오기
-      let res = await request.call(api.getAdminGroupDetail, groupId);
+      let res = await request.call(api.getGroupDetail, groupId);
       setGroup({
         name: res.group.name,
         description: res.group.description,
@@ -52,11 +51,11 @@ const GroupDetailPage = () => {
       });
 
       // 그룹에 속한 멤버 정보 가져오기
-      res = await request.call(api.getAdminMemberList, groupId);
+      res = await request.call(api.getMemberList, groupId);
       setMembers(res.members);
 
       // 그룹에 속한 앨범 정보 가져오기
-      res = await request.call(api.getAdminAlbumList, groupId);
+      res = await request.call(api.getAlbumList, groupId);
       setAlbums(res.albums);
     } catch (err) {
       console.error(err);
@@ -71,7 +70,7 @@ const GroupDetailPage = () => {
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
     try {
-      const res = await request.call(api.deleteAdminGroup, groupId);
+      const res = await request.call(api.deleteGroup, groupId);
       return navigate('/admin/group');
     } catch (err) {
       setMessage(err.response.data.message);
@@ -138,13 +137,13 @@ const GroupDetailPage = () => {
       <section className="card_section">
         {members ?
         members.map(member =>
-          <MemberCard
-            groupId={groupId}
-            key={member.member_id}
-            id={member.member_id}
-            name={member.name}
-            src={`${BACKEND}/image/member/${member.image_name}`}
-          />
+          <Link to={`/admin/member/detail/${member.member_id}?groupId=${groupId}`}>
+            <ImageCard
+              key={member.member_id}
+              name={member.name}
+              src={`${BACKEND}/image/member/${member.image_name}`}
+            />
+          </Link>
         ) : null}
       </section>
       <section className="title_area">
@@ -156,13 +155,13 @@ const GroupDetailPage = () => {
       <section className="card_section">
         {albums ?
         albums.map(album =>
-          <AlbumCard
-            groupId={groupId}
-            key={album.album_id}
-            id={album.album_id}
-            name={album.name}
-            src={`${BACKEND}/image/album/${album.image_name}`}
-          />
+          <Link to={`/admin/album/detail/${album.album_id}?groupId=${groupId}`}>
+            <ImageCard
+              key={album.album_id}
+              name={album.name}
+              src={`${BACKEND}/image/album/${album.image_name}`}
+            />
+          </Link>
         ) : null}
       </section>
     </AdminTemplate>

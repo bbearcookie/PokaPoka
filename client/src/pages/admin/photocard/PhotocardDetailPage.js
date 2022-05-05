@@ -40,7 +40,7 @@ const PhotocardDetailPage = () => {
   const onLoad = async () => {
     try {
       // 포토카드 정보 가져오기
-      const res = await request.call(api.getAdminPhotocardDetail, photocardId);
+      const res = await request.call(api.getPhotocardDetail, photocardId);
       setPhotocard({
         name: res.photocard.name,
         image_name: res.photocard.image_name
@@ -70,7 +70,7 @@ const PhotocardDetailPage = () => {
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
     try {
-      const res = await request.call(api.deleteAdminPhotocard, photocardId);
+      const res = await request.call(api.deletePhotocard, photocardId);
       setMessage(res.message);
       return navigate(`/admin/photocard`);
     } catch (err) {

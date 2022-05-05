@@ -35,104 +35,104 @@ export const postAuthSignup = (form) => axios.post(`${BACKEND}/api/auth/signup`,
 );
 
 // 아이돌 그룹 목록 데이터 조회 요청
-export const getAdminGroupList = () => axios.get(`${BACKEND}/api/admin/group/list`, options);
+export const getGroupList = () => axios.get(`${BACKEND}/api/group/list`, options);
 // 아이돌 그룹 상세 데이터 조회 요청
-export const getAdminGroupDetail = (groupId) => axios.get(`${BACKEND}/api/admin/group/detail/${groupId}`, options);
+export const getGroupDetail = (groupId) => axios.get(`${BACKEND}/api/group/detail/${groupId}`, options);
 // 아이돌 그룹 데이터 삭제 요청
-export const deleteAdminGroup = (groupId) => axios.delete(`${BACKEND}/api/admin/group/${groupId}`, options);
+export const deleteGroup = (groupId) => axios.delete(`${BACKEND}/api/group/${groupId}`, options);
 // 아이돌 그룹 데이터 작성 요청. 파일을 담아서 전송하는 방식인 multipart에서는 이처럼 데이터를 FormData에 담아서 보내줘야 함.
-export const postAdminGroup = (form) => {
+export const postGroup = (form) => {
   let formData = new FormData();
   formData.append('name', form.name);
   formData.append('description', form.description);
   formData.append('gender', form.gender);
   formData.append('image', form.image.file);
 
-  return axios.post(`${BACKEND}/api/admin/group`, formData,
+  return axios.post(`${BACKEND}/api/group`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 // 아이돌 그룹 데이터 수정 요청
-export const putAdminGroup = (form, groupId) => {
+export const putGroup = (form, groupId) => {
   let formData = new FormData();
   formData.append('name', form.name);
   formData.append('description', form.description);
   formData.append('gender', form.gender);
   formData.append('image', form.image.file);
 
-  return axios.put(`${BACKEND}/api/admin/group/${groupId}`, formData,
+  return axios.put(`${BACKEND}/api/group/${groupId}`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 
 // 아이돌 멤버 목록 데이터 조회 요청
-export const getAdminAllMemberList = () => axios.get(`${BACKEND}/api/admin/member/list`, options);
-export const getAdminMemberList = (groupId) => axios.get(`${BACKEND}/api/admin/member/list/${groupId}`, options);
+export const getAllMemberList = () => axios.get(`${BACKEND}/api/member/list`, options);
+export const getMemberList = (groupId) => axios.get(`${BACKEND}/api/member/list/${groupId}`, options);
 // 아이돌 멤버 상세 데이터 조회 요청
-export const getAdminMemberDetail = (memberId) => axios.get(`${BACKEND}/api/admin/member/detail/${memberId}`, options);
+export const getMemberDetail = (memberId) => axios.get(`${BACKEND}/api/member/detail/${memberId}`, options);
 // 아이돌 멤버 데이터 삭제 요청
-export const deleteAdminMember = (memberId) => axios.delete(`${BACKEND}/api/admin/member/${memberId}`, options);
+export const deleteMember = (memberId) => axios.delete(`${BACKEND}/api/member/${memberId}`, options);
 // 아이돌 멤버 데이터 작성 요청
-export const postAdminMember = (form, groupId) => {
+export const postMember = (form, groupId) => {
   let formData = new FormData();
   formData.append('groupId', groupId);
   formData.append('name', form.name);
   formData.append('image', form.image.file);
 
-  return axios.post(`${BACKEND}/api/admin/member`, formData,
+  return axios.post(`${BACKEND}/api/member`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 // 아이돌 멤버 데이터 수정 요청
-export const putAdminMember = (form, memberId) => {
+export const putMember = (form, memberId) => {
   let formData = new FormData();
   formData.append('name', form.name);
   formData.append('image', form.image.file);
 
-  return axios.put(`${BACKEND}/api/admin/member/${memberId}`, formData,
+  return axios.put(`${BACKEND}/api/member/${memberId}`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 
 // 앨범 목록 데이터 조회 요청
-export const getAdminAlbumList = (groupId) => axios.get(`${BACKEND}/api/admin/album/list/${groupId}`, options);
+export const getAlbumList = (groupId) => axios.get(`${BACKEND}/api/album/list/${groupId}`, options);
 // 앨범 상세 데이터 조회 요청
-export const getAdminAlbumDetail = (albumId) => axios.get(`${BACKEND}/api/admin/album/detail/${albumId}`, options);
+export const getAlbumDetail = (albumId) => axios.get(`${BACKEND}/api/album/detail/${albumId}`, options);
 // 앨범 데이터 삭제 요청
-export const deleteAdminAlbum = (albumId) => axios.delete(`${BACKEND}/api/admin/album/${albumId}`, options);
+export const deleteAlbum = (albumId) => axios.delete(`${BACKEND}/api/album/${albumId}`, options);
 // 앨범 데이터 등록 요청
-export const postAdminAlbum = (form, groupId) => {
+export const postAlbum = (form, groupId) => {
   let formData = new FormData();
   formData.append('groupId', groupId);
   formData.append('name', form.name);
   formData.append('image', form.image.file);
 
-  return axios.post(`${BACKEND}/api/admin/album`, formData,
+  return axios.post(`${BACKEND}/api/album`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 // 앨범 데이터 수정 요청
-export const putAdminAlbum = (form, albumId) => {
+export const putAlbum = (form, albumId) => {
   let formData = new FormData();
   formData.append('name', form.name);
   formData.append('image', form.image.file);
 
-  return axios.put(`${BACKEND}/api/admin/album/${albumId}`, formData,
+  return axios.put(`${BACKEND}/api/album/${albumId}`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 
 // 포토카드 데이터 목록 조회 요청
-export const getAdminPhotocardList = (groupId, memberId) => axios.get(
-  `${BACKEND}/api/admin/photocard/list?groupId=${groupId}&memberId=${memberId}`,
+export const getPhotocardList = (groupId, memberId) => axios.get(
+  `${BACKEND}/api/photocard/list?groupId=${groupId}&memberId=${memberId}`,
   options
 );
 // 포토카드 데이터 상세 조회 요청
-export const getAdminPhotocardDetail = (photocardId) => axios.get(`${BACKEND}/api/admin/photocard/detail/${photocardId}`, options);
+export const getPhotocardDetail = (photocardId) => axios.get(`${BACKEND}/api/photocard/detail/${photocardId}`, options);
 // 포토카드 데이터 삭제 요청
-export const deleteAdminPhotocard = (photocardId) => axios.delete(`${BACKEND}/api/admin/photocard/${photocardId}`, options);
+export const deletePhotocard = (photocardId) => axios.delete(`${BACKEND}/api/photocard/${photocardId}`, options);
 // 포토카드 데이터 등록 요청
-export const postAdminPhotocard = (form) => {
+export const postPhotocard = (form) => {
   let formData = new FormData();
   formData.append('groupId', form.group.id);
   formData.append('memberId', form.member.id);
@@ -140,12 +140,12 @@ export const postAdminPhotocard = (form) => {
   formData.append('name', form.name);
   formData.append('image', form.image.file);
 
-  return axios.post(`${BACKEND}/api/admin/photocard`, formData,
+  return axios.post(`${BACKEND}/api/photocard`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
 // 포토카드 데이터 수정 요청
-export const putAdminPhotocard = (form, photocardId) => {
+export const putPhotocard = (form, photocardId) => {
   let formData = new FormData();
   formData.append('groupId', form.group.id);
   formData.append('memberId', form.member.id);
@@ -153,7 +153,7 @@ export const putAdminPhotocard = (form, photocardId) => {
   formData.append('name', form.name);
   formData.append('image', form.image.file);
 
-  return axios.put(`${BACKEND}/api/admin/photocard/${photocardId}`, formData,
+  return axios.put(`${BACKEND}/api/photocard/${photocardId}`, formData,
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }

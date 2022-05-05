@@ -33,7 +33,7 @@ const AlbumWriterPage = () => {
     // 기존의 앨범 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
     if (albumId) {
       try {
-        const res = await request.call(api.getAdminAlbumDetail, albumId);
+        const res = await request.call(api.getAlbumDetail, albumId);
         setForm(produce(draft => {
           draft.name = res.album.name;
           draft.image.previewURL = `${BACKEND}/image/album/${res.album.image_name}`;
@@ -95,7 +95,7 @@ const AlbumWriterPage = () => {
     // 새로 작성하는 경우
     if (!albumId) {
       try {
-        const res = await request.call(api.postAdminAlbum, form, groupId);
+        const res = await request.call(api.postAlbum, form, groupId);
         setMessage(res.message);
         return navigate(`/admin/group/detail/${groupId}`);
       } catch (err) {
@@ -104,7 +104,7 @@ const AlbumWriterPage = () => {
     // 내용을 수정하는 경우
     } else {
       try {
-        const res = await request.call(api.putAdminAlbum, form, albumId);
+        const res = await request.call(api.putAlbum, form, albumId);
         setMessage(res.message);
         return navigate(`/admin/album/detail/${albumId}?groupId=${groupId}`);
       } catch (err) {

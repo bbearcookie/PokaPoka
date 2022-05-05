@@ -5,8 +5,12 @@
   color: white;
   background-color: rgb(47, 52, 65);
 
+  a {
+    text-decoration: none;
+  }
+
   .nav-logo {
-    margin-left: 15px;
+    margin-left: 43px;
     color: #ec1b5a;
     font-family: Inter, sans-serif;
     font-size: 2rem;
@@ -21,6 +25,7 @@
     font-size: 20px;
 
     .link_section {
+      padding-left: 12%;
       flex-grow: 1;
       display: flex;
       justify-content: center;
@@ -45,7 +50,9 @@
         margin-right: 15px;
       }
 
-      .link {
+      a {
+        display: flex;
+        align-items: center;
         color: white;
         text-decoration: none;
       }
