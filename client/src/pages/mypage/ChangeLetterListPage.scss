@@ -1,0 +1,66 @@
+.ChangeLetterListPage{
+  
+      .h{
+        font:bold;
+        margin: 20px 0;
+        font-size: 36px;
+        text-align: center;
+      }
+      .changeletterlist{
+        margin: 0 0 0 100px; padding:  0;
+        display: flex;
+        justify-content: center;
+      
+          form{
+       
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .r{
+              font-size: 16px;
+              background-color: rgb(206, 28, 73);
+              color: white;
+              margin:0 0 0 700px;
+              width: 20%; height: 50px;
+          
+            }
+                table{
+                  margin:30px;
+                  border-collapse: collapse;
+                  height: 300px;
+                  width: 800px;
+                  text-align: center;
+                  .title{
+                    background-color: #e5e5e5;
+                  }
+                  tr{
+                    border:1px solid grey;
+                  .b{
+                    background-color: #343434;
+                    text-align: center;
+                    color:white;
+                    border-radius:100%;
+                  }
+                  .y{
+                    background-color: rgb(238, 188, 27);
+                    color:white;
+                    border-radius:100%;
+                    
+                  }
+                  .bl{
+                    background-color: #70aefa;
+                    width: 50%; height: 30px;
+                          color: white;
+                  }
+                  .o{
+                    background-color: orange;
+                    width: 50%; height: 30px;
+                    color: white;
+                  }
+                }
+
+            }   
+      }
+    }
+}

@@ -34,7 +34,13 @@ import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import VoucherRequestListPage from './pages/mypage/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/VoucherRequestWriterPage';
-
+import ChangeLetterListPage from './pages/mypage/ChangeLetterListPage';
+import ChangeLetterWritePage from './pages/mypage/ChangeLetterWritePage';
+import ChangeLetterCorrectPage from './pages/mypage/ChangeLetterCorrectPage';
+import DeliveryInfoPage from './pages/mypage/DeliveryInfoPage';
+import InfoCorrectPage from './pages/mypage/InfoCorrectPage';
+import InfoManagePage from './pages/mypage/InfoManagePage';
+import AskingPage from './pages/mypage/AskingPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -96,6 +102,13 @@ function App() {
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>
+        <Route path="/mypage/changeletterlist" element={<ChangeLetterListPage />}/>
+        <Route path="/mypage/changeletterwrite" element={<ChangeLetterWritePage />}/>
+        <Route path="/mypage/changelettercorrect" element={<ChangeLetterCorrectPage />}/>
+        <Route path="/mypage/deliveryinfo" element={<DeliveryInfoPage />}/>
+        <Route path="/mypage/infocorrect" element={<InfoCorrectPage />}/>
+        <Route path="/mypage/infomanage" element={<InfoManagePage />}/>
+        <Route path="/mypage/asking" element={<AskingPage />}/>
       </Routes>
     </div>
   );
