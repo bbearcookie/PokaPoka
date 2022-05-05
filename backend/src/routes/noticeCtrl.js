@@ -113,7 +113,7 @@ router.delete('/admin/:noticeId', verifyLogin, async (req, res) => {
 router.get('/noticeList', async (req, res) => {
     const con = await db.getConnection();
     try {
-      let sql = `SELECT notice_id, username, title, write_time FROM notice`;
+      let sql = `SELECT notice_id, username, title, DATE_FORMAT(write_time, '%Y년 %m월 %d일') write_time FROM notice`;
       let [notice] = await con.query(sql);
       return res.status(200).json({ message: '공지사항 목록 조회에 성공했습니다.', notice });
     } catch (err) {
@@ -142,7 +142,7 @@ router.get('/detail/:noticeId', verifyLogin, async (req, res) => {
       let [[notice]] = await con.query(sql);
       if (!notice) return res.status(404).json({ message: '조회하려는 공지사항이 DB에 없습니다.' });
 
-      sql = `SELECT username, title, content, write_time FROM notice WHERE notice_id=${noticeId}`;
+      sql = `SELECT username, title, content, DATE_FORMAT(write_time, '%Y년 %m월 %d일') write_time FROM notice WHERE notice_id=${noticeId}`;
       [[notice]] = await con.query(sql);
       return res.status(200).json({ message: '공지사항 상세 조회에 성공했습니다.', notice });
     } catch (err) {

@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import Button from '../../../components/form/Button';
+import Textarea from '../../../components/form/Textarea';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
 import Modal from '../../../components/modal/Modal';
@@ -10,15 +11,22 @@ import ModalHeader from '../../../components/modal/ModalHeader';
 import ModalBody from '../../../components/modal/ModalBody';
 import ModalFooter from '../../../components/modal/ModalFooter';
 import AdminTemplate from '../../../templates/AdminTemplate';
+import produce from 'immer';
 import './SuggestionDetailPage.scss';
 
 // 문의 타입에 따라 화면에 보여줄 텍스트
 const category = {
   'normal': '일반',
-  'shippping': '배송',
+  'shipping': '배송',
   'voucher': '소유권',
   'contents': '새로운 데이터 추가',
   'trade': '거래'
+}
+
+// 처리 상태에 따라 화면에 보여줄 텍스트
+const state = {
+  'waiting': '답변 대기중',
+  'commented': '답변 완료'
 }
 
 // 문의사항 상세 조회 페이지
@@ -26,13 +34,26 @@ const SuggestionDetailPage = () => {
   const { suggestionId } = useParams(); // URL에 포함된 suggestionId Params 정보
   const [suggestion, setSuggestion] = useState({ // 문의사항 상세 정보
     title: '',
-    contnet: '',
-    category: ''
+    suggestionContent: '',
+    category: '',
+    username: '',
+    state: '',
+    write_time: ''
+  });
+  const [reply, setReply] = useState({  //답변 정보
+    reply: ''
   });
   const [showModal, setShowModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
+
+  // input 값 변경시
+  const onChangeInput = (e) => {
+    setReply(produce(draft => {
+      draft[e.target.name] = e.target.value;
+    }));
+  }
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -40,11 +61,21 @@ const SuggestionDetailPage = () => {
 
       // 문의사항 정보 가져오기
       let res = await request.call(api.getSuggestionDetail, suggestionId);
+      console.log(res);
+      console.log("작성일: "+res.suggestion.write_time);
       setSuggestion({
         title: res.suggestion.title,
-        content: res.suggestion.content,
-        category: res.suggestion.category
+        suggestionContent: res.suggestion.content,
+        category: res.suggestion.category,
+        username: res.suggestion.username,
+        state: res.suggestion.state,
+        write_time: res.suggestion.write_time
       });
+      if(res.reply){ // 답변이 있을 때 답변 정보 가져오기
+        setReply(produce(draft => {
+          draft.reply = res.reply.content;
+        }));
+      }
     } catch (err) {
       console.error(err);
     }
@@ -59,7 +90,18 @@ const SuggestionDetailPage = () => {
   const onClickRemove = async () => {
     try {
       const res = await request.call(api.deleteSuggestion, suggestionId);
-      return navigate('/suggestion');
+      return navigate('/admin/suggestion');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeModal();
+  }
+
+  // 작성 버튼 클릭시
+  const onClickReply = async () => {
+    try {
+      const res = await request.call(api.postReply, reply, suggestionId);
+      return navigate(0);
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -94,22 +136,38 @@ const SuggestionDetailPage = () => {
         <p>{suggestion.title}</p>
       </section>
       <section className="label_area">
-        <p className="label">내용</p>
-        <p>{suggestion.contnet}</p>
+        <p className="label">작성자</p>
+        <p>{suggestion.username}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">작성일</p>
+        <p>{suggestion.write_time}</p>
       </section>
       <section className="label_area">
         <p className="label">문의 타입</p>
         <p>{category[suggestion.category]}</p>
       </section>
+      <section className="label_area">
+        <p className="label">처리 상태</p>
+        <p>{state[suggestion.state]}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">내용</p>
+        <p>{suggestion.suggestionContent}</p>
+      </section>
       <section className="submit_section">
-        <Link to="/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
+        <Link to="/admin/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
         <Button className="remove_button" onClick={openModal}>삭제</Button>
       </section>
-      <section className="title_area">
-        <h1 className="title-label">답변</h1>
-        <Link to={`/suggestion/reply/writer?suggestionId=${suggestionId}`}>
-          <Button className="add_button">추가</Button>
-        </Link>
+      <section className="label_area">
+        <h1 className="label">답변</h1>
+        <Textarea
+          name="reply"
+          value={reply.reply}
+          placeholder="답변을 입력하세요"
+          onChange={onChangeInput}
+        />
+        <Button className="write_button" onClick={onClickReply}>작성</Button>
       </section>
     </AdminTemplate>
   );

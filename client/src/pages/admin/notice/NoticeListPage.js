@@ -6,18 +6,18 @@ import AdminTemplate from '../../../templates/AdminTemplate';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import Button from '../../../components/form/Button';
 import ImageCard from '../../../components/card/ImageCard';
-import './SuggestionListPage.scss';
+import './NoticeListPage.scss';
 
-// 문의사항 목록 조회 페이지
-const SuggestionListPage = () => {
+// 공지사항 목록 조회 페이지
+const NoticeListPage = () => {
   const request = useRequest();
-  const [suggestion, setSuggestion] = useState([]);
+  const [notice, setNotice] = useState([]);
 
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      const res = await request.call(api.getSuggestionList);
-      setSuggestion(res.suggestion_admin);
+      const res = await request.call(api.getNoticeList);
+      setNotice(res.notice);
     } catch (err) {
       console.error(err);
     }
@@ -28,22 +28,18 @@ const SuggestionListPage = () => {
     <AdminTemplate className="AdminGroupListPage">
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
-        <h1 className="title-label">문의사항 목록</h1>
-        <Link to="/suggestion/writer">
+        <h1 className="title-label">공지사항 목록</h1>
+        <Link to="/admin/notice/writer">
           <Button className="add_button">작성</Button>
         </Link>
       </section>
       <section className="card_section">
-        {suggestion ?
-        suggestion.map(suggestion =>
-          <Link to={`/suggestion/detail/${suggestion.suggestion_id}`}>
+        {notice ?
+        notice.map(notice =>
+          <Link to={`/admin/notice/detail/${notice.notice_id}`}>
             <ImageCard
-              key={suggestion.suggestion_id}
-              name={suggestion.title}
-              id={suggestion.suggestion_id}
-              category={suggestion.category}
-              username={suggestion.username}
-              write_tiem={suggestion.write_tiem}
+              key={notice.notice_id}
+              name={notice.title}
             />
           </Link>
         ) : null}
@@ -52,4 +48,4 @@ const SuggestionListPage = () => {
   );
 };
 
-export default SuggestionListPage;
+export default NoticeListPage;
