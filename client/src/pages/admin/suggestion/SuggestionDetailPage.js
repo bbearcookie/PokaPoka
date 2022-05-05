@@ -59,7 +59,7 @@ const SuggestionDetailPage = () => {
   const onClickRemove = async () => {
     try {
       const res = await request.call(api.deleteSuggestion, suggestionId);
-      return navigate('/suggestion');
+      return navigate('/admin/suggestion');
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -102,12 +102,12 @@ const SuggestionDetailPage = () => {
         <p>{category[suggestion.category]}</p>
       </section>
       <section className="submit_section">
-        <Link to="/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
+        <Link to="/admin/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
         <Button className="remove_button" onClick={openModal}>삭제</Button>
       </section>
       <section className="title_area">
         <h1 className="title-label">답변</h1>
-        <Link to={`/suggestion/reply/writer?suggestionId=${suggestionId}`}>
+        <Link to={`/admin/suggestion/reply/writer?suggestionId=${suggestionId}`}>
           <Button className="add_button">추가</Button>
         </Link>
       </section>

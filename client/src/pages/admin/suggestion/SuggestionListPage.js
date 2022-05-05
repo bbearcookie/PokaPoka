@@ -29,7 +29,7 @@ const SuggestionListPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">문의사항 목록</h1>
-        <Link to="/suggestion/writer">
+        <Link to="/admin/suggestion/writer">
           <Button className="add_button">작성</Button>
         </Link>
       </section>
