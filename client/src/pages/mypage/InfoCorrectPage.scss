@@ -1,0 +1,46 @@
+.InfoCorrectPage{
+  
+      .h{
+        margin: 20px 200px;
+        font:bold;
+        margin: 20px 0;
+      font-size: 36px;
+      text-align: center;
+      }
+     .infocorrect_sec{
+        margin: 0px 100px; padding: 40px 0;
+        display: flex;
+        justify-content: center;
+         form{
+            width: 500px;
+            display: flex;
+           flex-direction: column;
+           align-items: center;
+           table{
+            margin:20px;
+            border-collapse: collapse;
+            height: 300px;
+            width: 750px;
+             
+            input{
+              width: 90%; height: 40px;
+            }
+        
+
+        }
+        .btn {
+            margin:20px 0px 40px 640px;
+            width: 20%; height: 50px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            background-color: rgb(206, 28, 73);
+            color: white;
+        
+            &:hover {
+              background-color: rgb(163, 33, 66);
+            }
+          }
+         }
+
+     }
+}
