@@ -6,7 +6,7 @@ import { BACKEND } from '../../../utils/api';
 import AdminTemplate from '../../../templates/AdminTemplate';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import Button from '../../../components/form/Button';
-import GroupCard from '../../../components/card/GroupCard';
+import ImageCard from '../../../components/card/ImageCard';
 import './GroupListPage.scss';
 
 // 그룹 목록 조회 페이지
@@ -17,7 +17,7 @@ const GroupListPage = () => {
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      const res = await request.call(api.getAdminGroupList);
+      const res = await request.call(api.getGroupList);
       setGroups(res.groups);
     } catch (err) {
       console.error(err);
@@ -37,12 +37,13 @@ const GroupListPage = () => {
       <section className="card_section">
         {groups ?
         groups.map(group =>
-          <GroupCard
-            key={group.group_id}
-            id={group.group_id}
-            name={group.name}
-            src={`${BACKEND}/image/group/${group.image_name}`}
-          />
+          <Link to={`/admin/group/detail/${group.group_id}`}>
+            <ImageCard
+              key={group.group_id}
+              name={group.name}
+              src={`${BACKEND}/image/group/${group.image_name}`}
+            />
+          </Link>
         ) : null}
       </section>
     </AdminTemplate>

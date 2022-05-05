@@ -33,7 +33,7 @@ const MemberWriterPage = () => {
     // 기존의 멤버 내용을 수정하려는 경우 기본 폼의 내용을 서버로부터 가져옴
     if (memberId) {
       try {
-        const res = await request.call(api.getAdminMemberDetail, memberId);
+        const res = await request.call(api.getMemberDetail, memberId);
         setForm(produce(draft => {
           draft.name = res.member.name;
           draft.image.previewURL = `${BACKEND}/image/member/${res.member.image_name}`;
@@ -94,7 +94,7 @@ const MemberWriterPage = () => {
     // 새로 작성하는 경우
     if (!memberId) {
       try {
-        const res = await request.call(api.postAdminMember, form, groupId);
+        const res = await request.call(api.postMember, form, groupId);
         setMessage(res.message);
         return navigate(`/admin/group/detail/${groupId}`);
       } catch (err) {
@@ -103,7 +103,7 @@ const MemberWriterPage = () => {
     // 내용을 수정하는 경우
     } else {
       try {
-        const res = await request.call(api.putAdminMember, form, memberId);
+        const res = await request.call(api.putMember, form, memberId);
         setMessage(res.message);
         return navigate(`/admin/member/detail/${memberId}?groupId=${groupId}`);
       } catch (err) {

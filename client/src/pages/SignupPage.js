@@ -40,7 +40,7 @@ const SignupPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getAdminGroupList);
+      const res = await request.call(api.getGroupList);
       setGroups(res.groups);
     } catch (err) {
       setMessage(err.response.data.message);

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelect, setGroups, setMembers, setPhotocards } from '../../../modules/photocardListPage';
-import { Link } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import { BACKEND } from '../../../utils/api';
-import PhotocardCard from '../../../components/card/PhotocardCard';
+import ImageCard from '../../../components/card/ImageCard';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
 import Button from '../../../components/form/Button';
@@ -28,7 +28,7 @@ const PhotocardListPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getAdminGroupList);
+      const res = await request.call(api.getGroupList);
       dispatch(setGroups(res.groups));
     } catch (err) {
       setMessage(err.response.data.message);
@@ -39,7 +39,7 @@ const PhotocardListPage = () => {
   // 화면에 보여줄 포토카드 목록 업데이트
   const onUpdatePhotocards = async (e) => {
     try {
-      const res = await request.call(api.getAdminPhotocardList, select.groupId, select.memberId);
+      const res = await request.call(api.getPhotocardList, select.groupId, select.memberId);
       dispatch(setPhotocards(res.photocards));
     } catch (err) {
       setMessage(err.response.data.message);
@@ -55,14 +55,14 @@ const PhotocardListPage = () => {
       dispatch(setMembers([]));
     } else if (e.target.value === 'all') {
       try {
-        const res = await request.call(api.getAdminAllMemberList);
+        const res = await request.call(api.getAllMemberList);
         dispatch(setMembers(res.members));
       } catch (err) {
         setMessage(err.response.data.message);
       }
     } else {
       try {
-        const res = await request.call(api.getAdminMemberList, e.target.value);
+        const res = await request.call(api.getMemberList, e.target.value);
         dispatch(setMembers(res.members));
       } catch (err) {
         setMessage(err.response.data.message);
@@ -117,12 +117,13 @@ const PhotocardListPage = () => {
       <section className="card_section">
         {photocards ?
           photocards.map(photocard =>
-            <PhotocardCard
-              key={photocard.photocard_id}
-              id={photocard.photocard_id}
-              name={photocard.name}
-              src={`${BACKEND}/image/photocard/${photocard.image_name}`}
-            />
+            <Link to={`/admin/photocard/detail/${photocard.photocard_id}`}>
+              <ImageCard
+                key={photocard.photocard_id}
+                name={photocard.name}
+                src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+              />
+            </Link>
           ) : null}
       </section>
 

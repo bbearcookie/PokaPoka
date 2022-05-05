@@ -30,7 +30,7 @@ const MemberDetailPage = () => {
   const onLoad = async () => {
     try {
       // 멤버 정보 가져오기
-      const res = await request.call(api.getAdminMemberDetail, memberId);
+      const res = await request.call(api.getMemberDetail, memberId);
       setMember({
         name: res.member.name,
         image_name: res.member.image_name
@@ -48,7 +48,7 @@ const MemberDetailPage = () => {
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
     try {
-      const res = await request.call(api.deleteAdminMember, memberId);
+      const res = await request.call(api.deleteMember, memberId);
       return navigate(`/admin/group/detail/${groupId}`);
     } catch (err) {
       setMessage(err.response.data.message);

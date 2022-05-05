@@ -178,6 +178,7 @@ const verifyLogin = async (req, res, next) => {
         token: token.accessToken,
         payload: token.payload
       };
+      req.user = token.payload; // 사용자 정보를 req.user에 저장
       res.cookie('accessToken', token.accessToken, { httpOnly: true });
     // 검증 실패하면 쿠키에서 토큰 삭제
     } else {
