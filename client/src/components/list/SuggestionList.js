@@ -5,6 +5,7 @@ import { getFormattedDate } from '../../utils/common';
 import Table from '../table/Table';
 import Badge from '../Badge';
 import PaginationBar from '../PaginationBar';
+import { STORAGE_KEY_NAME } from '../../contexts/Auth';
 import './SuggestionList.scss';
 
 const SuggestionList = ({ className, suggestions, perPage }) => {
@@ -15,7 +16,12 @@ const SuggestionList = ({ className, suggestions, perPage }) => {
   // 문의사항 상세 보기시 작동
   const onClickDetailView = (e) => {
     const suggestionId = e.currentTarget.getAttribute('suggestion_id');
-    return navigate(`/admin/suggestion/detail/${suggestionId}`);
+
+    //사용자 역할을 확인하여 관리자일 경우 관리자 페이지로 일반 사용자일 경우 사용자페이지로 이동
+    let user = sessionStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
+    user = JSON.parse(user);
+    if (user.role == 'admin') return navigate(`/admin/suggestion/detail/${suggestionId}`);
+    else return navigate(`/mypage/suggestion/detail/${suggestionId}`);
   }
   
   // 해당 문의사항이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.

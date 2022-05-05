@@ -28,12 +28,15 @@ import CertificationPage from './pages/find_password/CertificationPage';
 import UserMainPage from './pages/MainPage';
 import SuggestionListPage from './pages/admin/suggestion/SuggestionListPage';
 import SuggestionDetailPage from './pages/admin/suggestion/SuggestionDetailPage';
-import SuggestionWriterPage from './pages/admin/suggestion/SuggestionWriterPage';
 import NoticeListPage from './pages/admin/notice/NoticeListPage';
 import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import VoucherRequestListPage from './pages/mypage/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/VoucherRequestWriterPage';
+import SuggestionRequestListPage from './pages/mypage/SuggestionRequestList';
+import SuggestionWriterPage from './pages/mypage/SuggestionWriterPage';
+import SuggestionRequestDetailPage from './pages/mypage/SuggestionRequestDetailPage';
+
 
 
 function App() {
@@ -77,7 +80,6 @@ function App() {
         <Route path="/admin/photocard/detail/:photocardId" element={<PhotocardDetailPage />} />
         <Route path="/admin/suggestion" element={<SuggestionListPage />}/>
         <Route path="/admin/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
-        <Route path="/admin/suggestion/writer/" element={<SuggestionWriterPage />}/>
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />
@@ -88,7 +90,6 @@ function App() {
         <Route path="/finding/sms" element={<CertificationPage />}/>
         <Route path="/admin/suggestion" element={<SuggestionListPage />}/>
         <Route path="/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
-        <Route path="/suggestion/writer/" element={<SuggestionWriterPage />}/>
         <Route path="/admin/notice" element={<NoticeListPage />}/>
         <Route path="/admin/notice/detail/:noticeId" element={<NoticeDetailPage />}/>
         <Route path="/admin/notice/writer" element={<NoticeWriterPage />}/>
@@ -96,6 +97,9 @@ function App() {
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>
+        <Route path="/mypage/suggestion" element={<SuggestionRequestListPage />}/>
+        <Route path="/mypage/suggestion/writer" element={<SuggestionWriterPage />}/>
+        <Route path="/mypage/suggestion/detail/:suggestionId" element={<SuggestionRequestDetailPage />}/>
       </Routes>
     </div>
   );

@@ -56,7 +56,7 @@ router.get('/list', verifyLogin, async (req, res) => {
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion_admin });
       }
       else if(user){  // 일반 사용자일 경우
-        let sql = `SELECT suggestion_id, category, title, username, write_time FROM suggestion WHERE username='${user.username}'`;
+        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion WHERE username='${user.username}'`;
         let [suggestion] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
