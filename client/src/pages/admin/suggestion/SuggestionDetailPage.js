@@ -6,6 +6,7 @@ import { getFormattedDate } from '../../../utils/common';
 import Button from '../../../components/form/Button';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
+import Badge from '../../../components/Badge';
 import Modal from '../../../components/modal/Modal';
 import ModalHeader from '../../../components/modal/ModalHeader';
 import ModalBody from '../../../components/modal/ModalBody';
