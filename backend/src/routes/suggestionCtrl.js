@@ -52,11 +52,11 @@ router.get('/list', verifyLogin, async (req, res) => {
     try {
       if(isAdmin(accessToken)){ // 관리자 일 경우
         let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion`;
-        let [suggestion_admin] = await con.query(sql);
-        return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion_admin });
+        let [suggestion] = await con.query(sql);
+        return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
       else if(user){  // 일반 사용자일 경우
-        let sql = `SELECT suggestion_id, category, title, username, write_time FROM suggestion WHERE username='${user.username}'`;
+        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion WHERE username='${user.username}'`;
         let [suggestion] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
@@ -130,10 +130,6 @@ router.delete('/:suggestionId', verifyLogin, async (req, res) => {
       let [[suggestion]] = await con.query(sql);
       if (!suggestion) return res.status(404).json({ message: '삭제하려는 문의사항이 DB에 없습니다.' });
 
-      // DB에서 그룹 삭제
-      sql = `DELETE FROM suggestion WHERE suggestion_id=${suggestionId}`;
-      await con.execute(sql);
-
       //답변이 있는지 확인해서 있으면 삭제
       sql = `SELECT suggestion_id from reply WHERE suggestion_id=${suggestionId}`;
       let [[reply]] = await con.query(sql);
@@ -141,6 +137,10 @@ router.delete('/:suggestionId', verifyLogin, async (req, res) => {
         sql = `DELETE FROM reply WHERE suggestion_id=${suggestionId}`;
         await con.query(sql);
       }
+
+      // DB에서 문의사항 삭제
+      sql = `DELETE FROM suggestion WHERE suggestion_id=${suggestionId}`;
+      await con.execute(sql);
   
       return res.status(200).json({ message: '문의사항을 삭제했습니다.' });
     } catch (err) {

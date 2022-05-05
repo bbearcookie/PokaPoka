@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import produce from 'immer';
-import useRequest from '../../../utils/useRequest';
-import * as api from '../../../utils/api';
-import AdminTemplate from '../../../templates/AdminTemplate';
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import MessageLabel from '../../../components/MessageLabel';
-import Input from '../../../components/form/Input';
-import Textarea from '../../../components/form/Textarea';
-import Button from '../../../components/form/Button';
+import useRequest from '../../utils/useRequest';
+import * as api from '../../utils/api';
+import UserTemplate from '../../templates/UserTemplate';
+import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import MessageLabel from '../../components/MessageLabel';
+import Input from '../../components/form/Input';
+import Textarea from '../../components/form/Textarea';
+import Button from '../../components/form/Button';
 import './SuggestionWriterPage.scss';
 
 // 문의사항 작성 페이지
@@ -67,7 +68,7 @@ const SuggestionWriterPage = () => {
       try {
         const res = await request.call(api.postSuggestion, form);
         setMessage(res.message);
-        return navigate('/admin/suggestion');
+        return navigate('/mypage/suggestion');
       } catch (err) {
         setMessage(err.response.data.message);
       }
@@ -75,7 +76,7 @@ const SuggestionWriterPage = () => {
   }
 
   return (
-    <AdminTemplate className="AdminGroupWriterPage">
+    <UserTemplate className="SuggestionWriterPage" sidebar={<MyPageSidebar />}>
       {request.loading ? <LoadingSpinner /> : null}
       <form onSubmit={onSubmit}>
         {suggestionId ?
@@ -117,7 +118,7 @@ const SuggestionWriterPage = () => {
           <Button className="submit_button" type="submit">작성</Button>
         </section>
       </form>
-    </AdminTemplate>
+    </UserTemplate>
   );
 };
 

@@ -37,7 +37,7 @@ const SuggestionListPage = () => {
   const onLoad = async (e) => {
     try {
       const res = await request.call(api.getSuggestionList);
-      setSuggestion(res.suggestion_admin);
+      setSuggestion(res.suggestion);
       // setSuggestion(createDummyList()); // 페이지네이션 기능 테스트를 위한 더미 데이터
     } catch (err) {
       console.error(err);
@@ -50,9 +50,6 @@ const SuggestionListPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">문의사항 목록</h1>
-        <Link to="/admin/suggestion/writer">
-          <Button className="add_button">작성</Button>
-        </Link>
       </section>
 
       <SuggestionList suggestions={suggestion} perPage="10" />
