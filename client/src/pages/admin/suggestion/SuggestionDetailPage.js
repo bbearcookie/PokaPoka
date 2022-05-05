@@ -4,6 +4,7 @@ import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import { getFormattedDate } from '../../../utils/common';
 import Button from '../../../components/form/Button';
+import Textarea from '../../../components/form/Textarea';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
 import Badge from '../../../components/Badge';
@@ -12,6 +13,7 @@ import ModalHeader from '../../../components/modal/ModalHeader';
 import ModalBody from '../../../components/modal/ModalBody';
 import ModalFooter from '../../../components/modal/ModalFooter';
 import AdminTemplate from '../../../templates/AdminTemplate';
+import produce from 'immer';
 import './SuggestionDetailPage.scss';
 
 // 문의 타입에 따라 화면에 보여줄 텍스트
@@ -40,10 +42,20 @@ const SuggestionDetailPage = () => {
     state: '', // 문의 사항 처리 상태
     write_time: ''
   });
+  const [reply, setReply] = useState({  //답변 정보
+    reply: ''
+  });
   const [showModal, setShowModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
+
+  // input 값 변경시
+  const onChangeInput = (e) => {
+    setReply(produce(draft => {
+      draft[e.target.name] = e.target.value;
+    }));
+  }
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -51,6 +63,8 @@ const SuggestionDetailPage = () => {
 
       // 문의사항 정보 가져오기
       let res = await request.call(api.getSuggestionDetail, suggestionId);
+      console.log(res);
+      console.log("작성일: "+res.suggestion.write_time);
       setSuggestion({
         username: res.suggestion.username,
         title: res.suggestion.title,
@@ -59,6 +73,11 @@ const SuggestionDetailPage = () => {
         state: res.suggestion.state,
         write_time: res.suggestion.write_time
       });
+      if(res.reply){ // 답변이 있을 때 답변 정보 가져오기
+        setReply(produce(draft => {
+          draft.reply = res.reply.content;
+        }));
+      }
     } catch (err) {
       console.error(err);
     }
@@ -74,6 +93,17 @@ const SuggestionDetailPage = () => {
     try {
       const res = await request.call(api.deleteSuggestion, suggestionId);
       return navigate('/admin/suggestion');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeModal();
+  }
+
+  // (답변) 작성 버튼 클릭시
+  const onClickReply = async () => {
+    try {
+      const res = await request.call(api.postReply, reply, suggestionId);
+      return navigate(0);
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -131,11 +161,15 @@ const SuggestionDetailPage = () => {
         <Link to="/admin/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
         <Button className="remove_button" onClick={openModal}>삭제</Button>
       </section>
-      <section className="title_area">
-        <h1 className="title-label">답변</h1>
-        <Link to={`/admin/suggestion/reply/writer?suggestionId=${suggestionId}`}>
-          <Button className="add_button">추가</Button>
-        </Link>
+      <section className="label_area">
+        <h1 className="label">답변</h1>
+        <Textarea
+          name="reply"
+          value={reply.reply}
+          placeholder="답변을 입력하세요"
+          onChange={onChangeInput}
+        />
+        <Button className="write_button" onClick={onClickReply}>작성</Button>
       </section>
     </AdminTemplate>
   );

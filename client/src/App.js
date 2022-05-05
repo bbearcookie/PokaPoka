@@ -29,6 +29,9 @@ import UserMainPage from './pages/MainPage';
 import SuggestionListPage from './pages/admin/suggestion/SuggestionListPage';
 import SuggestionDetailPage from './pages/admin/suggestion/SuggestionDetailPage';
 import SuggestionWriterPage from './pages/admin/suggestion/SuggestionWriterPage';
+import NoticeListPage from './pages/admin/notice/NoticeListPage';
+import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
+import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import VoucherRequestListPage from './pages/mypage/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/VoucherRequestWriterPage';
 
@@ -83,6 +86,13 @@ function App() {
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
         <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
         <Route path="/finding/sms" element={<CertificationPage />}/>
+        <Route path="/admin/suggestion" element={<SuggestionListPage />}/>
+        <Route path="/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
+        <Route path="/suggestion/writer/" element={<SuggestionWriterPage />}/>
+        <Route path="/admin/notice" element={<NoticeListPage />}/>
+        <Route path="/admin/notice/detail/:noticeId" element={<NoticeDetailPage />}/>
+        <Route path="/admin/notice/writer" element={<NoticeWriterPage />}/>
+        <Route path="/admin/notice/writer/:noticeId" element={<NoticeWriterPage />}/>
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>

@@ -99,7 +99,7 @@ router.get('/viewing/:suggestionId', verifyLogin, async (req, res) => {
       sql = `SELECT content FROM reply WHERE suggestion_id=${suggestionId}`;
       let [[reply]] = await con.query(sql);
 
-      if(!reply){ // 답변이 아직 등록되지 않은 경우 문의사항 만 반환
+      if(!reply){ // 답변이 아직 등록되지 않은 경우 문의사항만 반환
         return res.status(200).json({ message: '문의사항 상세 조회에 성공했습니다.', suggestion });
       }
       else{ // 답변이 등록 된 경우 문의사항과 답변을 모두 반환
@@ -119,8 +119,6 @@ router.get('/viewing/:suggestionId', verifyLogin, async (req, res) => {
 router.delete('/:suggestionId', verifyLogin, async (req, res) => {
     const { suggestionId } = req.params;
     const { accessToken } = req;
-
-    console.log(suggestionId);
   
     // 관리자 권한 확인
     if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
@@ -176,11 +174,21 @@ router.post('/reply/:suggestionId', verifyLogin, async (req, res) => {
       //데이터 유효성 검사
       if (!content) return res.status(400).json({ message: '내용을 입력해주세요.' });
       
-      //문의사항 답변 DB에 등록
-      sql = `INSERT into reply(suggestion_id, username, content)
-      values(?, ?, ?)`;
-      await con.execute(sql, [suggestionId ,user.username, content]);
+      //문의사항 답변 존재 여부
+      sql = `SELECT suggestion_id from reply WHERE suggestion_id=${suggestionId}`;
+      [[reply]] = await con.query(sql);
 
+      if(!reply){
+        //문의사항 답변 DB에 등록
+        sql = `INSERT into reply(suggestion_id, username, content)
+        values(?, ?, ?)`;
+        await con.execute(sql, [suggestionId ,user.username, content]);
+      }
+      else{
+        //문의사항 답변 이미 있는 경우 수정
+        sql = `UPDATE reply SET content='${content}', update_time=NOW() WHERE suggestion_id=${suggestionId}`;
+        await con.execute(sql);
+      }
       // DB에서 처리 상태 UPDATE
       sql = `UPDATE suggestion SET state='commented', update_time=NOW() WHERE suggestion_id=${suggestionId}`;
       await con.execute(sql);

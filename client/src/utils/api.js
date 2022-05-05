@@ -208,6 +208,36 @@ export const postSuggestion = (form) => axios.post(`${BACKEND}/api/suggestion/ne
   },
   options
 );
+// 문의사항 답변 데이터 작성 요청
+export const postReply = (reply, suggestionId) => axios.post(`${BACKEND}/api/suggestion/reply/${suggestionId}`,
+  {
+    content: reply.reply
+  },
+  options
+);
+
+// 공지사항 목록 데이터 조회 요청
+export const getNoticeList = () => axios.get(`${BACKEND}/api/notice/noticeList`, options);
+// 공지사항 상세 데이터 조회 요청
+export const getNoticeDetail = (noticeId) => axios.get(`${BACKEND}/api/notice/detail/${noticeId}`, options);
+// 공지사항 삭제 요헝
+export const deleteNotice = (noticeId) => axios.delete(`${BACKEND}/api/notice/admin/${noticeId}`, options);
+// 공지사항 데이터 작성 요청
+export const postNotice = (form) => axios.post(`${BACKEND}/api/notice/admin/new`,
+  {
+    title: form.title,
+    content: form.content
+  },
+  options
+);
+// 공지사항 데이터 수정 요청
+export const putNotice = (form, noticeId) => axios.put(`${BACKEND}/api/notice/admin/${noticeId}`,
+{
+  title: form.title,
+  content: form.content
+},
+options
+);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
