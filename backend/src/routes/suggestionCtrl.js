@@ -51,7 +51,7 @@ router.get('/list', verifyLogin, async (req, res) => {
     const con = await db.getConnection();
     try {
       if(isAdmin(accessToken)){ // 관리자 일 경우
-        let sql = `SELECT suggestion_id, category, title, username, write_time FROM suggestion`;
+        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion`;
         let [suggestion_admin] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion_admin });
       }

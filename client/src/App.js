@@ -72,6 +72,9 @@ function App() {
         <Route path="/admin/photocard/writer" element={<PhotocardWriterPage />} />
         <Route path="/admin/photocard/writer/:photocardId" element={<PhotocardWriterPage />} />
         <Route path="/admin/photocard/detail/:photocardId" element={<PhotocardDetailPage />} />
+        <Route path="/admin/suggestion" element={<SuggestionListPage />}/>
+        <Route path="/admin/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
+        <Route path="/admin/suggestion/writer/" element={<SuggestionWriterPage />}/>
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />
@@ -80,9 +83,6 @@ function App() {
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
         <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
         <Route path="/finding/sms" element={<CertificationPage />}/>
-        <Route path="/suggestion" element={<SuggestionListPage />}/>
-        <Route path="/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
-        <Route path="/suggestion/writer/" element={<SuggestionWriterPage />}/>
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>

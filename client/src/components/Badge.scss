@@ -1,0 +1,31 @@
+.Badge {
+  min-width: 100px;
+  display: inline-block;
+  padding: 3px;
+  border-radius: 100px;
+
+  &[type="normal"], &[type="waiting"] {
+    background-color: gray;
+    color: white;
+  }
+
+  &[type="shipping"] {
+    background-color: rgb(91, 251, 198);
+    color: black;
+  }
+
+  &[type="voucher"] {
+    background-color: rgb(255, 255, 0);
+    color: black;
+  }
+
+  &[type="contents"], &[type="commented"] {
+    background-color: rgb(206, 28, 73);
+    color: white;
+  }
+
+  &[type="trade"] {
+    background-color: skyblue;
+    color: black;
+  }
+}

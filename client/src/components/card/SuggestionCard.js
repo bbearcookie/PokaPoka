@@ -5,7 +5,7 @@ import './SuggestionCard.scss';
 
 const SuggestionCard = ({ className, id, title }) => {
   return (
-    <Link className={classNames("SuggestionCard", className)} to={`/suggestion/detail/${id}`}>
+    <Link className={classNames("SuggestionCard", className)} to={`/admin/suggestion/detail/${id}`}>
       <img 
         width="100%"
         height="200px"
