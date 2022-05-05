@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import AdminTemplate from '../../../templates/AdminTemplate';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import Button from '../../../components/form/Button';
-import ImageCard from '../../../components/card/ImageCard';
 import './NoticeListPage.scss';
+import NoticeList from '../../../components/list/NoticeList';
 
 // 공지사항 목록 조회 페이지
 const NoticeListPage = () => {
   const request = useRequest();
   const [notice, setNotice] = useState([]);
+  const navigate = useNavigate();
 
   // 화면 로드시 작동
   const onLoad = async (e) => {
@@ -25,7 +26,7 @@ const NoticeListPage = () => {
   useEffect(() => { onLoad(); }, []);
 
   return (
-    <AdminTemplate className="AdminGroupListPage">
+    <AdminTemplate className="NoticeListPage">
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">공지사항 목록</h1>
@@ -33,17 +34,9 @@ const NoticeListPage = () => {
           <Button className="add_button">작성</Button>
         </Link>
       </section>
-      <section className="card_section">
-        {notice ?
-        notice.map(notice =>
-          <Link to={`/admin/notice/detail/${notice.notice_id}`}>
-            <ImageCard
-              key={notice.notice_id}
-              name={notice.title}
-            />
-          </Link>
-        ) : null}
-      </section>
+
+      <NoticeList notices={notice} perPage="10" />
+
     </AdminTemplate>
   );
 };

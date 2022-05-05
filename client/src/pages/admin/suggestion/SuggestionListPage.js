@@ -5,11 +5,7 @@ import * as api from '../../../utils/api';
 import SuggestionList from '../../../components/list/SuggestionList';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import Button from '../../../components/form/Button';
-<<<<<<< HEAD
-import ImageCard from '../../../components/card/ImageCard';
-=======
 import AdminTemplate from '../../../templates/AdminTemplate';
->>>>>>> fe080ebad8edfc6a8d297d184fdfad908ff9b743
 import './SuggestionListPage.scss';
 
 // 테스트용 더미 데이터 생성 (테스트용 함수임)
@@ -58,27 +54,9 @@ const SuggestionListPage = () => {
           <Button className="add_button">작성</Button>
         </Link>
       </section>
-<<<<<<< HEAD
-      <section className="card_section">
-        {suggestion ?
-        suggestion.map(suggestion =>
-          <Link to={`/suggestion/detail/${suggestion.suggestion_id}`}>
-            <ImageCard
-              key={suggestion.suggestion_id}
-              name={suggestion.title}
-              id={suggestion.suggestion_id}
-              category={suggestion.category}
-              username={suggestion.username}
-              write_tiem={suggestion.write_tiem}
-            />
-          </Link>
-        ) : null}
-      </section>
-=======
 
       <SuggestionList suggestions={suggestion} perPage="10" />
 
->>>>>>> fe080ebad8edfc6a8d297d184fdfad908ff9b743
     </AdminTemplate>
   );
 };

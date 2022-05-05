@@ -10,6 +10,7 @@ import ModalHeader from '../../../components/modal/ModalHeader';
 import ModalBody from '../../../components/modal/ModalBody';
 import ModalFooter from '../../../components/modal/ModalFooter';
 import AdminTemplate from '../../../templates/AdminTemplate';
+import { getFormattedDate } from '../../../utils/common';
 import './NoticeDetailPage.scss';
 
 // 문의사항 상세 조회 페이지
@@ -93,7 +94,7 @@ const NoticeDetailPage = () => {
       </section>
       <section className="label_area">
         <p className="label">작성일</p>
-        <p>{notice.write_time}</p>
+        <p>{getFormattedDate(notice.write_time)}</p>
       </section>
       <section className="label_area">
         <p className="label">내용</p>
