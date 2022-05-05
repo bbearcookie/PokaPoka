@@ -4,6 +4,7 @@ module.exports = (app) => {
   app.use('/api/payment', require('../routes/paymentCtrl'));
   app.use('/api/sms', require('../routes/smsCtrl'));
   app.use('/api/suggestion', require('../routes/suggestionCtrl'));
+  app.use('/api/notice', require('../routes/noticeCtrl'));
   app.use('/api/trade', require('../routes/tradeCtrl'));
   app.use('/api/finding', require('../routes/findingCtrl'));
   app.use('/api', require('../routes/groupCtrl'));

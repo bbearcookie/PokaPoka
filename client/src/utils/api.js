@@ -170,7 +170,6 @@ export const postIdCheck = (username, name, phone) => axios.post(`${BACKEND}/api
   },
   options
 );
-
 //인증 번호 생성하여 휴대폰 번호에 발송
 export const postSending = (phone) => axios.post(`${BACKEND}/api/sms/sending`,
   {
@@ -178,7 +177,6 @@ export const postSending = (phone) => axios.post(`${BACKEND}/api/sms/sending`,
   },
   options
 );
-
 //인증 번호가 맞는지 확인
 export const postConfirmation = (cert_num) => axios.post(`${BACKEND}/api/sms/confirmation`,
   {
@@ -186,12 +184,27 @@ export const postConfirmation = (cert_num) => axios.post(`${BACKEND}/api/sms/con
   },
   options
 );
-
 //비밀번호 변경
 export const postPassword = (password, password_check) => axios.post(`${BACKEND}/api/sms/password`,
   {
     password: password,
     password_check: password_check
+  },
+  options
+);
+
+// 문의사항 목록 데이터 조회 요청
+export const getSuggestionList = () => axios.get(`${BACKEND}/api/suggestion/list`, options);
+// 문의사항 상세 데이터 조회 요청
+export const getSuggestionDetail = (suggestionId) => axios.get(`${BACKEND}/api/suggestion/viewing/${suggestionId}`, options);
+// 문의사항 삭제 요헝
+export const deleteSuggestion = (suggestionId) => axios.delete(`${BACKEND}/api/suggestion/${suggestionId}`, options);
+// 문의사항 데이터 작성 요청
+export const postSuggestion = (form) => axios.post(`${BACKEND}/api/suggestion/new`,
+  {
+    title: form.title,
+    content: form.content,
+    category: form.category
   },
   options
 );

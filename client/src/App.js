@@ -26,8 +26,12 @@ import PwChangePage from './pages/find_password/PwChangePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import CertificationPage from './pages/find_password/CertificationPage';
 import UserMainPage from './pages/MainPage';
+import SuggestionListPage from './pages/admin/suggestion/SuggestionListPage';
+import SuggestionDetailPage from './pages/admin/suggestion/SuggestionDetailPage';
+import SuggestionWriterPage from './pages/admin/suggestion/SuggestionWriterPage';
 import VoucherRequestListPage from './pages/mypage/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/VoucherRequestWriterPage';
+
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -76,6 +80,9 @@ function App() {
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
         <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
         <Route path="/finding/sms" element={<CertificationPage />}/>
+        <Route path="/suggestion" element={<SuggestionListPage />}/>
+        <Route path="/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
+        <Route path="/suggestion/writer/" element={<SuggestionWriterPage />}/>
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>
