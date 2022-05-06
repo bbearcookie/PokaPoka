@@ -8,6 +8,12 @@ import PaginationBar from '../PaginationBar';
 import { STORAGE_KEY_NAME } from '../../contexts/Auth';
 import './VoucherProvisionList.scss';
 
+// 테이블에 보여줄 임시 or 영구 소유권 여부
+const permanentState = {
+  0: '임시',
+  1: '영구'
+};
+
 const VoucherProvisionList = ({ className, provisions, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(provisions.length / perPage); // 총 페이지 갯수
@@ -36,6 +42,7 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
         <thead>
           <tr>
             <th className="provision_id">번호</th>
+            <th className="permanent">임시 / 영구</th>
             <th className="name">포토카드 이름</th>
             <th className="recipient">요청자</th>
             <th className="provider">발급자</th>
@@ -44,13 +51,14 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
         </thead>
         <tbody>
         {provisions ?
-          provisions.filter(req => isInCurrentPage(++count)).map(req => 
-            <tr key={count} provision_id={req.provision_id} onClick={onClickDetailView}>
-                <td>{req.provision_id}</td>
-                <td>{req.name}</td>
-                <td>{req.recipient}</td>
-                <td>{req.provider}</td>
-                <td>{getFormattedDate(req.provide_time)}</td>
+          provisions.filter(prov => isInCurrentPage(++count)).map(prov => 
+            <tr key={count} provision_id={prov.provision_id} onClick={onClickDetailView}>
+                <td>{prov.provision_id}</td>
+                <td>{permanentState[prov.permanent]}</td>
+                <td>{prov.name}</td>
+                <td>{prov.recipient}</td>
+                <td>{prov.provider}</td>
+                <td>{getFormattedDate(prov.provide_time)}</td>
             </tr>
           ) : null}
         </tbody>

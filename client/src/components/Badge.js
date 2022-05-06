@@ -10,7 +10,8 @@ const TYPES = {
   'contents': '데이터',
   'trade': '거래',
   'waiting': '대기중',
-  'commented': '완료'
+  'commented': '완료',
+  'finished': '완료',
 }
 
 // 뱃지 컴포넌트

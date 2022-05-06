@@ -19,7 +19,7 @@
     color: black;
   }
 
-  &[type="contents"], &[type="commented"] {
+  &[type="contents"], &[type="commented"], &[type="finished"] {
     background-color: rgb(206, 28, 73);
     color: white;
   }

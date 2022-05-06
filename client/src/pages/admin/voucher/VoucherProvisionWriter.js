@@ -108,8 +108,14 @@ const VoucherProvisionWriter = () => {
   // 작성 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(form);
+    
+    try {
+      const res = await request.call(api.postVoucherProvision, form);
+      setMessage(res.message);
+      console.log(res);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
   }
 
   return (
