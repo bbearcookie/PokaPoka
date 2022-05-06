@@ -4,7 +4,7 @@
   padding: 3px;
   border-radius: 100px;
 
-  &[type="normal"], &[type="waiting"], &[type="temporary"] {
+  &[type="normal"], &[type="waiting"] {
     background-color: gray;
     color: white;
   }
@@ -27,5 +27,9 @@
   &[type="trade"] {
     background-color: skyblue;
     color: black;
+  }
+  &[type="temporary"] {
+    background-color: rgb(137, 147, 156);
+    color: white;
   }
 }

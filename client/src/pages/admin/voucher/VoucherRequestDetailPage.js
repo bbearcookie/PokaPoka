@@ -21,6 +21,7 @@ import './VoucherRequestDetailPage.scss';
 // 발급 요청의 처리 상태에 따라 화면에 보여줄 텍스트
 const suggestionState = {
   'waiting': '발급 대기중',
+  'temporary': '임시 소유권 발급',
   'finished': '발급 완료'
 }
 
@@ -41,7 +42,8 @@ const VoucherRequestDetailPage = () => {
     name: '',
     image_name: ''
   });
-  const [showModal, setShowModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
+  const [showRemoveModal, setShowRemoveModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
+  const [showProvisionModal, setShowProvisionModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
@@ -74,8 +76,36 @@ const VoucherRequestDetailPage = () => {
   useEffect(() => { onLoad(); }, []);
 
   // 삭제 모달 열기 / 닫기
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+  const openRemoveModal = () => setShowRemoveModal(true);
+  const closeRemoveModal = () => setShowRemoveModal(false);
+
+  // 발급 모달 열기 / 닫기
+  const openProvisionModal = () => setShowProvisionModal(true);
+  const closeProvisionModal = () => setShowProvisionModal(false);
+
+  // 발급 버튼 클릭시
+  const onClickProvision = async () => {
+    if (!voucherRequest.state) return; // 값이 비정상적으로 비어있으면 처리 안함
+
+    // 아직 발급하기 전인 경우 임시 소유권을 발급해줌.
+    if (voucherRequest.state === 'waiting') {
+      try {
+        const res = await request.call(api.postVoucherProvisionByRequest, requestId);
+        onLoad();
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    // 이미 발급이 되어 있는 경우 임시 소유권을 영구 소유권으로 변경해줌.
+    } else {
+      try {
+        const res = await request.call(api.putVoucherProvisionByRequest, requestId);
+        onLoad();
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    }
+    closeProvisionModal();
+  }
 
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
@@ -85,24 +115,40 @@ const VoucherRequestDetailPage = () => {
     } catch (err) {
       setMessage(err.response.data.message);
     }
-    closeModal();
+    closeRemoveModal();
   }
 
   return (
     <AdminTemplate className="AdminVoucherRequestDetailPage">
 
       {/* 삭제 버튼 눌리면 삭제 모달 창 띄움 */}
-      {showModal ?
-      <Modal className="remove_modal" onClose={closeModal}>
-        <ModalHeader onClose={closeModal}>
+      {showRemoveModal ?
+      <Modal className="remove_modal" onClose={closeRemoveModal}>
+        <ModalHeader onClose={closeRemoveModal}>
           <h1>소유권 요청 삭제</h1>
         </ModalHeader>
         <ModalBody>
-          <p>정말로 소유권 요청을 삭제하시겠습니까?</p>
+          <p>{voucherRequest.username} 님의 소유권 요청을 삭제하시겠습니까?</p>
         </ModalBody>
         <ModalFooter>
-          <Button className="cancel_button" onClick={closeModal}>취소</Button>
+          <Button className="cancel_button" onClick={closeRemoveModal}>취소</Button>
           <Button className="remove_button" onClick={onClickRemove}>삭제</Button>
+        </ModalFooter>
+      </Modal> : null}
+
+      {/* 발급 버튼 눌리면 발급 모달 창 띄움 */}
+      {showProvisionModal ?
+      <Modal className="remove_modal" onClose={closeProvisionModal}>
+        <ModalHeader onClose={closeProvisionModal}>
+          <h1>소유권 발급</h1>
+        </ModalHeader>
+        <ModalBody>
+          {voucherRequest.state === 'waiting' && <p>{voucherRequest.username} 님에게 임시 소유권을 발급하시겠습니까?</p>}
+          {voucherRequest.state === 'temporary' && <p>{voucherRequest.username} 님에게 발급한 임시 소유권을 <br/>영구적으로 발급하시겠습니까?</p>}
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeProvisionModal}>취소</Button>
+          <Button className="edit_button" onClick={onClickProvision}>발급</Button>
         </ModalFooter>
       </Modal> : null}
 
@@ -152,10 +198,10 @@ const VoucherRequestDetailPage = () => {
         <p>{getFormattedDate(voucherRequest.regist_time)}</p>
       </section>
 
-
       <section className="submit_section">
         <Link to="/admin/voucher/request"><Button className="cancel_button">뒤로 가기</Button></Link>
-        <Button className="remove_button" onClick={openModal}>삭제</Button>
+        {voucherRequest.state !== 'finished' && <Button className="edit_button" onClick={openProvisionModal}>발급</Button>}
+        <Button className="remove_button" onClick={openRemoveModal}>삭제</Button>
       </section>
     </AdminTemplate>
   );

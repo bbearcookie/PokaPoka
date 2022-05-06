@@ -95,19 +95,7 @@ router.get('/request/detail/:requestId', async (req, res) => {
     FROM Photocard WHERE photocard_id=${request.photocard_id}`;
     let [[photocard]] = await con.query(sql);
 
-    // 그룹 내용 조회
-    sql = `SELECT name, description, gender, image_name FROM GroupData WHERE group_id=${photocard.group_id}`;
-    let [[group]] = await con.query(sql);
-
-    // 멤버 내용 조회
-    sql = `SELECT name, description, image_name FROM MemberData WHERE member_id=${photocard.member_id}`;
-    let [[member]] = await con.query(sql);
-
-    // 앨범 내용 조회
-    sql = `SELECT name, description, image_name FROM AlbumData WHERE album_id=${photocard.album_id}`;
-    let [[album]] = await con.query(sql);
-
-    return res.status(200).json({ message: '포토카드 소유권 발급 요청 상세 조회에 성공했습니다.', request, photocard, group, member, album });
+    return res.status(200).json({ message: '포토카드 소유권 발급 요청 상세 조회에 성공했습니다.', request, photocard });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -199,7 +187,7 @@ router.delete('/request/:requestId', verifyLogin, async (req, res) => {
 
     // 관리자이거나 해당 소유권을 등록한 것이 자신인 경우에만 삭제 가능
     if (isAdmin(accessToken) || request.username === user.username) {
-      if (request.state != 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
+      // if (request.state != 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
 
       // DB에서 소유권 요청 삭제
       sql = `DELETE FROM VoucherRequest WHERE request_id=${requestId}`;
@@ -251,9 +239,8 @@ router.get('/provision/list/all', verifyLogin, async (req, res) => {
 });
 
 // 포토카드 소유권 발급
-router.post('/provision', verifyLogin, async (req, res) => {
-  // requestId는 발급 완료 처리할 소유권 요청의 id임
-  const { recipient, permanent, photocardId, requestId } = req.body;
+router.post('/provision/new', verifyLogin, async (req, res) => {
+  const { recipient, permanent, photocardId } = req.body;
   const { accessToken } = req;
 
   // 관리자 권한 확인
@@ -278,12 +265,6 @@ router.post('/provision', verifyLogin, async (req, res) => {
     let [[photocard]] = await con.query(sql);
     if (!photocard) return res.status(400).json({ message: '선택한 포토카드는 데이터에 없습니다.' });
 
-    // 특정 소유권 요청을 발급 완료 처리 해야 할 경우 처리
-    if (requestId) {
-      sql = `UPDATE VoucherRequest SET state='finished' WHERE request_id=${requestId}`;
-      await con.execute(sql);
-    }
-
     // 해당 사용자의 소유권 추가
     sql = `INSERT INTO Voucher (photocard_id, username, permanent) VALUES (?, ?, ?)`;
     let [result] = await con.execute(sql, [photocardId, recipient, permanent]);
@@ -302,6 +283,108 @@ router.post('/provision', verifyLogin, async (req, res) => {
     con.release();
   }
 
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 기존의 포토카드 소유권 요청 정보를 가지고 임시 소유권 발급
+router.post('/provision/request', verifyLogin, async (req, res) => {
+  const { requestId } = req.body;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    await con.beginTransaction(); // 여러 테이블에 대한 삽입, 수정 작업은 동시에 이뤄져야 하므로 트랜잭션으로 묶음 처리
+
+    // 포토카드 요청 존재 여부 확인
+    sql = `SELECT username, photocard_id, state from VoucherRequest where request_id='${requestId}'`;
+    let [[request]] = await con.query(sql);
+    if (!request) return res.status(400).json({ message: '해당 포토카드 소유권 요청이 데이터에 없습니다.' });
+    if (request.state !== 'waiting') return res.status(400).json({ message: '이미 발급 처리된 포토카드 소유권 요청입니다.' });
+
+    // 포토카드 존재 여부 확인
+    sql = `SELECT photocard_id from Photocard where photocard_id='${request.photocard_id}'`;
+    let [[photocard]] = await con.query(sql);
+    if (!photocard) return res.status(400).json({ message: '해당 포토카드는 데이터에 없습니다.' });
+
+    // 해당 사용자의 임시 소유권 추가
+    sql = `INSERT INTO Voucher (photocard_id, username, permanent) VALUES (?, ?, ?)`;
+    let [result] = await con.execute(sql, [request.photocard_id, request.username, 0]);
+
+    // 발급 내역 추가
+    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient) VALUES (?, ?, ?)`;
+    await con.execute(sql, [result.insertId, req.user.username, request.username]);
+
+    // 포토카드 요청의 처리 상태와 발급한 소유권 ID 업데이트
+    sql = `UPDATE VoucherRequest SET state='temporary', voucher_id=${result.insertId} WHERE request_id=${requestId}`;
+    await con.execute(sql);
+
+    await con.commit(); // 수정된 DB 내용 반영
+    return res.status(200).json({ message: '해당 사용자에게 포토카드 임시 소유권을 발급했습니다.' });
+  } catch (err) {
+    console.error(err);
+    con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 기존의 포토카드 소유권 요청 정보를 가지고 발급했던 임시 소유권을 영구 소유권으로 변경
+router.put('/provision/request', verifyLogin, async (req, res) => {
+  const { requestId } = req.body;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    await con.beginTransaction();
+
+    // 포토카드 요청 존재 여부 확인
+    sql = `SELECT username, photocard_id, state, voucher_id from VoucherRequest where request_id='${requestId}'`;
+    let [[request]] = await con.query(sql);
+    if (!request) return res.status(400).json({ message: '해당 포토카드 소유권 요청이 데이터에 없습니다.' });
+    if (request.state !== 'temporary') return res.status(400).json({ message: '이미 발급 처리된 포토카드 소유권 요청입니다.' });
+    if (!request.voucher_id) return res.status(400).json({ message: '아직 임시 소유권이 발급되지 않은 요청입니다.' });
+
+    // 포토카드 존재 여부 확인
+    sql = `SELECT photocard_id from Photocard where photocard_id='${request.photocard_id}'`;
+    let [[photocard]] = await con.query(sql);
+    if (!photocard) return res.status(400).json({ message: '해당 포토카드는 데이터에 없습니다.' });
+
+    // 소유권 존재 여부 확인
+    sql = `SELECT state, permanent from Voucher where voucher_id=${request.voucher_id}`;
+    let [[voucher]] = await con.query(sql);
+    if (!voucher) return res.status(400).json({ message: '해당 포토카드 소유권은 데이터에 없습니다.' });
+
+    // 해당 사용자에게 발급했던 임시 소유권을 영구 소유권으로 전환
+    sql = `UPDATE Voucher SET permanent=1 WHERE voucher_id=${request.voucher_id}`;
+    await con.execute(sql, [request.photocard_id, request.username, 0]);
+
+    // 포토카드 소유권 요청에도 영구로 수정
+    sql = `UPDATE VoucherRequest SET state='finished' WHERE voucher_id=${request.voucher_id}`;
+    await con.execute(sql, [request.photocard_id, request.username, 0]);
+
+    // 발급 내역 추가
+    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient) VALUES (?, ?, ?)`;
+    await con.execute(sql, [request.voucher_id, req.user.username, request.username]);
+
+    await con.commit(); // 수정된 DB 내용 반영
+    return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });
+  } catch (err) {
+    console.error(err);
+    con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+  
   return res.status(501).json({ message: 'end of line' });
 });
 

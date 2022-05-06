@@ -262,11 +262,27 @@ export const postVoucherRequest = (form) => {
   );
 }
 // 관리자가 포토카드 소유권 발급
-export const postVoucherProvision = (form) => axios.post(`${BACKEND}/api/voucher/provision`,
+export const postVoucherProvisionNew = (form) => axios.post(`${BACKEND}/api/voucher/provision/new`,
   {
     recipient: form.recipient,
     permanent: form.permanent,
     photocardId: form.photocardId
+  },
+  options
+);
+
+// 관리자가 기존의 포토카드 소유권 요청 정보를 가지고 임시 소유권 발급
+export const postVoucherProvisionByRequest = (requestId) => axios.post(`${BACKEND}/api/voucher/provision/request`,
+  {
+    requestId: requestId,
+  },
+  options
+);
+
+// 임시 소유권을 영구 소유권으로 전환
+export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}/api/voucher/provision/request`,
+  {
+    requestId: requestId,
   },
   options
 );

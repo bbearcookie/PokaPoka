@@ -34,7 +34,7 @@ const VoucherProvisionWriter = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getGroupList);
+      let res = await request.call(api.getGroupList);
       setGroups(res.groups);
     } catch (err) {
       setMessage(err.response.data.message);
@@ -110,9 +110,9 @@ const VoucherProvisionWriter = () => {
     e.preventDefault();
     
     try {
-      const res = await request.call(api.postVoucherProvision, form);
+      const res = await request.call(api.postVoucherProvisionNew, form);
       setMessage(res.message);
-      console.log(res);
+      return navigate('/admin/voucher/provision');
     } catch (err) {
       setMessage(err.response.data.message);
     }
