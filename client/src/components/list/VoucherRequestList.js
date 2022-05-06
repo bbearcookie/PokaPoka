@@ -18,12 +18,12 @@ const VoucherRequestList = ({ className, requests, perPage }) => {
 
   // 발급 요청 상세 보기시 작동
   const onClickDetailView = (e) => {
-    // const requestId = e.currentTarget.getAttribute('request_id');
+    const requestId = e.currentTarget.getAttribute('request_id');
 
-    // //사용자 역할을 확인하여 관리자일 경우 관리자 페이지로 일반 사용자일 경우 사용자페이지로 이동
-    // let user = sessionStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
-    // user = JSON.parse(user);
-    // if (user.role == 'admin') return navigate(`/admin/suggestion/detail/${suggestionId}`);
+    //사용자 역할을 확인하여 관리자일 경우 관리자 페이지로 일반 사용자일 경우 사용자페이지로 이동
+    let user = sessionStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
+    user = JSON.parse(user);
+    if (user.role === 'admin') return navigate(`/admin/voucher/request/detail/${requestId}`);
     // else return navigate(`/mypage/suggestion/detail/${suggestionId}`);
   }
   

@@ -32,6 +32,7 @@ import NoticeListPage from './pages/admin/notice/NoticeListPage';
 import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import AdminVoucherRequestListPage from './pages/admin/voucher/VoucherRequestListPage';
+import AdminVoucherRequestDetailPage from './pages/admin/voucher/VoucherRequestDetailPage';
 import VoucherRequestListPage from './pages/mypage/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/VoucherRequestWriterPage';
 import SuggestionRequestListPage from './pages/mypage/SuggestionRequestList';
@@ -86,7 +87,8 @@ function App() {
         <Route path="/admin/photocard/detail/:photocardId" element={<PhotocardDetailPage />} />
         <Route path="/admin/suggestion" element={<SuggestionListPage />}/>
         <Route path="/admin/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
-        <Route path="/admin/voucher" element={<AdminVoucherRequestListPage />}/>
+        <Route path="/admin/voucher/request" element={<AdminVoucherRequestListPage />}/>
+        <Route path="/admin/voucher/request/detail/:requestId" element={<AdminVoucherRequestDetailPage />}/>
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />
