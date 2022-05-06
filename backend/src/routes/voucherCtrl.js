@@ -3,6 +3,30 @@ const { db } = require('../config/database');
 const { voucherImageUpload, VOUCHER_IMAGE_DIR } = require('../config/multer');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
 
+// 사용자 본인의 포토카드 소유권 목록 조회
+
+// // 모든 포토카드 소유권 목록 조회 (관리자 전용)
+// router.get('/list/all', verifyLogin, async (req, res) => {
+//   const { accessToken } = req;
+
+//   // 관리자 권한 확인
+//   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+//   const con = await db.getConnection();
+//   try {
+//     let sql = `SELECT voucher_id, photocard_id, username, state, permanent, regist_time FROM Voucher`;
+//     let [vouchers] = await con.query(sql);
+
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+//   } finally {
+//     con.release();
+//   }
+  
+//   return res.status(501).json({ message: 'end of line' });
+// })
+
 // 사용자 본인의 소유권 발급 요청 조회
 router.get('/request/list/mine', verifyLogin, async (req, res) => {
   const { user } = req;
@@ -27,7 +51,7 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 모든 포토카드 소유권 발급 요청 조회(관리자 전용)
+// 모든 포토카드 소유권 발급 요청 조회 (관리자 전용)
 router.get('/request/list/all', verifyLogin, async (req, res) => {
   const { accessToken } = req;
 
@@ -120,6 +144,34 @@ router.post('/request', voucherImageUpload.single('image'), verifyLogin, async (
   } finally {
     con.release();
   }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 포토카드 소유권 발급 목록 조회
+router.get('/provision/list/all', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    let sql = `
+    SELECT provision_id, P.voucher_id, provider, recipient, provide_time, permanent, PHOTO.name
+    FROM VoucherProvision as P
+    LEFT JOIN Voucher as V ON P.voucher_id = V.voucher_id
+    LEFT JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id`;
+    let [provisions] = await con.query(sql);
+
+    return res.status(200).json({ message: '포토카드 소유권 발급 목록을 조회했습니다.', provisions });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
 
   return res.status(501).json({ message: 'end of line' });
 });

@@ -17,8 +17,9 @@ const VoucherProvisionListPage = () => {
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      // const res = await request.call(api.getVoucherRequestListAll);
-      // setProvisions(res.requests);
+      const res = await request.call(api.getVoucherProvisionListAll);
+      setProvisions(res.provisions);
+      console.log(res);
     } catch (err) {
       console.error(err);
     }
@@ -29,7 +30,7 @@ const VoucherProvisionListPage = () => {
     <AdminTemplate className="AdminVoucherProvisionListPage">
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
-        <h1 className="title-label">포토카드 소유권 발급 목록</h1>
+        <h1 className="title-label">포토카드 소유권 발급 내역</h1>
         <Link to="/admin/voucher/provision/writer">
           <Button className="add_button">발급</Button>
         </Link>

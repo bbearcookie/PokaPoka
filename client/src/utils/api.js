@@ -243,6 +243,8 @@ options
 export const getVoucherRequestListMine = () => axios.get(`${BACKEND}/api/voucher/request/list/mine`, options);
 // 관리자-모든 포토카드 소유권 발급 요청 목록 조회
 export const getVoucherRequestListAll = () => axios.get(`${BACKEND}/api/voucher/request/list/all`, options);
+// 관리자-모든 포토카드 소유권 발급 목록 조회
+export const getVoucherProvisionListAll = () => axios.get(`${BACKEND}/api/voucher/provision/list/all`, options);
 // 포토카드 소유권 발급 요청 상세 조회
 export const getVoucherRequestDetail = (requestId) => axios.get(`${BACKEND}/api/voucher/request/detail/${requestId}`, options);
 // 사용자가 포토카드 소유권 발급 요청

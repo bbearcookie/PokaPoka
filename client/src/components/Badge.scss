@@ -4,7 +4,7 @@
   padding: 3px;
   border-radius: 100px;
 
-  &[type="normal"], &[type="waiting"] {
+  &[type="normal"], &[type="waiting"], &[type="temporary"] {
     background-color: gray;
     color: white;
   }
@@ -19,7 +19,7 @@
     color: black;
   }
 
-  &[type="contents"], &[type="commented"], &[type="finished"] {
+  &[type="contents"], &[type="commented"], &[type="finished"], &[type="permanent"] {
     background-color: rgb(206, 28, 73);
     color: white;
   }

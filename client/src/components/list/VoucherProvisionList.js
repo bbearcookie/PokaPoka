@@ -10,8 +10,8 @@ import './VoucherProvisionList.scss';
 
 // 테이블에 보여줄 임시 or 영구 소유권 여부
 const permanentState = {
-  0: '임시',
-  1: '영구'
+  0: 'temporary',
+  1: 'permanent'
 };
 
 const VoucherProvisionList = ({ className, provisions, perPage }) => {
@@ -54,7 +54,7 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
           provisions.filter(prov => isInCurrentPage(++count)).map(prov => 
             <tr key={count} provision_id={prov.provision_id} onClick={onClickDetailView}>
                 <td>{prov.provision_id}</td>
-                <td>{permanentState[prov.permanent]}</td>
+                <td>{<Badge type={permanentState[prov.permanent]} />}</td>
                 <td>{prov.name}</td>
                 <td>{prov.recipient}</td>
                 <td>{prov.provider}</td>

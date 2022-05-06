@@ -9,6 +9,8 @@ const TYPES = {
   'voucher': '소유권',
   'contents': '데이터',
   'trade': '거래',
+  'temporary': '임시',
+  'permanent': '영구',
   'waiting': '대기중',
   'commented': '완료',
   'finished': '완료',
