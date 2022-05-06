@@ -239,6 +239,25 @@ export const putNotice = (form, noticeId) => axios.put(`${BACKEND}/api/notice/ad
 options
 );
 
+// 사용자-자신이 작성한 포토카드 소유권 발급 요청 목록 조회
+export const getVoucherRequestListMine = () => axios.get(`${BACKEND}/api/voucher/list/mine`, options);
+// 관리자-모든 포토카드 소유권 발급 요청 목록 조회
+export const getVoucherRequestListAll = () => axios.get(`${BACKEND}/api/voucher/list/all`, options);
+// 포토카드 소유권 발급 요청 상세 조회
+export const getVoucherRequestDetail = (requestId) => axios.get(`${BACKEND}/api/voucher/detail/${requestId}`, options);
+// 사용자-포토카드 소유권 발급 요청
+export const postVoucherRequest = (form) => {
+  let formData = new FormData();
+  formData.append('delivery', form.delivery);
+  formData.append('trackingNumber', form.trackingNumber);
+  formData.append('photocardId', form.photocardId);
+  formData.append('image', form.image.file);
+
+  return axios.post(`${BACKEND}/api/voucher/request`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 

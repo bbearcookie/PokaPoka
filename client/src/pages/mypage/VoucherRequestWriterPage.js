@@ -148,10 +148,13 @@ const VoucherRequestWriterPage = () => {
 
     // 새로 작성하는 경우
     if (!voucherId) {
-
-    // 내용을 수정하는 경우
-    } else {
-
+      try {
+        const res = await request.call(api.postVoucherRequest, form);
+        console.log(res);
+        return navigate('/mypage/voucher');
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
     }
   }
 
