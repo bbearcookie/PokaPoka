@@ -33,7 +33,7 @@ import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import AdminVoucherRequestListPage from './pages/admin/voucher/VoucherRequestListPage';
 import AdminVoucherRequestDetailPage from './pages/admin/voucher/VoucherRequestDetailPage';
-import AdminVoucherProvisionDetailPage from './pages/admin/voucher/VoucherProvisionList';
+import VoucherProvisionWriter from './pages/admin/voucher/VoucherProvisionWriter';
 import VoucherRequestListPage from './pages/mypage/voucher_request/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/voucher_request/VoucherRequestWriterPage';
 import SuggestionRequestListPage from './pages/mypage/SuggestionRequestList';
@@ -92,6 +92,8 @@ function App() {
         <Route path="/admin/voucher/request" element={<AdminVoucherRequestListPage />}/>
         <Route path="/admin/voucher/request/detail/:requestId" element={<AdminVoucherRequestDetailPage />}/>
         <Route path="/admin/voucher/provision" element={<VoucherProvisionListPage />}/>
+        <Route path="/admin/voucher/provision/writer" element={<VoucherProvisionWriter />}/>
+        <Route path="/admin/voucher/provision/writer/:requestId" element={<VoucherProvisionWriter />}/>
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />

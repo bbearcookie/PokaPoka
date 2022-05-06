@@ -30,6 +30,9 @@ const VoucherProvisionListPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">포토카드 소유권 발급 목록</h1>
+        <Link to="/admin/voucher/provision/writer">
+          <Button className="add_button">발급</Button>
+        </Link>
       </section>
 
       <VoucherProvisionList provisions={provisions} perPage="10" />
