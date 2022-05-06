@@ -164,9 +164,8 @@ router.post('/request', voucherImageUpload.single('image'), verifyLogin, async (
     let filename = "";
     if (file) {
       filename = getTimestampFilename(result.insertId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
     }
     sql = `UPDATE VoucherRequest SET image_name = '${filename}' WHERE request_id = ${result.insertId}`;
     await con.execute(sql);
@@ -207,11 +206,8 @@ router.delete('/request/:requestId', verifyLogin, async (req, res) => {
       await con.execute(sql);
 
       // 이미지 파일 삭제
-      try {
-        fs.rm(path.join(VOUCHER_IMAGE_DIR, request.image_name));
-      } catch (err) {
-        console.error(err);
-      }
+      try { fs.rm(path.join(VOUCHER_IMAGE_DIR, request.image_name)); }
+      catch (err) { console.error(err); }
 
       return res.status(200).json({ message: '소유권 요청을 삭제했습니다.' });
 

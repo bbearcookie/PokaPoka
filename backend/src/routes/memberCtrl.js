@@ -134,9 +134,8 @@ router.post('/member', memberImageUpload.single('image'), verifyLogin, async (re
     let filename = "";
     if (file) {
       filename = getTimestampFilename(result.insertId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
     }
     sql = `UPDATE MemberData SET image_name = '${filename}' WHERE member_id = ${result.insertId}`;
     await con.execute(sql);
@@ -197,15 +196,13 @@ router.put('/member/:memberId', memberImageUpload.single('image'), verifyLogin, 
     let filename = "";
     if (file) {
       // 기존 이미지 삭제
-      fsAsync.rm(path.join(file.destination, member.image_name), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rm(path.join(file.destination, member.image_name)); }
+      catch (err) { console.error(err); }
 
       // 이미지 이름 변경
       filename = getTimestampFilename(memberId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
 
       // DB에 이미지 파일 이름 변경 내용 반영
       sql = `UPDATE MemberData SET image_name='${filename}' WHERE member_id=${memberId}`;
@@ -250,9 +247,8 @@ router.delete('/member/:memberId', verifyLogin, async (req, res) => {
     await con.execute(sql);
 
     // 이미지 파일 삭제
-    fsAsync.rm(path.join(IDOL_MEMBER_IMAGE_DIR, member.image_name), (err) => {
-      if (err) console.error(err);
-    });
+    try { fs.rm(path.join(IDOL_MEMBER_IMAGE_DIR, member.image_name)); }
+    catch (err) { console.error(err); }
 
     return res.status(200).json({ message: '아이돌 멤버 정보를 삭제했습니다.' });
   } catch (err) {
