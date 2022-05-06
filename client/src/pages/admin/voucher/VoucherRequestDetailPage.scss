@@ -3,6 +3,17 @@
   display: flex;
   flex-direction: column;
 
+  a {
+    text-decoration: none;
+  }
+
+  .ImageCard {
+    .name-label {
+      margin: 10px 0 0 0;
+      font-size: 16px;
+    }
+  }
+
   .title-label {
     margin: 20px 0;
     font-size: 36px;

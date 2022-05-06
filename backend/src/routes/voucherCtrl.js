@@ -1,9 +1,10 @@
 const router = require('../config/express').router;
+const path = require('path');
 const { db } = require('../config/database');
-const { voucherImageUpload, VOUCHER_IMAGE_DIR } = require('../config/multer');
+const fs = require('fs').promises;
+const fsAsync = require('fs');
+const { getTimestampFilename, voucherImageUpload, VOUCHER_IMAGE_DIR } = require('../config/multer');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
-
-// 사용자 본인의 포토카드 소유권 목록 조회
 
 // // 모든 포토카드 소유권 목록 조회 (관리자 전용)
 // router.get('/list/all', verifyLogin, async (req, res) => {
@@ -27,7 +28,7 @@ const { verifyLogin, isAdmin } = require('../utils/jwt');
 //   return res.status(501).json({ message: 'end of line' });
 // })
 
-// 사용자 본인의 소유권 발급 요청 조회
+// 사용자 본인의 소유권 요청 목록 조회
 router.get('/request/list/mine', verifyLogin, async (req, res) => {
   const { user } = req;
 
@@ -40,7 +41,7 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
     FROM VoucherRequest 
     WHERE username='${user.username}'`;
     let [requests] = await con.query(sql);
-    return res.status(200).json({ message: '포토카드 소유권 발급 요청 목록 조회에 성공했습니다.', requests });
+    return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -51,7 +52,7 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 모든 포토카드 소유권 발급 요청 조회 (관리자 전용)
+// 모든 포토카드 소유권 요청 목록 조회 (관리자 전용)
 router.get('/request/list/all', verifyLogin, async (req, res) => {
   const { accessToken } = req;
 
@@ -63,7 +64,7 @@ router.get('/request/list/all', verifyLogin, async (req, res) => {
     let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
     FROM VoucherRequest`;
     let [requests] = await con.query(sql);
-    return res.status(200).json({ message: '포토카드 소유권 발급 요청 목록 조회에 성공했습니다.', requests });
+    return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -74,7 +75,7 @@ router.get('/request/list/all', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 포토카드 소유권 발급 요청 상세 조회
+// 포토카드 소유권 요청 상세 조회
 router.get('/request/detail/:requestId', async (req, res) => {
   const { requestId } = req.params;
 
@@ -83,11 +84,30 @@ router.get('/request/detail/:requestId', async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
-    FROM VoucherRequest 
+    // 포토카드 소유권 요청 조회
+    let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time, image_name 
+    FROM VoucherRequest
     WHERE request_id=${requestId}`;
     let [[request]] = await con.query(sql);
-    return res.status(200).json({ message: '포토카드 소유권 발급 요청 상세 조회에 성공했습니다.', request });
+
+    // 포토카드 내용 조회
+    sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
+    FROM Photocard WHERE photocard_id=${request.photocard_id}`;
+    let [[photocard]] = await con.query(sql);
+
+    // 그룹 내용 조회
+    sql = `SELECT name, description, gender, image_name FROM GroupData WHERE group_id=${photocard.group_id}`;
+    let [[group]] = await con.query(sql);
+
+    // 멤버 내용 조회
+    sql = `SELECT name, description, image_name FROM MemberData WHERE member_id=${photocard.member_id}`;
+    let [[member]] = await con.query(sql);
+
+    // 앨범 내용 조회
+    sql = `SELECT name, description, image_name FROM AlbumData WHERE album_id=${photocard.album_id}`;
+    let [[album]] = await con.query(sql);
+
+    return res.status(200).json({ message: '포토카드 소유권 발급 요청 상세 조회에 성공했습니다.', request, photocard, group, member, album });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -135,11 +155,26 @@ router.post('/request', voucherImageUpload.single('image'), verifyLogin, async (
 
   const con = await db.getConnection();
   try {
+
+    // DB에 소유권 요청 정보 저장
     let sql = `INSERT INTO VoucherRequest (username, photocard_id, delivery, tracking_number) VALUES (?, ?, ?, ?)`;
-    await con.execute(sql, [user.username, photocardId, delivery, trackingNumber]);
+    let [result] = await con.execute(sql, [user.username, photocardId, delivery, trackingNumber]);
+
+    // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
+    let filename = "";
+    if (file) {
+      filename = getTimestampFilename(result.insertId, file.mimetype);
+      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
+        if (err) console.error(err);
+      });
+    }
+    sql = `UPDATE VoucherRequest SET image_name = '${filename}' WHERE request_id = ${result.insertId}`;
+    await con.execute(sql);
+
     return res.status(200).json({ message: '관리자에게 포토카드 소유권 발급을 요청했습니다.' });
   } catch (err) {
     console.error(err);
+    removeTempFile();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
     con.release();
