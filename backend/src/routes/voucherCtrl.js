@@ -220,7 +220,7 @@ router.get('/provision/list/all', verifyLogin, async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `
-    SELECT provision_id, P.voucher_id, provider, recipient, provide_time, permanent, PHOTO.name
+    SELECT provision_id, P.voucher_id, provider, recipient, provide_time, P.permanent, PHOTO.name
     FROM VoucherProvision as P
     LEFT JOIN Voucher as V ON P.voucher_id = V.voucher_id
     LEFT JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id`;
@@ -270,8 +270,8 @@ router.post('/provision/new', verifyLogin, async (req, res) => {
     let [result] = await con.execute(sql, [photocardId, recipient, permanent]);
 
     // 발급 내역 추가
-    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient) VALUES (?, ?, ?)`;
-    await con.execute(sql, [result.insertId, req.user.username, recipient]);
+    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient, permanent) VALUES (?, ?, ?, ?)`;
+    await con.execute(sql, [result.insertId, req.user.username, recipient, permanent]);
 
     await con.commit(); // 수정된 DB 내용 반영
     return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });
@@ -314,8 +314,8 @@ router.post('/provision/request', verifyLogin, async (req, res) => {
     let [result] = await con.execute(sql, [request.photocard_id, request.username, 0]);
 
     // 발급 내역 추가
-    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient) VALUES (?, ?, ?)`;
-    await con.execute(sql, [result.insertId, req.user.username, request.username]);
+    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient, permanent) VALUES (?, ?, ?, ?)`;
+    await con.execute(sql, [result.insertId, req.user.username, request.username, 0]);
 
     // 포토카드 요청의 처리 상태와 발급한 소유권 ID 업데이트
     sql = `UPDATE VoucherRequest SET state='temporary', voucher_id=${result.insertId} WHERE request_id=${requestId}`;
@@ -372,8 +372,8 @@ router.put('/provision/request', verifyLogin, async (req, res) => {
     await con.execute(sql, [request.photocard_id, request.username, 0]);
 
     // 발급 내역 추가
-    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient) VALUES (?, ?, ?)`;
-    await con.execute(sql, [request.voucher_id, req.user.username, request.username]);
+    sql = `INSERT INTO VoucherProvision (voucher_id, provider, recipient, permanent) VALUES (?, ?, ?, ?)`;
+    await con.execute(sql, [request.voucher_id, req.user.username, request.username, 1]);
 
     await con.commit(); // 수정된 DB 내용 반영
     return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });

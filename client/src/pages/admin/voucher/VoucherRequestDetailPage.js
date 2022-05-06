@@ -140,7 +140,8 @@ const VoucherRequestDetailPage = () => {
       {showProvisionModal ?
       <Modal className="remove_modal" onClose={closeProvisionModal}>
         <ModalHeader onClose={closeProvisionModal}>
-          <h1>소유권 발급</h1>
+          {voucherRequest.state === 'waiting' && <h1>임시 소유권 발급</h1>}
+          {voucherRequest.state === 'temporary' && <h1>영구 소유권 발급</h1>}
         </ModalHeader>
         <ModalBody>
           {voucherRequest.state === 'waiting' && <p>{voucherRequest.username} 님에게 임시 소유권을 발급하시겠습니까?</p>}
