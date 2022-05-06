@@ -33,6 +33,7 @@ import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import AdminVoucherRequestListPage from './pages/admin/voucher/VoucherRequestListPage';
 import AdminVoucherRequestDetailPage from './pages/admin/voucher/VoucherRequestDetailPage';
+import AdminVoucherProvisionDetailPage from './pages/admin/voucher/VoucherProvisionList';
 import VoucherRequestListPage from './pages/mypage/voucher_request/VoucherRequestListPage';
 import VoucherRequestWriterPage from './pages/mypage/voucher_request/VoucherRequestWriterPage';
 import SuggestionRequestListPage from './pages/mypage/SuggestionRequestList';
@@ -45,6 +46,7 @@ import DeliveryInfoPage from './pages/mypage/DeliveryInfoPage';
 import InfoCorrectPage from './pages/mypage/InfoCorrectPage';
 import InfoManagePage from './pages/mypage/InfoManagePage';
 import AskingPage from './pages/mypage/AskingPage';
+import VoucherProvisionListPage from './pages/admin/voucher/VoucherProvisionList';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -89,6 +91,7 @@ function App() {
         <Route path="/admin/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
         <Route path="/admin/voucher/request" element={<AdminVoucherRequestListPage />}/>
         <Route path="/admin/voucher/request/detail/:requestId" element={<AdminVoucherRequestDetailPage />}/>
+        <Route path="/admin/voucher/provision" element={<VoucherProvisionListPage />}/>
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/username" element={<UsernamePage />} />

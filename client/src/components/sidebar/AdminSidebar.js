@@ -22,10 +22,13 @@ const AdminSidebar = () => {
       <section className="subtitle_section">포토카드 교환 관리</section>
       <Link className="link" to="#">교환글</Link>
       <Link
-        className={classNames("link", {"active": URI.includes('/admin/voucher')})}
+        className={classNames("link", {"active": URI.includes('/admin/voucher/request')})}
         to="/admin/voucher/request"
       >소유권 요청</Link>
-      <Link className="link" to="#">소유권 발급</Link>
+      <Link
+        className={classNames("link", {"active": URI.includes('/admin/voucher/provision')})}
+        to="/admin/voucher/provision"
+      >소유권 발급</Link>
       <Link className="link" to="#">배송 요청</Link>
       <section className="subtitle_section">DB 데이터 관리</section>
       <Link
