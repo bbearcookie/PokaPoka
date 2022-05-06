@@ -80,10 +80,10 @@ const VoucherRequestDetailPage = () => {
       {showModal ?
       <Modal className="remove_modal" onClose={closeModal}>
         <ModalHeader onClose={closeModal}>
-          <h1>소유권 발급 요청 삭제</h1>
+          <h1>소유권 요청 삭제</h1>
         </ModalHeader>
         <ModalBody>
-          <p>정말로 소유권 발급 요청을 삭제하시겠습니까?</p>
+          <p>정말로 소유권 요청을 삭제하시겠습니까?</p>
         </ModalBody>
         <ModalFooter>
           <Button className="cancel_button" onClick={closeModal}>취소</Button>
@@ -94,7 +94,7 @@ const VoucherRequestDetailPage = () => {
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
       {request.loading ? <LoadingSpinner /> : null}
 
-      <h1 className="title-label">포토카드 소유권 발급 요청 상세 정보</h1>
+      <h1 className="title-label">포토카드 소유권 요청 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="label_area">
         <p className="label">작성자</p>

@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import produce from 'immer';
 import classNames from 'classnames';
-import useRequest from '../../utils/useRequest';
-import * as api from '../../utils/api';
-import { BACKEND } from '../../utils/api';
-import Input from '../../components/form/Input';
-import Button from '../../components/form/Button';
-import Select from '../../components/form/Select';
-import UserTemplate from '../../templates/UserTemplate';
-import ImageCard from '../../components/card/ImageCard';
-import MessageLabel from '../../components/MessageLabel';
-import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
+import useRequest from '../../../utils/useRequest';
+import * as api from '../../../utils/api';
+import { BACKEND } from '../../../utils/api';
+import Input from '../../../components/form/Input';
+import Button from '../../../components/form/Button';
+import Select from '../../../components/form/Select';
+import UserTemplate from '../../../templates/UserTemplate';
+import ImageCard from '../../../components/card/ImageCard';
+import MessageLabel from '../../../components/MessageLabel';
+import MyPageSidebar from '../../../components/sidebar/MyPageSidebar';
 import './VoucherRequestWriterPage.scss';
 
 const VoucherRequestWriterPage = () => {
@@ -165,8 +165,8 @@ const VoucherRequestWriterPage = () => {
     >
       <form onSubmit={onSubmit}>
         {voucherId ?
-        <h1 className="title-label">포토카드 소유권 발급 요청 수정</h1> :
-        <h1 className="title-label">포토카드 소유권 발급 요청 작성</h1>}
+        <h1 className="title-label">포토카드 소유권 요청 수정</h1> :
+        <h1 className="title-label">포토카드 소유권 요청 등록</h1>}
 
         {message ? <MessageLabel>{message}</MessageLabel> : null}
 

@@ -29,7 +29,7 @@ const VoucherRequestListPage = () => {
     <AdminTemplate className="VoucherRequestListPage">
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
-        <h1 className="title-label">포토카드 소유권 발급 요청 목록</h1>
+        <h1 className="title-label">포토카드 소유권 요청 목록</h1>
       </section>
 
       <VoucherRequestList requests={requests} perPage="10" />

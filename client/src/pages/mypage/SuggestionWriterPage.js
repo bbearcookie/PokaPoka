@@ -103,7 +103,7 @@ const SuggestionWriterPage = () => {
         <p className="label">문의 타입</p>
         <section className="gender_section">
           <input id="normal" type="radio" name="category" value="normal" ref={categoryRefs.normal} onChange={onChangeInput} />
-          <label htmlFor="normal">일반</label>
+          <label htmlFor="normal">기타</label>
           <input id="shipping" type="radio" name="category" value="shipping" ref={categoryRefs.shipping} onChange={onChangeInput} />
           <label htmlFor="shipping">배송</label>
           <input id="voucher" type="radio" name="category" value="voucher" ref={categoryRefs.voucher} onChange={onChangeInput} />
