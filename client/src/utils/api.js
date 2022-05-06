@@ -247,6 +247,8 @@ export const getVoucherRequestListAll = () => axios.get(`${BACKEND}/api/voucher/
 export const getVoucherProvisionListAll = () => axios.get(`${BACKEND}/api/voucher/provision/list/all`, options);
 // 포토카드 소유권 발급 요청 상세 조회
 export const getVoucherRequestDetail = (requestId) => axios.get(`${BACKEND}/api/voucher/request/detail/${requestId}`, options);
+// 포토카드 소유권 요청 삭제 요청
+export const deleteVoucherRequest = (requestId) => axios.delete(`${BACKEND}/api/voucher/request/${requestId}`, options);
 // 사용자가 포토카드 소유권 발급 요청
 export const postVoucherRequest = (form) => {
   let formData = new FormData();

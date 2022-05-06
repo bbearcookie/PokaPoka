@@ -183,6 +183,49 @@ router.post('/request', voucherImageUpload.single('image'), verifyLogin, async (
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 포토카드 소유권 요청 삭제
+router.delete('/request/:requestId', verifyLogin, async (req, res) => {
+  const { requestId } = req.params;
+  const { user, accessToken } = req;
+
+  // 로그인 상태 검사
+  if (!user) return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+
+  const con = await db.getConnection();
+  try {
+    // 소유권 요청 존재 유무 확인
+    let sql = `SELECT request_id, username, state, image_name FROM VoucherRequest WHERE request_id=${requestId}`;
+    let [[request]] = await con.query(sql);
+    if (!request) return res.status(404).json({ message: '삭제하려는 소유권 요청이 없습니다.' });
+
+    // 관리자이거나 해당 소유권을 등록한 것이 자신인 경우에만 삭제 가능
+    if (isAdmin(accessToken) || request.username === user.username) {
+      if (request.state != 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
+
+      // DB에서 소유권 요청 삭제
+      sql = `DELETE FROM VoucherRequest WHERE request_id=${requestId}`;
+      await con.execute(sql);
+
+      // 이미지 파일 삭제
+      try {
+        fs.rm(path.join(VOUCHER_IMAGE_DIR, request.image_name));
+      } catch (err) {
+        console.error(err);
+      }
+
+      return res.status(200).json({ message: '소유권 요청을 삭제했습니다.' });
+
+    } else return res.status(403).json({ message: '권한이 없습니다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 포토카드 소유권 발급 목록 조회
 router.get('/provision/list/all', verifyLogin, async (req, res) => {
   const { accessToken } = req;

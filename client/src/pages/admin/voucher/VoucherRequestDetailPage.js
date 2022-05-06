@@ -79,12 +79,12 @@ const VoucherRequestDetailPage = () => {
 
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
-    // try {
-    //   const res = await request.call(api.deleteSuggestion, suggestionId);
-    //   return navigate('/admin/suggestion');
-    // } catch (err) {
-    //   setMessage(err.response.data.message);
-    // }
+    try {
+      const res = await request.call(api.deleteVoucherRequest, requestId);
+      return navigate('/admin/voucher/request');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
     closeModal();
   }
 
