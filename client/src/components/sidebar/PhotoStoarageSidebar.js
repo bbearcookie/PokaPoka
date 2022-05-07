@@ -13,11 +13,11 @@ const PhotoStoarageSidebar = () => {
       <Link
         className={classNames("link", {"active": URI.includes('/stoarage/permanent')})}
         to="/stoarage/permanent"
-      >정식 포토카드</Link>
+      >정식 소유권</Link>
       <Link
         className={classNames("link", {"active": URI.includes('/stoarage/temporal')})}
         to="/stoarage/temporal"
-      >임시 포토카드</Link>
+      >임시 소유권</Link>
     </SidebarTemplate>
   );
 };

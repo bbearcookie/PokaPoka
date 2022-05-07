@@ -28,6 +28,59 @@ const { verifyLogin, isAdmin } = require('../utils/jwt');
 //   return res.status(501).json({ message: 'end of line' });
 // })
 
+// 사용자 본인이 소유한 포토카드 소유권 목록 조회
+router.get('/list/mine', verifyLogin, async (req, res) => {
+  const { groupId, memberId, permanent } = req.query;
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  // 유효성 검사
+  if (!groupId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
+  if (!memberId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
+
+  const con = await db.getConnection();
+  try {
+    let sql = ``;
+    // 모든 그룹의 모든 멤버에 대한 소유권 목록 조회
+    if (groupId === 'all' && memberId === 'all') {
+      sql = `
+      SELECT voucher_id, state, permanent, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, A.name AS album_name
+      FROM Voucher as V
+      INNER JOIN Photocard as P ON V.photocard_id = P.photocard_id
+      INNER JOIN AlbumData as A ON P.album_id = A.album_id
+      WHERE username='${user.username}' AND permanent=${permanent}`;
+    // 특정 그룹의 모든 멤버에 대한 소유권 목록 조회
+    } else if (memberId === 'all') {
+      sql = `
+      SELECT voucher_id, state, permanent, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, A.name AS album_name
+      FROM Voucher as V
+      INNER JOIN Photocard as P ON V.photocard_id = P.photocard_id
+      INNER JOIN AlbumData as A ON P.album_id = A.album_id
+      WHERE username='${user.username}' AND permanent=${permanent} AND P.group_id=${groupId}`;
+    // 그 외에 특정 멤버에 대한 소유권 목록 조회
+    } else {
+      sql = `
+      SELECT voucher_id, state, permanent, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, A.name AS album_name
+      FROM Voucher as V
+      INNER JOIN Photocard as P ON V.photocard_id = P.photocard_id
+      INNER JOIN AlbumData as A ON P.album_id = A.album_id
+      WHERE username='${user.username}' AND permanent=${permanent} AND P.member_id=${memberId}`;
+    }
+    let [vouchers] = await con.query(sql);
+
+    return res.status(200).json({ message: '포토카드 소유권 목록 조회에 성공했습니다.', vouchers });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 사용자 본인의 소유권 요청 목록 조회
 router.get('/request/list/mine', verifyLogin, async (req, res) => {
   const { user } = req;
@@ -222,8 +275,8 @@ router.get('/provision/list/all', verifyLogin, async (req, res) => {
     let sql = `
     SELECT provision_id, P.voucher_id, provider, recipient, provide_time, P.permanent, PHOTO.name
     FROM VoucherProvision as P
-    LEFT JOIN Voucher as V ON P.voucher_id = V.voucher_id
-    LEFT JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id`;
+    INNER JOIN Voucher as V ON P.voucher_id = V.voucher_id
+    INNER JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id`;
     let [provisions] = await con.query(sql);
 
     return res.status(200).json({ message: '포토카드 소유권 발급 목록을 조회했습니다.', provisions });

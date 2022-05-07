@@ -1,3 +1,34 @@
 .PermanentVoucherListPage {
-  
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .search_area {
+    min-width: 500px;
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .search {
+      display: flex;
+
+      .Select {
+        width: 200px; height: 40px;
+        margin-left: 5px;
+        align-self: center;
+      }
+    }
+  }
 }

@@ -39,7 +39,7 @@ const Navbar = () => {
               <Link
                 className={classNames("nav-item link", {"active": URI.includes('/trade')})}
                 to="/trade/all"
-              >포토카드 거래</Link>
+              >포토카드 교환</Link>
               <Link
                 className={classNames("nav-item link", {"active": URI.includes('/stoarage')})}
                 to="/stoarage/permanent"

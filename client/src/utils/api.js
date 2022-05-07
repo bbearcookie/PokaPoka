@@ -287,6 +287,12 @@ export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}
   options
 );
 
+// 사용자가 소유한 포토카드 소유권 목록 조회 (permanent가 0이면 임시소유권, 1이면 정식소유권 조회)
+export const getVoucherListMine = (groupId, memberId, permanent) => axios.get(
+  `${BACKEND}/api/voucher/list/mine?groupId=${groupId}&memberId=${memberId}&permanent=${permanent}`,
+  options
+);
+
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
