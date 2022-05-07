@@ -7,9 +7,9 @@ module.exports = (app) => {
   app.use('/api/notice', require('../routes/noticeCtrl'));
   app.use('/api/trade', require('../routes/tradeCtrl'));
   app.use('/api/finding', require('../routes/findingCtrl'));
+  app.use('/api/voucher', require('../routes/voucherCtrl'));
   app.use('/api', require('../routes/groupCtrl'));
   app.use('/api', require('../routes/memberCtrl'));
   app.use('/api', require('../routes/albumCtrl'));
   app.use('/api', require('../routes/photocardCtrl'));
-  app.use('/api', require('../routes/voucherCtrl'));
 }

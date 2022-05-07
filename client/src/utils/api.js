@@ -239,6 +239,55 @@ export const putNotice = (form, noticeId) => axios.put(`${BACKEND}/api/notice/ad
 options
 );
 
+// 사용자-자신이 작성한 포토카드 소유권 발급 요청 목록 조회
+export const getVoucherRequestListMine = () => axios.get(`${BACKEND}/api/voucher/request/list/mine`, options);
+// 관리자-모든 포토카드 소유권 발급 요청 목록 조회
+export const getVoucherRequestListAll = () => axios.get(`${BACKEND}/api/voucher/request/list/all`, options);
+// 관리자-모든 포토카드 소유권 발급 목록 조회
+export const getVoucherProvisionListAll = () => axios.get(`${BACKEND}/api/voucher/provision/list/all`, options);
+// 포토카드 소유권 발급 요청 상세 조회
+export const getVoucherRequestDetail = (requestId) => axios.get(`${BACKEND}/api/voucher/request/detail/${requestId}`, options);
+// 포토카드 소유권 요청 삭제 요청
+export const deleteVoucherRequest = (requestId) => axios.delete(`${BACKEND}/api/voucher/request/${requestId}`, options);
+// 사용자가 포토카드 소유권 발급 요청
+export const postVoucherRequest = (form) => {
+  let formData = new FormData();
+  formData.append('delivery', form.delivery);
+  formData.append('trackingNumber', form.trackingNumber);
+  formData.append('photocardId', form.photocardId);
+  formData.append('image', form.image.file);
+
+  return axios.post(`${BACKEND}/api/voucher/request`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+// 관리자가 포토카드 소유권 발급
+export const postVoucherProvisionNew = (form) => axios.post(`${BACKEND}/api/voucher/provision/new`,
+  {
+    recipient: form.recipient,
+    permanent: form.permanent,
+    photocardId: form.photocardId
+  },
+  options
+);
+
+// 관리자가 기존의 포토카드 소유권 요청 정보를 가지고 임시 소유권 발급
+export const postVoucherProvisionByRequest = (requestId) => axios.post(`${BACKEND}/api/voucher/provision/request`,
+  {
+    requestId: requestId,
+  },
+  options
+);
+
+// 임시 소유권을 영구 소유권으로 전환
+export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}/api/voucher/provision/request`,
+  {
+    requestId: requestId,
+  },
+  options
+);
+
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 
