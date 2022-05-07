@@ -36,10 +36,12 @@ const Navbar = () => {
           <section className="link_section">
             {authState.user.role === 'user' ?
             <>
-              <Link className="nav-item link" to="#">포토카드 탐색</Link>
-              <Link className="nav-item link" to="#">포토카드 교환</Link>
               <Link
-                className={classNames("nav-item link", {"active": URI.includes('/stoarage/permanent')})}
+                className={classNames("nav-item link", {"active": URI.includes('/trade')})}
+                to="/trade/all"
+              >포토카드 거래</Link>
+              <Link
+                className={classNames("nav-item link", {"active": URI.includes('/stoarage')})}
                 to="/stoarage/permanent"
               >포토카드 보관함</Link>
             </>
