@@ -9,17 +9,27 @@
     text-align: center;
   }
 
+  .label {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .card_section {
+    margin-top: 10px;
+    text-align: center;
+
+    .VoucherCard {
+      margin: 0 50px 50px 0;
+      display: inline-block;
+    }
+  }
+
   .search_area {
     min-width: 500px;
     width: 50%;
     margin: 0 auto;
     display: flex;
     justify-content: space-around;
-
-    .label {
-      font-size: 24px;
-      font-weight: bold;
-    }
 
     .search {
       display: flex;

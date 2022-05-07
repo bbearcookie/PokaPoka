@@ -1,0 +1,27 @@
+.VoucherCard {
+  width: 200px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  color: black;
+  text-decoration: none;
+
+  img {
+    object-fit: contain;
+  }
+
+  p {
+    margin: 5px 0;
+    text-align: center;
+  }
+  
+  .name-label {
+    font-weight: bold;
+  }
+
+  .album-label {
+    margin-bottom: 10px;
+  }
+
+}
