@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import qs from 'qs';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
@@ -15,6 +16,7 @@ import './PhotocardDetailPage.scss';
 
 const PhotocardDetailPage = () => {
   const { photocardId } = useParams(); // URL에 포함된 photocardId Params 정보
+  const { backURI } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   const [photocard, setPhotocard] = useState({
     name: '',
     image_name: ''
@@ -66,6 +68,15 @@ const PhotocardDetailPage = () => {
   // 삭제 모달 열기 / 닫기
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+
+  // 뒤로가기 버튼 클릭시
+  const onClickBackButton = () => {
+    if (backURI) {
+      return navigate(backURI);
+    }
+    
+    return navigate("/admin/photocard");
+  };
 
   // 삭제 버튼 클릭시
   const onClickRemove = async () => {
@@ -155,7 +166,8 @@ const PhotocardDetailPage = () => {
         </section>
       </section>
       <section className="submit_section">
-          <Link to="/admin/photocard"><Button className="cancel_button">뒤로 가기</Button></Link>
+          {/* <Link to="/admin/photocard"><Button className="cancel_button" onClick={onClickBackButton}>뒤로 가기</Button></Link> */}
+          <Button className="cancel_button" onClick={onClickBackButton}>뒤로 가기</Button>
           <Link to={`/admin/photocard/writer/${photocardId}`}><Button className="edit_button">수정</Button></Link>
           <Button className="remove_button" onClick={openModal}>삭제</Button>
       </section>

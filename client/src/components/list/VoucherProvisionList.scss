@@ -1,0 +1,30 @@
+.VoucherProvisionList {
+  
+  .Table {
+
+    // 테이블 크기 지정
+    thead {
+      .provision_id { width: 5%; }
+      .name { width: 35%; }
+      .recipient { width: 15%; }
+      .provider { width: 15%; }
+      .write_time { width: 15%; }
+    }
+
+    tbody {
+      tr {
+        &:hover {
+          background-color: #eee2e5;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .pagination_section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+}

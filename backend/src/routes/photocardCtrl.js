@@ -175,9 +175,8 @@ router.post('/photocard', photocardImageUpload.single('image'), verifyLogin, asy
     let filename = "";
     if (file) {
       filename = getTimestampFilename(result.insertId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
     }
     sql = `UPDATE Photocard SET image_name = '${filename}' WHERE photocard_id = ${result.insertId}`;
     await con.execute(sql);
@@ -248,15 +247,13 @@ router.put('/photocard/:photocardId', photocardImageUpload.single('image'), veri
     if (file) {
 
       // 기존 이미지 삭제
-      fsAsync.rm(path.join(file.destination, photocard.image_name), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rm(path.join(file.destination, photocard.image_name)); }
+      catch (err) { console.error(err); }
 
       // 이미지 이름 변경
       filename = getTimestampFilename(photocardId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
 
       // DB에 이미지 파일 이름 변경 내용 반영
       sql = `UPDATE Photocard SET image_name='${filename}' WHERE photocard_id=${photocardId}`;
@@ -304,9 +301,8 @@ router.delete('/photocard/:photocardId', verifyLogin, async (req, res) => {
     await con.execute(sql);
 
     // 이미지 파일 삭제
-    fsAsync.rm(path.join(PHOTOCARD_IMAGE_DIR, photocard.image_name), (err) => {
-      if (err) console.error(err);
-    });
+    try { fs.rm(path.join(PHOTOCARD_IMAGE_DIR, photocard.image_name)); }
+    catch (err) { console.error(err); }
 
     return res.status(200).json({ message: '포토카드 정보를 삭제했습니다.' });
   } catch (err) {

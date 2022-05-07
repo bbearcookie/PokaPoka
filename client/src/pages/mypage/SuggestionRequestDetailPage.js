@@ -14,7 +14,7 @@ import './SuggestionRequestDetailPage.scss';
 
 // 문의 타입에 따라 화면에 보여줄 텍스트
 const category = {
-  'normal': '일반',
+  'normal': '기타',
   'shipping': '배송',
   'voucher': '소유권',
   'contents': '새로운 데이터 추가',

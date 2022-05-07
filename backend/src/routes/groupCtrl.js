@@ -98,9 +98,8 @@ router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req,
     let filename = "";
     if (file) {
       filename = getTimestampFilename(result.insertId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
     }
     sql = `UPDATE GroupData SET image_name = '${filename}' WHERE group_id = ${result.insertId}`;
     await con.execute(sql);
@@ -165,15 +164,13 @@ router.put('/group/:groupId', groupImageUpload.single('image'), verifyLogin, asy
     let filename = "";
     if (file) {
       // 기존 이미지 삭제
-      fsAsync.rm(path.join(file.destination, group.image_name), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rm(path.join(file.destination, group.image_name)); }
+      catch (err) { console.error(err); }
 
       // 이미지 이름 변경
       filename = getTimestampFilename(groupId, file.mimetype);
-      fsAsync.rename(file.path, path.join(file.destination, filename), (err) => {
-        if (err) console.error(err);
-      });
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
 
       // DB에 이미지 파일 이름 변경 내용 반영
       sql = `UPDATE GroupData SET image_name = '${filename}' WHERE group_id = ${groupId}`;
@@ -229,9 +226,8 @@ router.delete('/group/:groupId', verifyLogin, async (req, res) => {
     await con.execute(sql);
 
     // 이미지 파일 삭제
-    fsAsync.rm(path.join(IDOL_GROUP_IMAGE_DIR, group.image_name), (err) => {
-      if (err) console.error(err);
-    });
+    try { fs.rm(path.join(IDOL_GROUP_IMAGE_DIR, group.image_name)); }
+    catch (err) { console.error(err); }
 
     return res.status(200).json({ message: '아이돌 그룹 정보를 삭제했습니다.' });
 
