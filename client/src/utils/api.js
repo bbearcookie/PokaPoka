@@ -288,8 +288,8 @@ export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}
 );
 
 // 사용자가 소유한 포토카드 소유권 목록 조회 (permanent가 0이면 임시소유권, 1이면 정식소유권 조회)
-export const getVoucherListMine = (permanent) => axios.get(
-  `${BACKEND}/api/voucher/list/mine?permanent=${permanent}`,
+export const getVoucherListMine = (permanent, state) => axios.get(
+  `${BACKEND}/api/voucher/list/mine?permanent=${permanent}&state=${state}`,
   options
 );
 
