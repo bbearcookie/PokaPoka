@@ -287,6 +287,24 @@ export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}
   options
 );
 
+//사용자 회원정보 조회
+export const getUserInfo = () => axios.get(`${BACKEND}/api/user/mypage`, options);
+//사용자 회원정보 수정
+export const putUserInfo = (form) => axios.put(`${BACKEND}/api/user/mypage/edit`,
+  {
+    name: form.name,
+    phone: form.phone,
+    nickname: form.nickname,
+    favorite: form.favorite
+  }, 
+  options
+);
+//관리자 - 회원 목록 조회
+export const getUserList = () => axios.get(`${BACKEND}/api/admin/user/list`, options);
+//관리자 - 탈퇴요청한, 비활성화된 사용자 조회
+export const getSelectUserList = (keword) => axios.get(`${BACKEND}/api/admin/user/selectList?keword=${keword}`, options);
+//관리자 - 회원 정보 상세 조회
+export const getUserDetail = (username) => axios.get(`${BACKEND}/api/admin/user/detail/${username}`, options);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

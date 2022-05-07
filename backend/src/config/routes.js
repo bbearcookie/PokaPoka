@@ -12,4 +12,5 @@ module.exports = (app) => {
   app.use('/api', require('../routes/memberCtrl'));
   app.use('/api', require('../routes/albumCtrl'));
   app.use('/api', require('../routes/photocardCtrl'));
+  app.use('/api', require('../routes/userCtrl'));
 }
