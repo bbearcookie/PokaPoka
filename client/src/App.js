@@ -47,6 +47,7 @@ import InfoCorrectPage from './pages/mypage/InfoCorrectPage';
 import InfoManagePage from './pages/mypage/InfoManagePage';
 import AskingPage from './pages/mypage/AskingPage';
 import VoucherProvisionListPage from './pages/admin/voucher/VoucherProvisionList';
+import PermanentVoucherListPage from './pages/stoarage/PermanentVoucherListPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -120,6 +121,7 @@ function App() {
         <Route path="/mypage/infocorrect" element={<InfoCorrectPage />}/>
         <Route path="/mypage/infomanage" element={<InfoManagePage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
+        <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
       </Routes>
     </div>
   );

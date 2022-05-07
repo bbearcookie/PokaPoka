@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import AuthContext from '../contexts/Auth';
+import classNames from 'classnames';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
+import AuthContext from '../contexts/Auth';
 import './Navbar.scss';
 
 const Navbar = () => {
+  const URI = window.location.pathname;
   const { state: authState, actions: authActions } = useContext(AuthContext);
   const request = useRequest();
   const navigate = useNavigate();
@@ -36,7 +38,10 @@ const Navbar = () => {
             <>
               <Link className="nav-item link" to="#">포토카드 탐색</Link>
               <Link className="nav-item link" to="#">포토카드 교환</Link>
-              <Link className="nav-item link" to="#">포토카드 보관함</Link>
+              <Link
+                className={classNames("nav-item link", {"active": URI.includes('/stoarage/permanent')})}
+                to="/stoarage/permanent"
+              >포토카드 보관함</Link>
             </>
             : null}
           </section>

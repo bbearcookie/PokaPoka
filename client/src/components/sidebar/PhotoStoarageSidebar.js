@@ -11,11 +11,11 @@ const PhotoStoarageSidebar = () => {
     <SidebarTemplate>
       <section className="title_section">포토카드 보관함</section>
       <Link
-        className={classNames("link", {"active": URI.includes('/main')})}
+        className={classNames("link", {"active": URI.includes('/stoarage/permanent')})}
         to="#"
-      >보유한 포토카드</Link>
+      >정식 포토카드</Link>
+      <Link className="link" to="#">임시 포토카드</Link>
       <Link className="link" to="#">찜한 포토카드</Link>
-      <Link className="link" to="#">교환 진행 상황</Link>
     </SidebarTemplate>
   );
 };
