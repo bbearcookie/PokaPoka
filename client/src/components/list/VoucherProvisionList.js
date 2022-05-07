@@ -42,7 +42,7 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
         <thead>
           <tr>
             <th className="provision_id">번호</th>
-            <th className="permanent">임시 / 영구</th>
+            <th className="permanent">임시 소유권 여부</th>
             <th className="name">포토카드 이름</th>
             <th className="recipient">요청자</th>
             <th className="provider">발급자</th>

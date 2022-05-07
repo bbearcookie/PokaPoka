@@ -29,8 +29,6 @@ const TemporalVoucherListPage = () => {
       setTradedVouchers(res2.vouchers);
       const res3 = await request.call(api.getGroupList);
       setGroups(res3.groups);
-      console.log(res);
-      console.log(res2);
     } catch (err) {
       console.error(err);
     }
