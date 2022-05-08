@@ -20,8 +20,8 @@ import './TradeWriterPage.scss';
 const TradeWriterPage = () => {
   const { tradeId } = useParams(); // URL에 포함된 albumId Params 정보
   const [form, setForm] = useState({
-    voucherId: '',
-    want_amount: ''
+    haveVoucherId: '',
+    wantAmount: ''
   });
   const [select, setSelect] = useState({
     permanent: '1',
@@ -91,7 +91,7 @@ const TradeWriterPage = () => {
         setVouchers([]);
         return;
       }
-      
+
       const res = await request.call(api.getVoucherListMine, {
         permanent: select.permanent,
         state: select.state,
@@ -149,15 +149,14 @@ const TradeWriterPage = () => {
     }));
   }
 
-  // 포토카드 선택시
-  const onClickPhotocard = (e) => {
+  // 사용할 소유권 선택시
+  const onClickVoucher = (e) => {
     const target = e.currentTarget;
-    const name = target.getAttribute('name');
     const value = target.getAttribute('value');
 
-    // setForm(produce(draft => {
-    //   draft.photocardId = photocardId;
-    // }));
+    setForm(produce(draft => {
+      draft.haveVoucherId = value;
+    }));
   }
 
   // 작성 취소 버튼 클릭시
@@ -166,6 +165,7 @@ const TradeWriterPage = () => {
   // 작성 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
+    console.log(form);
 
     // 새로 작성하는 경우
     if (!tradeId) {
@@ -228,10 +228,13 @@ const TradeWriterPage = () => {
           {vouchers ?
             vouchers.map(v =>
               <VoucherCard
+                className={classNames({"active": v.voucher_id === parseInt(form.haveVoucherId) })}
                 key={v.voucher_id}
+                value={v.voucher_id}
                 name={v.name}
                 albumName={v.album_name}
                 src={`${BACKEND}/image/photocard/${v.image_name}`}
+                onClick={onClickVoucher}
               />
             ) : null}
         </section>
@@ -247,6 +250,11 @@ const TradeWriterPage = () => {
           placeholder="받으려는 소유권 갯수를 입력하세요 (숫자)"
           onChange={onChangeNumberInput}
         />
+
+        <section className="submit_section">
+          <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
+          <Button className="submit_button" type="submit">작성</Button>
+        </section>
 
       </form>
     </UserTemplate>
