@@ -4,7 +4,7 @@ const { db } = require('../config/database');
 const fs = require('fs').promises;
 const { getTimestampFilename, voucherImageUpload, VOUCHER_IMAGE_DIR } = require('../config/multer');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
-const { isNull } = require('../utils/common');
+const { isNull, getWhereClause } = require('../utils/common');
 
 // 사용자 본인이 소유한 포토카드 소유권 목록 조회
 router.get('/list/mine', verifyLogin, async (req, res) => {
@@ -16,13 +16,14 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    let whereSql = `WHERE username='${user.username}'`;
+    let whereSqls = []; // WHERE 절에 들어갈 조건문 배열. 조건 작성후 getWhereClause 호출하면 WHERE절에 알맞는 문자열로 반환됨
+    whereSqls.push(`username='${user.username}'`);
 
     // 소유권 조회 조건에 permanent 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(permanent)) whereSql += ` AND permanent='${permanent}'`;
+    if (!isNull(permanent)) whereSqls.push(`permanent='${permanent}'`);
 
     // 소유권 조회 조건에 state 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(state)) whereSql += ` AND state='${state}'`;
+    if (!isNull(state)) whereSqls.push(`state='${state}'`);
 
     // 소유권 조회 조건에 특정 그룹과 멤버에 대한 필터링 조건이 있을 경우 WHERE 조건에 추가
     if (!isNull(groupId) && !isNull(memberId)) {
@@ -31,10 +32,10 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
         // 특별한 WHERE 조건이 필요하지 않음.
       // 특정 그룹의 모든 멤버에 대한 소유권 목록 조회
       } else if (memberId === 'all') {
-        whereSql += ` AND P.group_id=${groupId}`;
+        whereSqls.push(`P.group_id=${groupId}`);
       // 그 외에 특정 멤버에 대한 소유권 목록 조회
       } else {
-        whereSql += ` AND P.member_id=${memberId}`;
+        whereSqls.push(`P.member_id=${memberId}`);
       }
     }
 
@@ -43,7 +44,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
     FROM Voucher as V
     INNER JOIN Photocard as P ON V.photocard_id = P.photocard_id
     INNER JOIN AlbumData as A ON P.album_id = A.album_id
-    ${whereSql}
+    WHERE ${getWhereClause(whereSqls)}
     ORDER BY P.group_id, voucher_id`;
 
     let [vouchers] = await con.query(sql);

@@ -4,6 +4,7 @@ function isNull(value) {
   if (value === undefined) return true;
   if (value === '') return true;
   if (value === 'undefined') return true; // URL params가 비어있는 경우에 undefined 라는 문자열로 받게 됨.
+  if (value.length === 0) return true;
   return false;
 }
 
@@ -17,5 +18,19 @@ function convertToMysqlTime(date) {
       ('00' + date.getUTCSeconds()).slice(-2);
 };
 
+// DB SQL문 사용시 필요한 조건이 담긴 배열을 WHERE절의 조건에 들어갈 부분의 문자열 형태로 반환함.
+function getWhereClause(queries) {
+  if (isNull(queries)) return '';
+
+  let result = '';
+  queries.forEach((element, i) => {
+    if (i === 0) result += `${element}`
+    else result += ` AND ${element}`;
+  });
+  
+  return result;
+}
+
 module.exports.isNull = isNull;
 module.exports.convertToMysqlTime = convertToMysqlTime;
+module.exports.getWhereClause = getWhereClause;
