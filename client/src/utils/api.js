@@ -95,6 +95,7 @@ export const putMember = (form, memberId) => {
 }
 
 // 앨범 목록 데이터 조회 요청
+export const getAllAlbumList = () => axios.get(`${BACKEND}/api/album/list`, options);
 export const getAlbumList = (groupId) => axios.get(`${BACKEND}/api/album/list/${groupId}`, options);
 // 앨범 상세 데이터 조회 요청
 export const getAlbumDetail = (albumId) => axios.get(`${BACKEND}/api/album/detail/${albumId}`, options);
@@ -310,6 +311,9 @@ export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
   },
   options
 );
+
+// 모든 교환글 목록 조회 요청
+export const getTradeListAll = () => axios.get(`${BACKEND}/api/trade/list/all`, options);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

@@ -21,7 +21,7 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
   try {
     await con.beginTransaction();
 
-    // 교환글 등록
+    // -교환글 등록
     let sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
     let [result] = await con.execute(sql, [user.username, haveVoucherId, wantAmount]);
 
@@ -41,6 +41,23 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
     con.release();
   }
 
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 모든 교환글 목록 조회 요청
+router.get('/trade/list/all', async (req, res) => {
+  const con = await db.getConnection();
+  try {
+    let sql = `SELECT trade_id, username, voucher_id, want_amount, state, regist_time FROM Trade`;
+    const [trades] = await con.query(sql);
+    return res.status(200).json({ message: '교환글 목록을 조회했습니다.', trades });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+  
   return res.status(501).json({ message: 'end of line' });
 });
 
