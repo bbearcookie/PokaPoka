@@ -13,6 +13,10 @@ import ImageCard from '../../components/card/ImageCard';
 import VoucherCard from '../../components/card/VoucherCard';
 import Button from '../../components/form/Button';
 import Input from '../../components/form/Input';
+import Modal from '../../components/modal/Modal';
+import ModalHeader from '../../components/modal/ModalHeader';
+import ModalBody from '../../components/modal/ModalBody';
+import ModalFooter from '../../components/modal/ModalFooter';
 import TradeSideBar from '../../components/sidebar/TradeSideBar';
 import UserTemplate from '../../templates/UserTemplate';
 import './TradeWriterPage.scss';
@@ -21,6 +25,8 @@ const TradeWriterPage = () => {
   const { tradeId } = useParams(); // URL에 포함된 albumId Params 정보
   const [form, setForm] = useState({
     haveVoucherId: '',
+    wantPhotocardId: '', // 포토카드 추가 모달 창에서 사용될 변수
+    wantPhotocards: [], // 사용자에 의해 추가된 원하는 포토카드 목록
     wantAmount: ''
   });
   const [select, setSelect] = useState({
@@ -38,8 +44,9 @@ const TradeWriterPage = () => {
     }
   });
   const [groups, setGroups] = useState([]);
-  const [photocards, setPhotocards] = useState([]);
   const [vouchers, setVouchers] = useState([]);
+  const [photocards, setPhotocards] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false); // 받으려는 포토카드 추가 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const request = useRequest();
   const navigate = useNavigate();
@@ -55,6 +62,10 @@ const TradeWriterPage = () => {
   }
   useEffect(() => { onLoad(); }, []);
 
+  // 받으려는 포토카드 추가 모달 열기 / 닫기
+  const openAddModal = () => setShowAddModal(true);
+  const closeAddModal = () => setShowAddModal(false);
+
   // input 값 변경시
   const onChangeInput = (e) => {
     setForm(produce(draft => {
@@ -64,7 +75,7 @@ const TradeWriterPage = () => {
 
   // input에 입력된 값이 숫자인 경우에만 상태 업데이트
   const onChangeNumberInput = (e) => {
-    if (!/[^0-9]/.test(e.target.value)) {
+    if (!/[^1-9]/.test(e.target.value)) {
       setForm(produce(draft => {
         draft[e.target.name] = e.target.value;
       }));
@@ -103,7 +114,23 @@ const TradeWriterPage = () => {
       setMessage(err.response.data.message);
     }
   };
-  useEffect(() => { onUpdateVouchers(); }, [select]);
+  useEffect(() => { onUpdateVouchers(); }, [select.permanent, select.have, select.state]);
+
+  // 화면에 보여줄 포토카드 목록 업데이트
+  const onUpdatePhotocards = async (e) => {
+    try {
+      if (select.want.groupId === '' || select.want.memberId === '') {
+        setPhotocards([]);
+        return;
+      }
+
+      const res = await request.call(api.getPhotocardList, select.want.groupId, select.want.memberId);
+      setPhotocards(res.photocards);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  };
+  useEffect(() => { onUpdatePhotocards(); }, [select.want]);
 
   // 그룹 선택 변경시 동작
   const onChangeGroupSelect = async (e) => {
@@ -159,6 +186,16 @@ const TradeWriterPage = () => {
     }));
   }
 
+  // 받을 포토카드 선택시
+  const onClickPhotocard = (e) => {
+    const target = e.currentTarget;
+    const value = target.getAttribute('value');
+
+    setForm(produce(draft => {
+      draft.wantPhotocardId = value;
+    }));
+  }
+
   // 작성 취소 버튼 클릭시
   const onCancel = () => navigate(-1); // 뒤로 돌아가기
 
@@ -182,10 +219,65 @@ const TradeWriterPage = () => {
       sidebar={<TradeSideBar />}
     >
       {request.loading ? <LoadingSpinner /> : null}
+
+      {/* 받으려는 포토카드 추가 모달 창 */}
+      {showAddModal ?
+      <Modal onClose={closeAddModal}>
+        <ModalHeader onClose={closeAddModal}>
+          <h1>받으려는 포토카드</h1>
+        </ModalHeader>
+        <ModalBody>
+          <section className="search_area">
+            <article className="search">
+              <p className="label">그룹</p>
+              <Select name="want" value={select.want.groupId} onChange={onChangeGroupSelect}>
+                <option value="">선택</option>
+                <option value="all">전체</option>
+                {groups ?
+                groups.map(group => 
+                  <option key={group.group_id} value={group.group_id}>{group.name}</option>
+                ) : null}
+              </Select>
+            </article>
+
+            <article className="search">
+              <p className="label">멤버</p>
+              <Select name="want" value={select.want.memberId} onChange={onChangeMemberSelect}>
+                <option value="">선택</option>
+                <option value="all">전체</option>
+                {select.want.members ?
+                select.want.members.map(member =>
+                  <option key={member.member_id} value={member.member_id}>{member.name}</option>
+                ) : null}
+              </Select>
+            </article>
+          </section>
+
+          <section className="card_section">
+          {photocards ?
+            photocards.map(photocard =>
+              <ImageCard
+                className={classNames({"active": photocard.photocard_id === parseInt(form.wantPhotocardId) })}
+                key={photocard.photocard_id}
+                value={photocard.photocard_id}
+                name={photocard.name}
+                src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+                onClick={onClickPhotocard}
+              />
+            ) : null}
+        </section>
+
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeAddModal}>취소</Button>
+          <Button className="submit_button">추가</Button>
+        </ModalFooter>
+      </Modal> : null}
+
       <form onSubmit={onSubmit}>
         {tradeId ?
         <h1 className="title-label">교환글 수정</h1> :
-        <h1 className="title-label">교환글 추가</h1>}
+        <h1 className="title-label">교환글 등록</h1>}
 
         {message ? <MessageLabel>{message}</MessageLabel> : null}
 
@@ -239,15 +331,19 @@ const TradeWriterPage = () => {
             ) : null}
         </section>
 
-        <p className="label">받으려는 포토카드 선택</p>
-        <p className="label">받으려는 포토카드 갯수</p>
+        <div className="label_area">
+          <p className="label">받으려는 포토카드</p>
+          <Button className="add_button" onClick={openAddModal}>추가</Button>
+        </div>
+
+        <p className="label">받으려는 포토카드 개수</p>
         <Input
           type="text"
           name="want_amount"
           value={form.want_amount}
-          maxLength="2"
+          maxLength="1"
           autoComplete="off"
-          placeholder="받으려는 소유권 갯수를 입력하세요 (숫자)"
+          placeholder="받으려는 포토카드의 개수를 입력하세요 (숫자)"
           onChange={onChangeNumberInput}
         />
 

@@ -20,26 +20,28 @@
       margin: 15px 0 15px 0;
     }
 
+    .label_area {
+      margin: 20px 0;
+      display: flex;
+  
+      .add_button {
+        width: 50px; height: 35px;
+        align-self: center;
+        margin-left: 10px;
+        border-radius: 50px;
+        font-size: 16px;
+        background-color: rgb(206, 28, 73);
+        color: white;
+  
+        &:hover {
+          background-color: rgb(163, 33, 66);
+        }
+      }
+    }
+
     .Input {
       width: 100%; height: 50px;
       font-size: 16px;
-    }
-
-    .cancel_button {
-      background-color: #ececec;
-  
-      &:hover {
-        background: gainsboro;
-      }
-    }
-  
-    .submit_button {
-      color: white;
-      background-color: rgb(206, 28, 73);
-  
-      &:hover {
-        background-color: rgb(163, 33, 66);
-      }
     }
 
     .image_section {
@@ -74,45 +76,97 @@
         margin-left: 15px;
       }
     }
+  }
 
-    .search_area {
-      min-width: 500px;
-      width: 70%;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-around;
-  
-      .label {
-        font-size: 24px;
-        font-weight: bold;
-      }
-  
-      .search {
-        display: flex;
-  
-        .Select {
-          width: 200px; height: 40px;
-          margin-left: 5px;
-          align-self: center;
-        }
+  .Modal {
+    width: 1000px;
+    height: 70%;
+
+    .ModalBody {
+      height: 100%;
+      display: flex; flex-direction: column;
+      text-align: center;
+      overflow-y: scroll;
+
+      p {
+        line-height: 50px;
       }
     }
-  
-    .card_section {
-      margin-top: 10px;
-      text-align: center;
-  
-      .VoucherCard {
-        margin: 0 25px 50px 25px;
-        display: inline-block;
+  }
 
-        &.active {
-          outline: none;
-          border: 1px solid rgb(206, 28, 73);
-          box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
-          transition: all 0.25s;
-        }
+  .search_area {
+    min-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .search {
+      display: flex;
+
+      .Select {
+        width: 200px; height: 40px;
+        margin-left: 5px;
+        align-self: center;
       }
+    }
+  }
+
+  .card_section {
+    margin-top: 10px;
+    text-align: center;
+
+    .VoucherCard {
+      margin: 0 25px 50px 25px;
+      display: inline-block;
+
+      &.active {
+        outline: none;
+        border: 1px solid rgb(206, 28, 73);
+        box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+        transition: all 0.25s;
+      }
+    }
+
+    .ImageCard {
+      margin: 0 25px 50px 25px;
+      display: inline-block;
+
+      p {
+        margin: 0;
+        padding: 0;
+        line-height: 40px;
+        font-size: 16px;
+      }
+
+      &.active {
+        outline: none;
+        border: 1px solid rgb(206, 28, 73);
+        box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+        transition: all 0.25s;
+      }
+    }
+  }
+
+  .cancel_button {
+    background-color: #ececec;
+
+    &:hover {
+      background: gainsboro;
+    }
+  }
+
+  .submit_button {
+    color: white;
+    background-color: rgb(206, 28, 73);
+
+    &:hover {
+      background-color: rgb(163, 33, 66);
     }
   }
 }
