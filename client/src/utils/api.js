@@ -313,7 +313,13 @@ export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
 );
 
 // 모든 교환글 목록 조회 요청
-export const getTradeListAll = () => axios.get(`${BACKEND}/api/trade/list/all`, options);
+export const getTradeListAll = (filter) => axios.get(
+  `${BACKEND}/api/trade/list/all?` +
+  `groupId=${filter.groupId}&` +
+  `memberId=${filter.memberId}&` +
+  `albumId=${filter.albumId}&` +
+  options
+);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

@@ -28,8 +28,6 @@ const TradeListPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      // const res = await request.call(api.getTradeListAll);
-      // setTrades(res.trades);
       const res = await request.call(api.getGroupList);
       setGroups(res.groups);
     } catch (err) {
@@ -39,19 +37,28 @@ const TradeListPage = () => {
   useEffect(() => { onLoad(); }, []);
 
   // 화면에 보여줄 교환글 목록 업데이트
-  const onUpdateTrades = async (e) => {
-    console.log(select);
-    // if (select.want.groupId === '' || select.want.memberId === '') {
-    //   setPhotocards([]);
-    //   return;
-    // }
+  const onUpdateTrades = async () => {
+    if (select.searchType === '') {
+      return setTrades([]);
+    } else if (select.searchType === 'group') {
+      if (select.groupId === '') return setTrades([]);
+    } else if (select.searchType === 'member') {
+      if (select.groupId === '' || select.memberId === '') return setTrades([]);
+    } else if (select.searchType === 'album') {
+      if (select.groupId === '' || select.albumId === '') return setTrades([]);
+    }
 
-    // try {
-    //   const res = await request.call(api.getPhotocardList, select.want.groupId, select.want.memberId);
-    //   setPhotocards(res.photocards);
-    // } catch (err) {
-    //   setMessage(err.response.data.message);
-    // }
+    try {
+      const res = await request.call(api.getTradeListAll, {
+        groupId: select.groupId,
+        memberId: select.memberId,
+        albumId: select.albumId
+      });
+      setTrades(res.trades);
+      console.log(res);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
   };
   useEffect(() => { onUpdateTrades(); }, [select]);
 
@@ -120,8 +127,8 @@ const TradeListPage = () => {
       className="TradeListPage"
       sidebar={<TradeSideBar />}
     >
+      {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="title_area">
-        {message ? <MessageLabel>{message}</MessageLabel> : null}
         <h1 className="title-label">교환글 목록</h1>
         <Link to="/trade/writer">
           <Button className="add_button">작성</Button>
