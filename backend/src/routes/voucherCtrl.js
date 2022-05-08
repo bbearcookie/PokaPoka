@@ -44,7 +44,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
     FROM Voucher as V
     INNER JOIN Photocard as P ON V.photocard_id = P.photocard_id
     INNER JOIN AlbumData as A ON P.album_id = A.album_id
-    WHERE ${getWhereClause(whereSqls)}
+    ${getWhereClause(whereSqls)}
     ORDER BY P.group_id, voucher_id`;
 
     let [vouchers] = await con.query(sql);

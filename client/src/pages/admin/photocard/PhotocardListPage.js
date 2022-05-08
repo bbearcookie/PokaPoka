@@ -38,6 +38,11 @@ const PhotocardListPage = () => {
 
   // 화면에 보여줄 포토카드 목록 업데이트
   const onUpdatePhotocards = async (e) => {
+    if (select.groupId === '' || select.memberId === '') {
+      dispatch(setPhotocards([]));
+      return;
+    }
+
     try {
       const res = await request.call(api.getPhotocardList, select.groupId, select.memberId);
       dispatch(setPhotocards(res.photocards));

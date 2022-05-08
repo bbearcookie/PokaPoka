@@ -49,6 +49,11 @@ const VoucherRequestWriterPage = () => {
 
   // 화면에 보여줄 포토카드 목록 업데이트
   const onUpdatePhotocards = async (e) => {
+    if (form.groupId === '' || form.memberId === '') {
+      setPhotocards([]);
+      return;
+    }
+
     try {
       const res = await request.call(api.getPhotocardList, form.groupId, form.memberId);
       setPhotocards(res.photocards);

@@ -24,7 +24,7 @@ function getWhereClause(queries) {
 
   let result = '';
   queries.forEach((element, i) => {
-    if (i === 0) result += `${element}`
+    if (i === 0) result += `WHERE ${element}`
     else result += ` AND ${element}`;
   });
   

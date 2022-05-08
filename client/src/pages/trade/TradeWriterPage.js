@@ -126,6 +126,7 @@ const TradeWriterPage = () => {
 
       const res = await request.call(api.getPhotocardList, select.want.groupId, select.want.memberId);
       setPhotocards(res.photocards);
+      console.log(res);
     } catch (err) {
       setMessage(err.response.data.message);
     }
