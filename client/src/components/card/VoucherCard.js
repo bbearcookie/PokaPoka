@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import './VoucherCard.scss';
 
-const VoucherCard = ({ className, src, name, albumName, value, onClick }) => {
+const VoucherCard = ({ className, src, name, albumName, value, onClick, children }) => {
   return (
     <div className={classNames("VoucherCard", className)} value={value} onClick={onClick}>
       <img 
@@ -14,6 +14,7 @@ const VoucherCard = ({ className, src, name, albumName, value, onClick }) => {
       />
       <p className="name-label">{name}</p>
       <p className="album-label">{albumName}</p>
+      {children}
     </div>
   );
 };

@@ -48,6 +48,7 @@ const TradeWriterPage = () => {
   const [photocards, setPhotocards] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false); // 받으려는 포토카드 추가 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
   const request = useRequest();
   const navigate = useNavigate();
 
@@ -64,7 +65,34 @@ const TradeWriterPage = () => {
 
   // 받으려는 포토카드 추가 모달 열기 / 닫기
   const openAddModal = () => setShowAddModal(true);
-  const closeAddModal = () => setShowAddModal(false);
+  const closeAddModal = () => {
+    setModalMessage('');
+    setShowAddModal(false);
+  }
+
+  // 받으려는 포토카드 추가 모달에서 추가 버튼 클릭시
+  const onClickAddPhotocardButton = () => {
+    if (form.wantPhotocards.find(element => element.photocard_id === parseInt(form.wantPhotocardId)))
+      return setModalMessage('이미 받으려는 포토카드로 추가한 포토카드입니다.');
+    if (!form.wantPhotocardId) return setModalMessage('받을 포토카드를 선택해주세요.');
+
+    // 받으려는 포토카드 목록에 해당 포토카드 정보 추가
+    setForm(produce(draft => {
+      draft.wantPhotocards = draft.wantPhotocards.concat(photocards.find(element => element.photocard_id === parseInt(form.wantPhotocardId)));
+      draft.wantPhotocardId = '';
+    }));
+
+    closeAddModal();
+  }
+
+  // 받으려는 포토카드 목록에서 취소 버튼 클릭시
+  const onClickRemovePhotocardButton = (e) => {
+    const value = e.target.value;
+
+    setForm(produce(draft => {
+      draft.wantPhotocards = draft.wantPhotocards.filter(element => element.photocard_id !== parseInt(value));
+    }));
+  }
 
   // input 값 변경시
   const onChangeInput = (e) => {
@@ -126,7 +154,6 @@ const TradeWriterPage = () => {
 
       const res = await request.call(api.getPhotocardList, select.want.groupId, select.want.memberId);
       setPhotocards(res.photocards);
-      console.log(res);
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -223,7 +250,7 @@ const TradeWriterPage = () => {
 
       {/* 받으려는 포토카드 추가 모달 창 */}
       {showAddModal ?
-      <Modal onClose={closeAddModal}>
+      <Modal className="add_modal" onClose={closeAddModal}>
         <ModalHeader onClose={closeAddModal}>
           <h1>받으려는 포토카드</h1>
         </ModalHeader>
@@ -255,23 +282,24 @@ const TradeWriterPage = () => {
           </section>
 
           <section className="card_section">
-          {photocards ?
-            photocards.map(photocard =>
-              <ImageCard
-                className={classNames({"active": photocard.photocard_id === parseInt(form.wantPhotocardId) })}
-                key={photocard.photocard_id}
-                value={photocard.photocard_id}
-                name={photocard.name}
-                src={`${BACKEND}/image/photocard/${photocard.image_name}`}
-                onClick={onClickPhotocard}
-              />
-            ) : null}
-        </section>
-
+            {photocards ?
+              photocards.map(photocard =>
+                <VoucherCard
+                  className={classNames({"active": photocard.photocard_id === parseInt(form.wantPhotocardId) })}
+                  key={photocard.photocard_id}
+                  value={photocard.photocard_id}
+                  name={photocard.name}
+                  albumName={photocard.album_name}
+                  src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+                  onClick={onClickPhotocard}
+                />
+              ) : null}
+          </section>
+          {modalMessage && <MessageLabel>{modalMessage}</MessageLabel>}
         </ModalBody>
         <ModalFooter>
           <Button className="cancel_button" onClick={closeAddModal}>취소</Button>
-          <Button className="submit_button">추가</Button>
+          <Button className="submit_button" onClick={onClickAddPhotocardButton}>추가</Button>
         </ModalFooter>
       </Modal> : null}
 
@@ -337,11 +365,25 @@ const TradeWriterPage = () => {
           <Button className="add_button" onClick={openAddModal}>추가</Button>
         </div>
 
+        <section className="card_section">
+          {form.wantPhotocards ?
+            form.wantPhotocards.map(photocard =>
+              <VoucherCard
+                key={photocard.photocard_id}
+                name={photocard.name}
+                albumName={photocard.album_name}
+                src={`${BACKEND}/image/photocard/${photocard.image_name}`}
+              >
+                <Button className="remove_button" value={photocard.photocard_id} onClick={onClickRemovePhotocardButton}>취소</Button>
+              </VoucherCard>
+            ) : null}
+        </section>
+
         <p className="label">받으려는 포토카드 개수</p>
         <Input
           type="text"
-          name="want_amount"
-          value={form.want_amount}
+          name="wantAmount"
+          value={form.wantAmount}
           maxLength="1"
           autoComplete="off"
           placeholder="받으려는 포토카드의 개수를 입력하세요 (숫자)"

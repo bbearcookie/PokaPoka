@@ -3,11 +3,12 @@ import classNames from 'classnames';
 import './Button.scss';
 
 // 기본 스타일이 지정된 버튼 컴포넌트.
-const Button = ({ className, type, onClick, children }) => {
+const Button = ({ className, type, value, onClick, children }) => {
   return (
     <button
       className={classNames('Button', className)}
       type={type}
+      value={value}
       onClick={onClick}
     >
       {children}
