@@ -299,12 +299,42 @@ export const putUserInfo = (form) => axios.put(`${BACKEND}/api/user/mypage/edit`
   }, 
   options
 );
+//사용자 탈퇴 요청
+export const patchUser = (state) => axios.patch(`${BACKEND}/api/user/withdrawal/request`, 
+  {
+    withdrawal: state.withdrawal
+  }, 
+  options
+);
+//사용자 탈퇴 취소 요청
+export const patchUserCancel = (state) => axios.patch(`${BACKEND}/api/user/withdrawal/request`, 
+  {
+    withdrawal: state.normal
+  }, 
+  options
+);
 //관리자 - 회원 목록 조회
 export const getUserList = () => axios.get(`${BACKEND}/api/admin/user/list`, options);
 //관리자 - 탈퇴요청한, 비활성화된 사용자 조회
 export const getSelectUserList = (keword) => axios.get(`${BACKEND}/api/admin/user/selectList?keword=${keword}`, options);
 //관리자 - 회원 정보 상세 조회
 export const getUserDetail = (username) => axios.get(`${BACKEND}/api/admin/user/detail/${username}`, options);
+//관리자 - 사용자 비활성화
+export const patchInactive = (state, username) => axios.patch(`${BACKEND}/api/admin/user/inactive/${username}`, 
+  {
+    inactive: state.inactive
+  }, 
+  options
+);
+//관리자 - 사용자 비활성화 취소
+export const patchInactiveCancel = (state, username) => axios.patch(`${BACKEND}/api/admin/user/inactive/${username}`, 
+  {
+    inactive: state.normal
+  }, 
+  options
+);
+// 관리자 - 회원 탈퇴
+export const deleteUser = (username) => axios.delete(`${BACKEND}/api/admin/user/withdrawal/${username}`, options);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

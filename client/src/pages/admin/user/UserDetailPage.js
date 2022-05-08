@@ -34,13 +34,20 @@ const UserDetailPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
-
   const [users,setUsers]=useState({
       username: '',
       name: '',
       phone: '',
       nickname: '',
       favorite: ''
+  });
+  const state = {
+    inactive: 1,
+    normal: 0
+  };
+  const [modalContent, setModalContent] = useState({ // 모달의 header, body에 보여줄 메시지
+    header: '',
+    body: ''
   });
 
   // 페이지 로드시 동작
@@ -67,20 +74,66 @@ const UserDetailPage = () => {
   }};
   useEffect(() => { onLoad(); }, []);
 
-  // 삭제 모달 열기 / 닫기
+  // 모달 열기 / 닫기
   const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setShowModal(false);
+    navigate(0);
+  }
 
-  // 삭제 버튼 클릭시
-  // const onClickRemove = async () => {
-  //   try {
-  //     const res = await request.call(api.deleteSuggestion, username);
-  //     return navigate('/admin/suggestion');
-  //   } catch (err) {
-  //     setMessage(err.response.data.message);
-  //   }
-  //   closeModal();
-  // }
+  // 탈퇴 버튼 클릭시 작동
+  const onClickWithdrawal = async () => {
+    try {
+      const res = await request.call(api.deleteUser, username);
+      setModalContent({
+        header: '회원 탈퇴',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '회원 탈퇴',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+
+  // 비활성화 버튼 클릭시 작동
+  const onClickInactive = async () => {
+    try {
+      const res = await request.call(api.patchInactive, state, username);
+      setModalContent({
+        header: '비활성화',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '비활성화',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
+  
+  // 비활성화 버튼 클릭시 작동
+  const onClickCancel = async () => {
+    try {
+      const res = await request.call(api.patchInactiveCancel, state, username);
+      setModalContent({
+        header: '비활성화 취소',
+        body: res.message
+      });
+    } catch (err) {
+      setModalContent({
+        header: '비활성화 취소',
+        body: err.response.data.message
+      });
+    } finally {
+      openModal();
+    }
+  }
 
   const back = () => navigate(-1);
 
@@ -88,7 +141,18 @@ const UserDetailPage = () => {
     <AdminTemplate className="UserDetailPage">
 
       {/* 모달 창 띄움 */}
-      
+      {showModal ?
+      <Modal onClose={closeModal}>
+          <ModalHeader onClose={closeModal}>
+          <h1>{modalContent.header}</h1>
+          </ModalHeader>
+          <ModalBody>
+          <p>{modalContent.body}</p>
+          </ModalBody>
+          <ModalFooter>
+          <Button className="submit_button" onClick={closeModal}>확인</Button>
+          </ModalFooter>
+      </Modal> : null}
 
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
       {request.loading ? <LoadingSpinner /> : null}
@@ -112,8 +176,10 @@ const UserDetailPage = () => {
       </section>
       <section className="submit_section">
         <Button className="cancel_button" onClick={back}>뒤로 가기</Button>
-        <Button className="withdrawal_button" onClick={openModal}>탈퇴</Button>
-        <Button className="inactive_button" onClick={openModal}>비활성화</Button>
+        <Button className="withdrawal_button" onClick={onClickWithdrawal}>탈퇴</Button>
+        {users.inactive ? 
+        <Button className="inactive_button" onClick={onClickCancel}>비활성화 취소</Button>:
+        <Button className="inactive_button" onClick={onClickInactive}>비활성화</Button>}
       </section>
     </AdminTemplate>
   );

@@ -42,7 +42,7 @@ const Navbar = () => {
           </section>
           <section className="user_section">
             {authState.user.role === 'user' &&
-              <Link to="/mypage/voucher">
+              <Link to="/mypage/userInfo">
                 <img width="50px" height="50px" src="/user.png" alt="사용자" />
                 <span className="nav-item">{authState.user.username}</span>
               </Link>
