@@ -1,0 +1,118 @@
+.TradeWriterPage {
+  margin: 0 10%;
+
+  form {
+    display: flex; flex-direction: column;
+    text-align: center;
+
+    .title-label {
+      margin-top: 20px;
+      font-size: 36px;
+    }
+
+    .MessageLabel {
+      margin: 0 0 20px 0;
+    }
+
+    .label {
+      align-self: flex-start;
+      font-size: 20px;
+      margin: 15px 0 15px 0;
+    }
+
+    .Input {
+      width: 100%; height: 50px;
+      font-size: 16px;
+    }
+
+    .cancel_button {
+      background-color: #ececec;
+  
+      &:hover {
+        background: gainsboro;
+      }
+    }
+  
+    .submit_button {
+      color: white;
+      background-color: rgb(206, 28, 73);
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+
+    .image_section {
+      display: flex;
+
+      img {
+        object-fit: cover;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+  
+      .button_section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+  
+        .Button {
+          width: 80px; height: 30px;
+          margin: 0 0 10px 10px;
+        }
+      }
+    }
+
+    .submit_section {
+      margin-top: 10px;
+      align-self: flex-end;
+  
+      .Button {
+        width: 100px; height: 50px;
+        margin-left: 15px;
+      }
+    }
+
+    .search_area {
+      min-width: 500px;
+      width: 70%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+  
+      .label {
+        font-size: 24px;
+        font-weight: bold;
+      }
+  
+      .search {
+        display: flex;
+  
+        .Select {
+          width: 200px; height: 40px;
+          margin-left: 5px;
+          align-self: center;
+        }
+      }
+    }
+  
+    .card_section {
+      margin-top: 10px;
+      text-align: center;
+  
+      .VoucherCard {
+        margin: 0 25px 50px 25px;
+        display: inline-block;
+
+        &.active {
+          outline: none;
+          border: 1px solid rgb(206, 28, 73);
+          box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+          transition: all 0.25s;
+        }
+      }
+    }
+  }
+}

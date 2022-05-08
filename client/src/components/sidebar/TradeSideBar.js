@@ -11,7 +11,10 @@ const TradeSidebar = () => {
     <SidebarTemplate>
       <section className="title_section">포토카드 교환</section>
       <Link
-        className={classNames("link", {"active": URI.includes('/trade/all')})}
+        className={classNames("link",
+        {"active":
+        URI.includes('/trade/all') ||
+        URI.includes('/trade/writer')})}
         to="/trade/all"
       >전체 교환글</Link>
       <Link className="link" to="#">내 교환글</Link>

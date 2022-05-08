@@ -4,7 +4,7 @@ import './ImageCard.scss';
 
 const ImageCard = ({ className, src, name, value, onClick }) => {
   return (
-    <div className={classNames("ImageCard", className)} value={value} onClick={onClick}>
+    <div className={classNames("ImageCard", className)} name={name} value={value} onClick={onClick}>
       <img 
         width="100%"
         height="200px"

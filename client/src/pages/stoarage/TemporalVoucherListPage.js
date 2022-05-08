@@ -23,9 +23,15 @@ const TemporalVoucherListPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getVoucherListMine, 0, "initial");
+      const res = await request.call(api.getVoucherListMine, {
+        permanent: 0,
+        state: "initial"
+      });
       setInitialVouchers(res.vouchers);
-      const res2 = await request.call(api.getVoucherListMine, 0, "traded");
+      const res2 = await request.call(api.getVoucherListMine, {
+        permanent: 0,
+        state: "traded"
+      });
       setTradedVouchers(res2.vouchers);
       const res3 = await request.call(api.getGroupList);
       setGroups(res3.groups);

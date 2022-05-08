@@ -22,7 +22,9 @@ const PermanentVoucherListPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getVoucherListMine, 1, "");
+      const res = await request.call(api.getVoucherListMine, {
+        permanent: 1
+      });
       setVouchers(res.vouchers);
       const res2 = await request.call(api.getGroupList);
       setGroups(res2.groups);
