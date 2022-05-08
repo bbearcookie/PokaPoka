@@ -52,6 +52,7 @@ import UserListPage from './pages/admin/user/UserListPage';
 import WithdrawalUserListPage from './pages/admin/user/WithdrawalUserListPage';
 import InactiveUserListPage from './pages/admin/user/InactiveUserListPage';
 import UserDetailPage from './pages/admin/user/UserDetailPage';
+import UserListSearchPage from './pages/admin/user/UserListSearchPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -116,6 +117,7 @@ function App() {
         <Route path="/admin/user/withdrawal" element={<WithdrawalUserListPage />}/>
         <Route path="/admin/user/inactive" element={<InactiveUserListPage />}/>
         <Route path="/admin/user/detail/:username" element={<UserDetailPage />}/>
+        <Route path="/admin/user/search/:username" element={<UserListSearchPage />}/>
 
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/pwchange" element={<PwChangePage />}/>

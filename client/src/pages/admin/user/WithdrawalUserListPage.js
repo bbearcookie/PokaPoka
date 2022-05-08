@@ -62,7 +62,7 @@ const WithdrawalUserListPage = () => {
   }
 
   return (
-    <AdminTemplate className="SuggestionListPage">
+    <AdminTemplate className="UserListPage">
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">사용자 목록</h1>

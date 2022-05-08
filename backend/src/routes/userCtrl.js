@@ -144,7 +144,7 @@ router.get('/admin/user/list', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 회원 정보 목록 - 관리자: 아이디, 이름, 전화번호, 닉네임, 최애그룹
+// 관리자 - 탈퇴요청, 비활성화 사용자 조회
 router.get('/admin/user/selectList', verifyLogin, async (req, res) => {
   const { accessToken } = req;
   const { keword } = req.query;
@@ -168,6 +168,31 @@ router.get('/admin/user/selectList', verifyLogin, async (req, res) => {
     else{
       return res.status(400).json({ message: '선택해주세요.'});
     }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 아이디로 사용자 검색
+router.get('/admin/user/search/:username', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
+  const { username } = req.params;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 회원 정보 목록 조회
+  const con = await db.getConnection();
+  try {
+    let sql = `SELECT username, name, phone, nickname, favorite, regist_time FROM User WHERE username='${username}'`;
+    let [user] = await con.query(sql);
+
+    return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', user });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -270,95 +295,6 @@ router.delete('/admin/user/withdrawal/:username', verifyLogin, async (req, res) 
     [[user]] = await con.query(sql);
     console.log(user);
     if(user.withdrawal==0) return res.status(404).json({ message: '탈퇴를 요청하지 않는 회원입니다.' });
-
-    //username을 FK로 가지고 있는 테이블들에서 username 데이터가 있는지 확인 후 있으면 삭제
-    // 1. Wantcard 테이블 FK: trade_id, photocard_id
-    sql = `SELECT trade_id FROM Trade WHERE username='${username}'`;
-    let [[trade]] = await con.query(sql);
-    if (trade){
-      sql = `DELETE FROM Wantcard WHERE trade_id=${trade.trade_id}`;
-      await con.execute(sql);
-    }
-    // 2. Trade 테이블 FK: username
-    if (trade){
-      sql = `DELETE FROM Trade WHERE username='${username}'`;
-      await con.execute(sql);
-    }
-    // 3. VoucherProvision 테이블 FK: vocher_id
-    sql = `SELECT voucher_id FROM Voucher WHERE username='${username}'`;
-    let [[voucher]] = await con.query(sql);
-    if (voucher){
-      sql = `SELECT voucher_id FROM VoucherProvision WHERE voucher_id=${voucher.voucher_id}`;
-      [[voucher]] = await con.query(sql);
-      if(voucher){
-        sql = `DELETE FROM VoucherProvision WHERE voucher_id=${voucher.voucher_id}`;
-        await con.execute(sql);
-      }
-    }
-    // 4. VoucherRequest 테이블 FK: username, photocard_id, voucher_id
-    sql = `SELECT username FROM VoucherRequest WHERE username='${username}'`;
-    [[user]] = await con.query(sql);
-    if (user){
-      sql = `DELETE FROM VoucherRequest WHERE username='${username}'`;
-      await con.execute(sql);
-    }
-    // 5. Voucher 테이블 FK: photocard_id, username
-    sql = `SELECT username FROM Voucher WHERE username='${username}'`;
-    [[user]] = await con.query(sql);
-    if (user){
-      sql = `DELETE FROM Voucher WHERE username='${username}'`;
-      await con.execute(sql);
-    }
-    // 6. ShippingProvision 테이블 FK: request_id
-    sql = `SELECT request_id FROM ShippingRequest WHERE username='${username}'`;
-    let [[shipping]] = await con.query(sql);
-    if (shipping){
-      sql = `SELECT request_id FROM ShippingProvision WHERE request_id=${shipping.request_id}`;
-      [[shipping]] = await con.query(sql);
-      if(shipping){
-        sql = `DELETE FROM ShippingProvision WHERE request_id=${shipping.request_id}`;
-        await con.execute(sql);
-      }
-    }
-    // 7. ShippingRequest 테이블 FK: username
-    sql = `SELECT username FROM ShippingRequest WHERE username='${username}'`;
-    [[user]] = await con.query(sql);
-    if (user){
-      sql = `DELETE FROM ShippingRequest WHERE username='${username}'`;
-      await con.execute(sql);
-    }
-    // 8. Reply 테이블 FK: suggestion_id
-    sql = `SELECT suggestion_id FROM Suggestion WHERE username='${username}'`;
-    let [[reply]] = await con.query(sql);
-    if (reply){
-      sql = `SELECT suggestion_id FROM Reply WHERE suggestion_id=${reply.suggestion_id}`;
-      [[reply]] = await con.query(sql);
-      if(reply){
-        sql = `DELETE FROM Reply WHERE suggestion_id=${reply.suggestion_id}`;
-        await con.execute(sql);
-      }
-    }
-    // 9. Suggestion 테이블 FK: username
-    sql = `SELECT username FROM Suggestion WHERE username='${username}'`;
-    [[user]] = await con.query(sql);
-    if (user){
-      sql = `DELETE FROM Suggestion WHERE username='${username}'`;
-      await con.execute(sql);
-    }
-    // 10. Notice 테이블 FK: username
-    sql = `SELECT username FROM Notice WHERE username='${username}'`;
-    [[user]] = await con.query(sql);
-    if (user){
-      sql = `DELETE FROM Notice WHERE username='${username}'`;
-      await con.execute(sql);
-    }
-    // 11. LoginToken 테이블 FK: username
-    sql = `SELECT username FROM LoginToken WHERE username='${username}'`;
-    [[user]] = await con.query(sql);
-    if (user){
-      sql = `DELETE FROM LoginToken WHERE username='${username}'`;
-      await con.execute(sql);
-    }
 
     // 회원 데이터 삭제
     sql = `DELETE FROM User WHERE username='${username}'`;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import UserList from '../../../components/list/UserList';
@@ -31,7 +31,8 @@ const createDummyList = () => {
 }
 
 // 사용자 목록 조회 페이지
-const UserListPage = () => {
+const UserListSearchPage = () => {
+  const { username } = useParams();
   const request = useRequest();
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
@@ -45,8 +46,7 @@ const UserListPage = () => {
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      const res = await request.call(api.getUserList);
-      console.log(res.user.regist_time);
+      const res = await request.call(api.getUserListSearch, username);
       setUser(res.user);
       //setUser(createDummyList()); // 페이지네이션 기능 테스트를 위한 더미 데이터
     } catch (err) {
@@ -105,4 +105,4 @@ const UserListPage = () => {
   );
 };
 
-export default UserListPage;
+export default UserListSearchPage;

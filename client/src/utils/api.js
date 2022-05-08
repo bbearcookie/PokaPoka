@@ -319,6 +319,8 @@ export const getUserList = () => axios.get(`${BACKEND}/api/admin/user/list`, opt
 export const getSelectUserList = (keword) => axios.get(`${BACKEND}/api/admin/user/selectList?keword=${keword}`, options);
 //관리자 - 회원 정보 상세 조회
 export const getUserDetail = (username) => axios.get(`${BACKEND}/api/admin/user/detail/${username}`, options);
+//관리자 - 키워드 검색 조회
+export const getUserListSearch = (username) => axios.get(`${BACKEND}/api/admin/user/search/${username}`, options);
 //관리자 - 사용자 비활성화
 export const patchInactive = (state, username) => axios.patch(`${BACKEND}/api/admin/user/inactive/${username}`, 
   {
