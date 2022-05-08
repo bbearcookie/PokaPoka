@@ -235,7 +235,7 @@ const TradeWriterPage = () => {
     // 새로 작성하는 경우
     if (!tradeId) {
       try {
-        const res = await request.call(api.postTradeNew, form);
+        const res = await request.call(api.postTradeNew, { ...form, permanent: select.permanent });
         console.log(res);
         return navigate('/trade/all');
       } catch (err) {

@@ -303,6 +303,7 @@ export const getVoucherListMine = (filter) => axios.get(
 // 교환글 등록 요청
 export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
   {
+    permanent: form.permanent,
     haveVoucherId: form.haveVoucherId,
     wantPhotocards: form.wantPhotocards.map(element => element.photocard_id),
     wantAmount: form.wantAmount

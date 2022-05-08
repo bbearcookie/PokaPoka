@@ -1,22 +1,27 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
+const { isNull } = require('../utils/common');
 const { verifyLogin } = require('../utils/jwt');
 
 // 교환글 등록 요청
 router.post('/trade/new', verifyLogin, async (req, res) => {
-  const { haveVoucherId, wantPhotocards, wantAmount } = req.body;
+  const { permanent, haveVoucherId, wantPhotocards, wantAmount } = req.body;
   const { user } = req;
-
-  console.log(req.body);
 
   // 로그인 상태 확인
   if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  // 유효성 검사
+  if (!haveVoucherId) return res.status(400).json({ message: '사용하려는 소유권을 선택해주세요.' });
+  if (isNull(wantPhotocards)) return res.status(400).json({ message: '받으려는 포토카드를 선택해주세요.' });
+  if (!wantAmount) return res.status(400).json({ message: '받으려는 포토카드 개수를 입력해주세요.' });
+  if (permanent === '0' && parseInt(wantAmount) > 1) return res.status(400).json({ message: '임시 소유권으로는 한 개의 포토카드만 받을 수 있습니다.' });
 
   const con = await db.getConnection();
   try {
     await con.beginTransaction();
 
-    // TODO: 교환글 등록
+    // 교환글 등록
     let sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
     let [result] = await con.execute(sql, [user.username, haveVoucherId, wantAmount]);
 
