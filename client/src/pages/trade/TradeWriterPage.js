@@ -63,6 +63,43 @@ const TradeWriterPage = () => {
   }
   useEffect(() => { onLoad(); }, []);
 
+  // 화면에 보여줄 소유권 목록 업데이트
+  const onUpdateVouchers = async (e) => {
+    if (select.have.groupId === '' || select.have.memberId === '') {
+      setVouchers([]);
+      return;
+    }
+
+    try {
+      const res = await request.call(api.getVoucherListMine, {
+        permanent: select.permanent,
+        state: select.state,
+        groupId: select.have.groupId,
+        memberId: select.have.memberId
+      });
+      setVouchers(res.vouchers);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  };
+  useEffect(() => { onUpdateVouchers(); }, [select.permanent, select.have, select.state]);
+
+  // 화면에 보여줄 포토카드 목록 업데이트
+  const onUpdatePhotocards = async (e) => {
+    if (select.want.groupId === '' || select.want.memberId === '') {
+      setPhotocards([]);
+      return;
+    }
+
+    try {
+      const res = await request.call(api.getPhotocardList, select.want.groupId, select.want.memberId);
+      setPhotocards(res.photocards);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  };
+  useEffect(() => { onUpdatePhotocards(); }, [select.want]);
+
   // 받으려는 포토카드 추가 모달 열기 / 닫기
   const openAddModal = () => setShowAddModal(true);
   const closeAddModal = () => {
@@ -122,43 +159,6 @@ const TradeWriterPage = () => {
       else draft.state = '';
     }));
   }
-
-  // 화면에 보여줄 소유권 목록 업데이트
-  const onUpdateVouchers = async (e) => {
-    try {
-      if (select.have.groupId === '' || select.have.memberId === '') {
-        setVouchers([]);
-        return;
-      }
-
-      const res = await request.call(api.getVoucherListMine, {
-        permanent: select.permanent,
-        state: select.state,
-        groupId: select.have.groupId,
-        memberId: select.have.memberId
-      });
-      setVouchers(res.vouchers);
-    } catch (err) {
-      setMessage(err.response.data.message);
-    }
-  };
-  useEffect(() => { onUpdateVouchers(); }, [select.permanent, select.have, select.state]);
-
-  // 화면에 보여줄 포토카드 목록 업데이트
-  const onUpdatePhotocards = async (e) => {
-    try {
-      if (select.want.groupId === '' || select.want.memberId === '') {
-        setPhotocards([]);
-        return;
-      }
-
-      const res = await request.call(api.getPhotocardList, select.want.groupId, select.want.memberId);
-      setPhotocards(res.photocards);
-    } catch (err) {
-      setMessage(err.response.data.message);
-    }
-  };
-  useEffect(() => { onUpdatePhotocards(); }, [select.want]);
 
   // 그룹 선택 변경시 동작
   const onChangeGroupSelect = async (e) => {
@@ -234,7 +234,13 @@ const TradeWriterPage = () => {
 
     // 새로 작성하는 경우
     if (!tradeId) {
-
+      try {
+        const res = await request.call(api.postTradeNew, form);
+        console.log(res);
+        return navigate('/trade/all');
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
     // 내용을 수정하는 경우
     } else {
 

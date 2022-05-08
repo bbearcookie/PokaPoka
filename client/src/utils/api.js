@@ -300,6 +300,16 @@ export const getVoucherListMine = (filter) => axios.get(
   options
 );
 
+// 교환글 등록 요청
+export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
+  {
+    haveVoucherId: form.haveVoucherId,
+    wantPhotocards: form.wantPhotocards.map(element => element.photocard_id),
+    wantAmount: form.wantAmount
+  },
+  options
+);
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 

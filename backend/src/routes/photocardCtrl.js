@@ -276,7 +276,7 @@ router.delete('/photocard/:photocardId', verifyLogin, async (req, res) => {
     let [[photocard]] = await con.query(sql);
     if (!photocard) return res.status(404).json({ message: '삭제하려는 포토카드가 DB에 없습니다.' });
 
-    // DB에서 멤버 삭제
+    // DB에서 포토카드 삭제
     sql = `DELETE FROM Photocard WHERE photocard_id=${photocardId}`;
     await con.execute(sql);
 
