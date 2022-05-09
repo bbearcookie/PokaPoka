@@ -69,29 +69,20 @@ const TradeListPage = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    dispatch(setSelect(produce(draft => {
-      draft[name] = value;
-    })));
-
     // 필터링 조건이 눌린 경우 조건에 따라 초기값 설정
     if (name === 'searchType') {
       if (value === '' || value === 'all') {
-        dispatch(setSelect(produce(draft => {
-          draft.groupId = "";
-          draft.memberId = "";
-          draft.albumId = "";
-        })));
+        return dispatch(setSelect({ ...select, [name]: value, groupId: '', memberId: '', albumId: '' }));
       } else if (value === 'group') {
-        dispatch(setSelect(produce(draft => {
-          draft.memberId = "";
-          draft.albumId = "";
-        })));
+        return dispatch(setSelect({ ...select, [name]: value, memberId: '', albumId: '' }));
       } else if (value === 'member') {
-        dispatch(setSelect(produce(draft => { draft.albumId = ""; })));
+        return dispatch(setSelect({ ...select, [name]: value, albumId: '' }));
       } else if (value === 'album') {
-        dispatch(setSelect(produce(draft => { draft.memberId = ""; })));
+        return dispatch(setSelect({ ...select, [name]: value, memberId: '' }));
       }
     }
+
+    dispatch(setSelect({ ...select, [name]: value }));
   }
 
   // 그룹 선택 변경시 동작
@@ -99,9 +90,7 @@ const TradeListPage = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    dispatch(setSelect(produce(draft => {
-      draft[name] = value;
-    })));
+    dispatch(setSelect({ ...select, [name]: value}));
 
     try {
       if (value === '') {

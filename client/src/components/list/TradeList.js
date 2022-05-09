@@ -28,7 +28,7 @@ const TradeList = ({ className, contents, perPage }) => {
 
   // 상세 보기시 작동
   const onClickDetailView = (e) => {
-    const tradeId = e.currentTarget.getAttribute('tradeId');
+    const tradeId = e.currentTarget.getAttribute('trade_id');
 
     return navigate(`/trade/detail/${tradeId}`);
   }
@@ -49,6 +49,7 @@ const TradeList = ({ className, contents, perPage }) => {
         {contents ?
           contents.filter((content, idx) => isInCurrentPage(idx + 1)).map((content, idx) => 
             <TradeCard
+              key={content.trade_id}
               tradeId={content.trade_id}
               username={content.username}
               name={content.name}

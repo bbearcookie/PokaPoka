@@ -11,7 +11,7 @@ const TradeCard = ({ className, tradeId, username, name, imageName, albumName, s
     <article
       className={classNames("TradeCard", className)}
       key={tradeId}
-      tradeId={tradeId}
+      trade_id={tradeId}
       onClick={onClick}
     >
       <section className="card_section">
@@ -30,7 +30,7 @@ const TradeCard = ({ className, tradeId, username, name, imageName, albumName, s
         <section className="image_section">
           {wantcards ?
             wantcards.map(wantcard =>
-            <article className="image_item">
+            <article key={wantcard.photocard_id} className="image_item">
               <img 
                 width="165px"
                 height="165px"

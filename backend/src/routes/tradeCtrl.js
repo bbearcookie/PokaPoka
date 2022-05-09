@@ -98,4 +98,24 @@ router.get('/trade/list/mine', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 특정 교환글 상세 조회 요청
+router.get('/trade/detail/:tradeId', async (req, res) => {
+  const { tradeId } = req.params;
+
+  // 유효성 검사
+  if (!tradeId) return res.status(400).json({ message: '조회할 교환글을 선택해주세요.' });
+
+  const con = await db.getConnection();
+  try {
+    
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 module.exports = router;
