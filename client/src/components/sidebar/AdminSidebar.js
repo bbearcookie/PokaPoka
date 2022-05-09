@@ -11,7 +11,9 @@ const AdminSidebar = () => {
     <SidebarTemplate>
       <section className="title_section">관리자 페이지</section>
       <section className="subtitle_section">사용자 관리</section>
-      <Link className="link" to="#">사용자</Link>
+      <Link 
+        className={classNames("link", {"active": URI.includes('/admin/user')})}
+        to="/admin/user">사용자</Link>
       <section className="subtitle_section">커뮤니티 관리</section>
       <Link 
         className={classNames("link", {"active": URI.includes('/admin/notice')})}
