@@ -29,9 +29,8 @@ const TradeList = ({ className, contents, perPage }) => {
   // 상세 보기시 작동
   const onClickDetailView = (e) => {
     const tradeId = e.currentTarget.getAttribute('tradeId');
-    console.log(tradeId);
 
-    //return navigate(`/admin/suggestion/detail/${suggestionId}`);
+    return navigate(`/trade/detail/${tradeId}`);
   }
   
   // 해당 내용이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.

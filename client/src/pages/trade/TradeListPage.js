@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import produce from 'immer';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelect, setGroups, setMembers, setAlbums, setTrades } from '../../modules/tradeListPage';
+import produce from 'immer';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import Button from '../../components/form/Button';
@@ -13,24 +15,23 @@ import UserTemplate from '../../templates/UserTemplate';
 import './TradeListPage.scss';
 
 const TradeListPage = () => {
-  const [select, setSelect] = useState({
-    searchType: '',
-    groupId: '',
-    memberId: '',
-    albumId: ''
-  });
-  const [groups, setGroups] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [albums, setAlbums] = useState([]);
+  // 리덕스 스토어에 저장한 상태값. 페이지 이동시에도 상태를 보관해두기 위함.
+  const { select, groups, members, albums, trades } = useSelector(state => ({
+    select: state.tradeListPage.select,
+    groups: state.tradeListPage.groups,
+    members: state.tradeListPage.members,
+    albums: state.tradeListPage.albums,
+    trades: state.tradeListPage.trades
+  }));
+  const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [message, setMessage] = useState('');
-  const [trades, setTrades] = useState([]);
   const request = useRequest();
 
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
       const res = await request.call(api.getGroupList);
-      setGroups(res.groups);
+      dispatch(setGroups(res.groups));
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -40,13 +41,13 @@ const TradeListPage = () => {
   // 화면에 보여줄 교환글 목록 업데이트
   const onUpdateTrades = async () => {
     if (select.searchType === '') {
-      return setTrades([]);
+      return dispatch(setTrades([]));
     } else if (select.searchType === 'group') {
-      if (select.groupId === '') return setTrades([]);
+      if (select.groupId === '') return dispatch(setTrades([]));
     } else if (select.searchType === 'member') {
-      if (select.groupId === '' || select.memberId === '') return setTrades([]);
+      if (select.groupId === '' || select.memberId === '') return dispatch(setTrades([]));
     } else if (select.searchType === 'album') {
-      if (select.groupId === '' || select.albumId === '') return setTrades([]);
+      if (select.groupId === '' || select.albumId === '') return dispatch(setTrades([]));
     }
 
     try {
@@ -55,7 +56,7 @@ const TradeListPage = () => {
         memberId: select.memberId,
         albumId: select.albumId
       });
-      setTrades(res.trades);
+      dispatch(setTrades(res.trades));
       console.log(res);
     } catch (err) {
       setMessage(err.response.data.message);
@@ -68,27 +69,27 @@ const TradeListPage = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    setSelect(produce(draft => {
+    dispatch(setSelect(produce(draft => {
       draft[name] = value;
-    }));
+    })));
 
     // 필터링 조건이 눌린 경우 조건에 따라 초기값 설정
     if (name === 'searchType') {
       if (value === '' || value === 'all') {
-        setSelect(produce(draft => {
+        dispatch(setSelect(produce(draft => {
           draft.groupId = "";
           draft.memberId = "";
           draft.albumId = "";
-        }));
+        })));
       } else if (value === 'group') {
-        setSelect(produce(draft => {
+        dispatch(setSelect(produce(draft => {
           draft.memberId = "";
           draft.albumId = "";
-        }));
+        })));
       } else if (value === 'member') {
-        setSelect(produce(draft => { draft.albumId = ""; }));
+        dispatch(setSelect(produce(draft => { draft.albumId = ""; })));
       } else if (value === 'album') {
-        setSelect(produce(draft => { draft.memberId = ""; }));
+        dispatch(setSelect(produce(draft => { draft.memberId = ""; })));
       }
     }
   }
@@ -98,24 +99,24 @@ const TradeListPage = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    setSelect(produce(draft => {
+    dispatch(setSelect(produce(draft => {
       draft[name] = value;
-    }));
+    })));
 
     try {
       if (value === '') {
-        setMembers([]);
-        setAlbums([]);
+        dispatch(setMembers([]));
+        dispatch(setAlbums([]));
       } else if (value === 'all') {
         const res = await request.call(api.getAllMemberList);
         const res2 = await request.call(api.getAllAlbumList);
-        setMembers(res.members);
-        setAlbums(res2.albums);
+        dispatch(setMembers(res.members));
+        dispatch(setAlbums(res2.albums));
       } else {
         const res = await request.call(api.getMemberList, value);
         const res2 = await request.call(api.getAlbumList, value);
-        setMembers(res.members);
-        setAlbums(res2.albums);
+        dispatch(setMembers(res.members));
+        dispatch(setAlbums(res2.albums));
       }
     } catch (err) {
       console.error(err);
@@ -196,7 +197,6 @@ const TradeListPage = () => {
       </section>
       
       <TradeList contents={trades} perPage="10" />
-      
     </UserTemplate>
   );
 };
