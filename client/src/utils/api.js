@@ -380,7 +380,7 @@ export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detai
 // 해당 교환글에게 교환 신청
 export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/api/trade/transaction/${tradeId}`,
   {
-    useVouchers: form.useVouchers
+    useVouchers: form.useVouchers.map(element => element.voucher_id)
   },
   options
 );

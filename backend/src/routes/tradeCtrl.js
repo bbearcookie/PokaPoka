@@ -1,6 +1,6 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
-const { isNull, getWhereClause } = require('../utils/common');
+const { isNull, getWhereClause, convertToMysqlTime } = require('../utils/common');
 const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
@@ -185,7 +185,7 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '교환글을 등록했습니다.' });
   } catch (err) {
     console.error(err);
-    con.rollback();
+    await con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
     con.release();
@@ -213,11 +213,12 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
 
     // 교환글 정보 가져오기
     let sql = `
-    SELECT T.trade_id, T.want_amount, V.voucher_id, V.state, V.permanent
+    SELECT T.trade_id, T.username, T.want_amount, V.voucher_id, V.state, V.permanent
     FROM Trade as T
     INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
     WHERE T.trade_id=${tradeId}`
     const [[trade]] = await con.query(sql);
+    
 
     // 이미 교환 완료된 게시글에는 요청 불가능
     if (trade.state === 'finished') return res.status(400).json({ message: '이미 교환 완료된 교환글입니다.' });
@@ -232,17 +233,65 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
     // 임시 소유권인 경우 소유권 하나만 교환 가능
     if (trade.permanent === 0 && useVouchers.length > 1) return res.status(400).json({ message: '임시 소유권끼리의 교환은 교환하려는 소유권을 한 장만 선택할 수 있습니다.' });
 
+    // 정식 소유권은 정식 소유권끼리, 임시 소유권은 임시 소유권끼리 교환 가능.
+    // 임시 소유권이면 아직 거래 안한 소유권만 사용 가능.
+    try {
+      await Promise.all(useVouchers.map(async (voucherId) => {
+        let sql = `SELECT voucher_id, username, state, permanent FROM Voucher WHERE voucher_id=${voucherId}`;
+        let [[voucher]] = await con.query(sql);
+  
+        if (voucher.username !== user.username) throw new Error("당신의 소유권이 아닙니다.");
+        if (trade.permanent !== voucher.permanent) throw new Error("정식 소유권은 정식 소유권끼리, 임시 소유권은 임시 소유권끼리 교환 가능합니다.");
+        if (trade.permanent === 0 && voucher.state !== 'initial') throw new Error("임시 소유권으로는 한 번 거래했으면 정식 소유권이 되기까지 기다려야 합니다.");
+      }));
+    } catch (err) {
+      return res.status(400).json({ message: err.message });
+    }
 
-    // TODO: useVouchers에 들어있는 소유권의 username을 교환글 작성자의 것으로 교체.
-    // TODO: 교환글에 포함된 소유권의 사용자를 요청자의 것으로 교체.
-    // TODO: 위 소유권들의 state 필드를 traded로 변경.
+    // TODO: 교환글에 포함된 voucher_id의 사용자를 요청자의 것으로 교체하고 state를 traded로 변경
+    //       - TradeHistory 테이블에 provider가 recipient에게 voucher_id를 준다고 기록
+    // TODO: useVouchers에 들어있는 소유권들을 교환글 작성자의 것으로 교체하고 state를 traded로 변경
+    //       - TradeHistory 테이블에 provider가 recipient에게 voucher_id를 준다고 기록
     // TODO: 교환글의 state 필드를 finished로 변경하고 trade_time을 현재 시간으로 업데이트.
-    // TODO: 교환내역 테이블에 INSERT하기
+
+    // 교환글에 포함된 voucher_id의 사용자를 요청자의 것으로 교체하고 state를 traded로 변경
+    sql = `
+    UPDATE Voucher as V
+    INNER JOIN Trade as T ON T.voucher_id = V.voucher_id
+    SET V.username='${user.username}', V.state='traded'
+    WHERE T.trade_id=${tradeId}`;
+    await con.execute(sql);
+
+    // 교환글 작성자가 요청자에게 voucher_id를 준다고 기록
+    sql = `INSERT INTO TradeHistory (provider, recipient, voucher_id, trade_id) VALUES (?, ?, ?, ?)`;
+    await con.execute(sql, [trade.username, user.username, trade.voucher_id, trade.trade_id]);
+
+    // useVouchers에 들어있는 소유권들을 가지고 교환글 작성자에게 지급
+    await Promise.all(useVouchers.map(async (voucherId) => {
+
+      // 해당 소유권을 교환글 등록자의 것으로 교체하고 state를 traded로 변경
+      let sql = `
+      UPDATE Voucher
+      SET username='${trade.username}', state='traded'
+      WHERE voucher_id=${voucherId}`;
+      await con.execute(sql);
+
+      // 요청자가 교환글 작성자에게 해당 소유권을 준다고 기록
+      sql = `INSERT INTO TradeHistory (provider, recipient, voucher_id, trade_id) VALUES (?, ?, ?, ?)`;
+      await con.execute(sql, [user.username, trade.username, voucherId, trade.trade_id]);
+    }));
+
+    // 교환글의 state 필드를 finished로 변경하고 trade_time을 현재 시간으로 업데이트.
+    sql = `
+    UPDATE Trade
+    SET state='finished', trade_time='${convertToMysqlTime(new Date())}'`;
+    await con.execute(sql);
 
     await con.commit();
+    return res.status(200).json({ message: '교환 처리가 완료되었습니다.' });
   } catch (err) {
     console.error(err);
-    con.rollback();
+    await con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
     con.release();
