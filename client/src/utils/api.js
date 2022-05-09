@@ -288,6 +288,57 @@ export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}
   options
 );
 
+//사용자 회원정보 조회
+export const getUserInfo = () => axios.get(`${BACKEND}/api/user/mypage`, options);
+//사용자 회원정보 수정
+export const putUserInfo = (form) => axios.put(`${BACKEND}/api/user/mypage/edit`,
+  {
+    name: form.name,
+    phone: form.phone,
+    nickname: form.nickname,
+    favorite: form.favorite
+  }, 
+  options
+);
+//사용자 탈퇴 요청
+export const patchUser = (state) => axios.patch(`${BACKEND}/api/user/withdrawal/request`, 
+  {
+    withdrawal: state.withdrawal
+  }, 
+  options
+);
+//사용자 탈퇴 취소 요청
+export const patchUserCancel = (state) => axios.patch(`${BACKEND}/api/user/withdrawal/request`, 
+  {
+    withdrawal: state.normal
+  }, 
+  options
+);
+//관리자 - 회원 목록 조회
+export const getUserList = () => axios.get(`${BACKEND}/api/admin/user/list`, options);
+//관리자 - 탈퇴요청한, 비활성화된 사용자 조회
+export const getSelectUserList = (keword) => axios.get(`${BACKEND}/api/admin/user/selectList?keword=${keword}`, options);
+//관리자 - 회원 정보 상세 조회
+export const getUserDetail = (username) => axios.get(`${BACKEND}/api/admin/user/detail/${username}`, options);
+//관리자 - 키워드 검색 조회
+export const getUserListSearch = (username) => axios.get(`${BACKEND}/api/admin/user/search/${username}`, options);
+//관리자 - 사용자 비활성화
+export const patchInactive = (state, username) => axios.patch(`${BACKEND}/api/admin/user/inactive/${username}`, 
+  {
+    inactive: state.inactive
+  }, 
+  options
+);
+//관리자 - 사용자 비활성화 취소
+export const patchInactiveCancel = (state, username) => axios.patch(`${BACKEND}/api/admin/user/inactive/${username}`, 
+  {
+    inactive: state.normal
+  }, 
+  options
+);
+// 관리자 - 회원 탈퇴
+export const deleteUser = (username) => axios.delete(`${BACKEND}/api/admin/user/withdrawal/${username}`, options);
+
 // 사용자가 소유한 포토카드 소유권 목록 조회
 // permanent: (0이면 임시소유권, 1이면 정식소유권 조회)
 // state: (initial이면 거래 안된 소유권, traded이면 한 번이라도 거래 된 소유권 조회)

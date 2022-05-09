@@ -30,6 +30,7 @@ import SuggestionListPage from './pages/admin/suggestion/SuggestionListPage';
 import SuggestionDetailPage from './pages/admin/suggestion/SuggestionDetailPage';
 import NoticeListPage from './pages/admin/notice/NoticeListPage';
 import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
+import NoticeDetailUserPage from './pages/NoticeDetailUserPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
 import AdminVoucherRequestListPage from './pages/admin/voucher/VoucherRequestListPage';
 import AdminVoucherRequestDetailPage from './pages/admin/voucher/VoucherRequestDetailPage';
@@ -43,10 +44,15 @@ import ChangeLetterListPage from './pages/mypage/ChangeLetterListPage';
 import ChangeLetterWritePage from './pages/mypage/ChangeLetterWritePage';
 import ChangeLetterCorrectPage from './pages/mypage/ChangeLetterCorrectPage';
 import DeliveryInfoPage from './pages/mypage/DeliveryInfoPage';
-import InfoCorrectPage from './pages/mypage/InfoCorrectPage';
-import InfoManagePage from './pages/mypage/InfoManagePage';
+import EditUserPage from './pages/mypage/EditUserPage';
+import UserInfoPage from './pages/mypage/UserInfoPage';
 import AskingPage from './pages/mypage/AskingPage';
 import VoucherProvisionListPage from './pages/admin/voucher/VoucherProvisionList';
+import UserListPage from './pages/admin/user/UserListPage';
+import WithdrawalUserListPage from './pages/admin/user/WithdrawalUserListPage';
+import InactiveUserListPage from './pages/admin/user/InactiveUserListPage';
+import UserDetailPage from './pages/admin/user/UserDetailPage';
+import UserListSearchPage from './pages/admin/user/UserListSearchPage';
 import PermanentVoucherListPage from './pages/stoarage/PermanentVoucherListPage';
 import TemporalVoucherListPage from './pages/stoarage/TemporalVoucherListPage';
 import TradeListPage from './pages/trade/TradeListPage';
@@ -71,11 +77,20 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<IndexPage /> } />
+        
         <Route path="/main" element={<UserMainPage /> } />
+        <Route path="/main/notice/detail/:noticeId" element={<NoticeDetailUserPage />}/>
+
         <Route path="/test" element={<TestPage />} />
         <Route path="/social" element={<SocialLoginTestPage />} />
+
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />
+        <Route path="/auth/signup" element={<SignupPage />} />
+        <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
+        <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
+        <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
+
         <Route path="/admin" element={<AdminMainPage />} />
         <Route path="/admin/group" element={<GroupListPage />} />
         <Route path="/admin/group/writer" element={<GroupWriterPage />} />
@@ -98,19 +113,21 @@ function App() {
         <Route path="/admin/voucher/provision" element={<VoucherProvisionListPage />}/>
         <Route path="/admin/voucher/provision/writer" element={<VoucherProvisionWriter />}/>
         <Route path="/admin/voucher/provision/writer/:requestId" element={<VoucherProvisionWriter />}/>
-        <Route path="/auth/signup" element={<SignupPage />} />
-        <Route path="/finding/password" element={<PasswordPage />} />
-        <Route path="/finding/username" element={<UsernamePage />} />
-        <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
-        <Route path="/finding/pwchange" element={<PwChangePage />}/>
-        <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
-        <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
-        <Route path="/finding/sms" element={<CertificationPage />}/>
-        <Route path="/suggestion/detail/:suggestionId" element={<SuggestionDetailPage />}/>
         <Route path="/admin/notice" element={<NoticeListPage />}/>
         <Route path="/admin/notice/detail/:noticeId" element={<NoticeDetailPage />}/>
         <Route path="/admin/notice/writer" element={<NoticeWriterPage />}/>
         <Route path="/admin/notice/writer/:noticeId" element={<NoticeWriterPage />}/>
+        <Route path="/admin/user" element={<UserListPage />}/>
+        <Route path="/admin/user/withdrawal" element={<WithdrawalUserListPage />}/>
+        <Route path="/admin/user/inactive" element={<InactiveUserListPage />}/>
+        <Route path="/admin/user/detail/:username" element={<UserDetailPage />}/>
+        <Route path="/admin/user/search/:username" element={<UserListSearchPage />}/>
+
+        <Route path="/finding/password" element={<PasswordPage />} />
+        <Route path="/finding/pwchange" element={<PwChangePage />}/>
+        <Route path="/finding/username" element={<UsernamePage />} />
+        <Route path="/finding/sms" element={<CertificationPage />}/>
+      
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>
@@ -121,8 +138,8 @@ function App() {
         <Route path="/mypage/changeletterwrite" element={<ChangeLetterWritePage />}/>
         <Route path="/mypage/changelettercorrect" element={<ChangeLetterCorrectPage />}/>
         <Route path="/mypage/deliveryinfo" element={<DeliveryInfoPage />}/>
-        <Route path="/mypage/infocorrect" element={<InfoCorrectPage />}/>
-        <Route path="/mypage/infomanage" element={<InfoManagePage />}/>
+        <Route path="/mypage/editUserInfo" element={<EditUserPage />}/>
+        <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
         <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
         <Route path="/stoarage/temporal" element={<TemporalVoucherListPage />}/>

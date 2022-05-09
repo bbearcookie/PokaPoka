@@ -1,6 +1,6 @@
-.InfoManagePage{
+.UserInfoPage{
   
-      .h{
+      .title-label{
         font:bold;
           margin: 20px 0;
           font-size: 36px;
@@ -37,18 +37,32 @@
             }
 
         }
-        .btn {
-            margin:20px 0px 40px 640px;
-            width: 20%; height: 50px;
-            margin-bottom: 20px;
-            font-size: 16px;
-            background-color: rgb(206, 28, 73);
-            color: white;
-        
-            &:hover {
-              background-color: rgb(163, 33, 66);
-            }
+        .submit_section {
+          align-self: flex-end;
+      
+          .Button {
+            width: 100px; height: 50px;
+            margin: 15px 0 0 15px;
           }
+        }
+      
+        .edit_button {
+          color: white;
+          background-color: rgb(33, 52, 163);
+      
+          &:hover {
+            background-color: rgb(33, 52, 163);
+          }
+        }
+      
+        .withdrawal_button {
+          color: white;
+          background-color: rgb(206, 28, 73);
+      
+          &:hover {
+            background-color: rgb(163, 33, 66);
+          }
+        }
       }
     }
 }
