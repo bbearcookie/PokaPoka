@@ -372,6 +372,18 @@ export const getTradeListAll = (filter) => axios.get(
   options
 );
 
+//shippingCtrl
+//마이페이지 배송 정보 조회
+export const getAddress = () => axios.get(`${BACKEND}/api/shipping/deliveryInfo`, options);
+//배송 주소 입력
+export const putAddress = (form) => axios.put(`${BACKEND}/api/shipping/addressUpdate`,
+  {
+    address: form.address,
+    address_detail: form.address_detail
+  }, 
+  options
+);
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 

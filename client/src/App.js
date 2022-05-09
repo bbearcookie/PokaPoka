@@ -44,6 +44,7 @@ import ChangeLetterListPage from './pages/mypage/ChangeLetterListPage';
 import ChangeLetterWritePage from './pages/mypage/ChangeLetterWritePage';
 import ChangeLetterCorrectPage from './pages/mypage/ChangeLetterCorrectPage';
 import DeliveryInfoPage from './pages/mypage/DeliveryInfoPage';
+import DeliveryInfoWritePage from './pages/mypage/DeliveryInfoWritePage';
 import EditUserPage from './pages/mypage/EditUserPage';
 import UserInfoPage from './pages/mypage/UserInfoPage';
 import AskingPage from './pages/mypage/AskingPage';
@@ -138,6 +139,7 @@ function App() {
         <Route path="/mypage/changeletterwrite" element={<ChangeLetterWritePage />}/>
         <Route path="/mypage/changelettercorrect" element={<ChangeLetterCorrectPage />}/>
         <Route path="/mypage/deliveryinfo" element={<DeliveryInfoPage />}/>
+        <Route path="/mypage/deliveryinfo/write" element={<DeliveryInfoWritePage />}/>
         <Route path="/mypage/editUserInfo" element={<EditUserPage />}/>
         <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
@@ -146,6 +148,7 @@ function App() {
         <Route path="/trade/all" element={<TradeListPage />}/>
         <Route path="/trade/writer" element={<TradeWriterPage />}/>
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
+
       </Routes>
     </div>
   );
