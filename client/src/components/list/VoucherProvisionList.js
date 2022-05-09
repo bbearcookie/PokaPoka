@@ -18,7 +18,6 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(provisions.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
 
   // 발급 내역 상세 보기시 작동
   const onClickDetailView = (e) => {
@@ -42,7 +41,7 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
         <thead>
           <tr>
             <th className="provision_id">번호</th>
-            <th className="permanent">임시 / 영구</th>
+            <th className="permanent">임시 소유권 여부</th>
             <th className="name">포토카드 이름</th>
             <th className="recipient">요청자</th>
             <th className="provider">발급자</th>
@@ -51,8 +50,8 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
         </thead>
         <tbody>
         {provisions ?
-          provisions.filter(prov => isInCurrentPage(++count)).map(prov => 
-            <tr key={count} provision_id={prov.provision_id} onClick={onClickDetailView}>
+          provisions.filter((prov, idx) => isInCurrentPage(idx + 1)).map((prov, idx) => 
+            <tr key={idx} provision_id={prov.provision_id} onClick={onClickDetailView}>
                 <td>{prov.provision_id}</td>
                 <td>{<Badge type={permanentState[prov.permanent]} />}</td>
                 <td>{prov.name}</td>

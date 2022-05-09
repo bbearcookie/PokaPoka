@@ -1,4 +1,14 @@
-.AdminPhotocardListPage {
+.TradeListPage {
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
   .title_area {
     margin: 20px 0;
     display: flex;
@@ -25,7 +35,7 @@
 
   .search_area {
     min-width: 500px;
-    width: 50%;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     justify-content: space-around;
@@ -43,16 +53,6 @@
         margin-left: 5px;
         align-self: center;
       }
-    }
-  }
-
-  .card_section {
-    margin-top: 10px;
-    text-align: center;
-
-    .ImageCard {
-      margin: 0 25px 50px 25px;
-      display: inline-block;
     }
   }
 }

@@ -12,9 +12,6 @@ const VoucherRequestList = ({ className, requests, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(requests.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
-
-  console.log(requests);
 
   // 발급 요청 상세 보기시 작동
   const onClickDetailView = (e) => {
@@ -51,8 +48,8 @@ const VoucherRequestList = ({ className, requests, perPage }) => {
         </thead>
         <tbody>
         {requests ?
-          requests.filter(req => isInCurrentPage(++count)).map(req => 
-            <tr key={count} request_id={req.request_id} onClick={onClickDetailView}>
+          requests.filter((req, idx) => isInCurrentPage(idx + 1)).map((req, idx) => 
+            <tr key={idx} request_id={req.request_id} onClick={onClickDetailView}>
                 <td>{req.request_id}</td>
                 <td><Badge type={req.state} /></td>
                 <td>{req.delivery}</td>

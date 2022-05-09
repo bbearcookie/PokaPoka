@@ -10,7 +10,6 @@ const NoticeList = ({ className, notices, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(notices.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
   
   // 공지사항 상세 보기시 작동
   const onClickDetailView = (e) => {
@@ -40,8 +39,8 @@ const NoticeList = ({ className, notices, perPage }) => {
         </thead>
         <tbody>
         {notices ?
-          notices.filter(notice => isInCurrentPage(++count)).map(notice => 
-            <tr key={count} notice_id={notice.notice_id} onClick={onClickDetailView}>
+          notices.filter((notice, idx) => isInCurrentPage(idx + 1)).map((notice, idx) => 
+            <tr key={idx} notice_id={notice.notice_id} onClick={onClickDetailView}>
                 <td>{notice.notice_id}</td>
                 <td>{notice.title}</td>
                 <td>{notice.username}</td>

@@ -7,11 +7,8 @@ const MainPage = () => {
   return (
     <UserTemplate
       className="MainPage"
-      sidebar={<PhotoStoarageSidebar />}
     >
-      <p>메잉ㄴ페이지</p>
-      <p>메잉ㄴ페이지</p>
-      <p>메잉ㄴ페이지</p>
+      <p>사용자 메인 페이지</p>
     </UserTemplate>
   );
 };
