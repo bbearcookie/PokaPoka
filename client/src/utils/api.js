@@ -372,6 +372,12 @@ export const getTradeListAll = (filter) => axios.get(
   options
 );
 
+// 교환글 상세 조회 요청
+export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detail/${tradeId}`);
+
+// 해당 교환글이 원하는 포토카드 중에서 자신이 가지고 있는 소유권 목록 조회
+export const getTradeWantcardMine = (tradeId) => axios.get(`${BACKEND}/api/trade/wantcard/mine/${tradeId}`, options);
+
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,
   { 
