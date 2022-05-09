@@ -205,7 +205,7 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
-  if (!useVouchers) return res.status(400).json({ message: '사용할 포토카드 소유권을 선택해주세요.' });
+  if (isNull(useVouchers)) return res.status(400).json({ message: '사용할 포토카드 소유권을 선택해주세요.' });
 
   const con = await db.getConnection();
   try {
@@ -213,16 +213,31 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
 
     // 교환글 정보 가져오기
     let sql = `
-    SELECT trade_id, username, want_amount
-    FROM Trade
-    WHERE trade_id=${tradeId}`
-    let [[trade]] = await con.query(sql);
-    console.log(trade);
+    SELECT T.trade_id, T.want_amount, V.voucher_id, V.state, V.permanent
+    FROM Trade as T
+    INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
+    WHERE T.trade_id=${tradeId}`
+    const [[trade]] = await con.query(sql);
+
+    // 이미 교환 완료된 게시글에는 요청 불가능
+    if (trade.state === 'finished') return res.status(400).json({ message: '이미 교환 완료된 교환글입니다.' });
 
     // 작성자와 교환 요청자는 같으면 안됨
     if (user.username === trade.username) return res.status(400).json({ message: '자신이 등록한 교환글에 교환 요청은 불가능합니다.' });
 
-    // 소유권 갯수가 부족하진 않은지 확인
+    // 소유권 개수 유효성 확인
+    if (useVouchers.length < trade.want_amount) return res.status(400).json({ message: '교환할 소유권이 부족합니다. 더 선택해주세요.' });
+    if (useVouchers.length > trade.want_amount) return res.status(400).json({ message: '교환할 소유권이 너무 많습니다. 교환하려는 소유권만 선택해주세요.' });
+
+    // 임시 소유권인 경우 소유권 하나만 교환 가능
+    if (trade.permanent === 0 && useVouchers.length > 1) return res.status(400).json({ message: '임시 소유권끼리의 교환은 교환하려는 소유권을 한 장만 선택할 수 있습니다.' });
+
+
+    // TODO: useVouchers에 들어있는 소유권의 username을 교환글 작성자의 것으로 교체.
+    // TODO: 교환글에 포함된 소유권의 사용자를 요청자의 것으로 교체.
+    // TODO: 위 소유권들의 state 필드를 traded로 변경.
+    // TODO: 교환글의 state 필드를 finished로 변경하고 trade_time을 현재 시간으로 업데이트.
+    // TODO: 교환내역 테이블에 INSERT하기
 
     await con.commit();
   } catch (err) {
