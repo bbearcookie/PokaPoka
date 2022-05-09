@@ -312,9 +312,9 @@ router.post('/provision/new', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });
   } catch (err) {
     console.error(err);
-    con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback();
     con.release();
   }
 
@@ -360,9 +360,9 @@ router.post('/provision/request', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '해당 사용자에게 포토카드 임시 소유권을 발급했습니다.' });
   } catch (err) {
     console.error(err);
-    await con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback();
     con.release();
   }
 
@@ -414,9 +414,9 @@ router.put('/provision/request', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });
   } catch (err) {
     console.error(err);
-    await con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백 (commit 한 이후에 rollback해도 수정된 내용 그대로 반영되어있는지 불확실함)
     con.release();
   }
   

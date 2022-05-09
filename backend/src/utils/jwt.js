@@ -24,10 +24,8 @@ async function createLoginToken(user, userAgent) {
     const refreshToken = createToken(payload, process.env.REFRESH_TOKEN_EXPIRES);
 
     // 기존에 보관된 로그인 토큰 정보 삭제
-    if (user.username) {
-      sql = `DELETE FROM LoginToken WHERE username='${user.username}'`;
-      await con.execute(sql);
-    }
+    sql = `DELETE FROM LoginToken WHERE username='${user.username}'`;
+    await con.execute(sql);
 
     // DB에 로그인 정보와 새로운 토큰 정보 저장
     sql = `INSERT INTO 
@@ -49,7 +47,6 @@ async function renewAccessToken(refreshToken, userAgent) {
   // DB 사용
   const con = await db.getConnection();
   try {
-
     // 리프레쉬 토큰이 유효한지 확인
     try {
       await jwt.verify(refreshToken, process.env.JWT_SECRET);
@@ -112,20 +109,19 @@ async function renewAccessToken(refreshToken, userAgent) {
         const error = new Error('리프레쉬 토큰이 유효하지 않음.');
         error.name = "InvalidRefreshToken";
         throw error;
-
       // 그외 오류는 콘솔에 출력되게끔 그대로 오류를 반환해줌
       } else {
         throw err;
       }
     }
   } catch (err) {
-
     // 리프레쉬 토큰과 관련한 문제가 발생하면 DB에 저장된 토큰 정보를 지움.
     if (err.name === 'InvalidRefreshToken' || err.name === 'UnknownRefreshToken' || err.name === 'StolenRefreshToken') {
       let sql = `DELETE FROM LoginToken WHERE refresh='${refreshToken}'`;
       await con.execute(sql);
     }
     throw err;
+
   } finally {
     con.release();
   }

@@ -185,9 +185,9 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '교환글을 등록했습니다.' });
   } catch (err) {
     console.error(err);
-    await con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback();
     con.release();
   }
 
@@ -218,7 +218,6 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
     INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
     WHERE T.trade_id=${tradeId}`
     const [[trade]] = await con.query(sql);
-    
 
     // 이미 교환 완료된 게시글에는 요청 불가능
     if (trade.state === 'finished') return res.status(400).json({ message: '이미 교환 완료된 교환글입니다.' });
@@ -284,16 +283,17 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
     // 교환글의 state 필드를 finished로 변경하고 trade_time을 현재 시간으로 업데이트.
     sql = `
     UPDATE Trade
-    SET state='finished', trade_time='${convertToMysqlTime(new Date())}'`;
+    SET state='finished', trade_time='${convertToMysqlTime(new Date())}'
+    WHERE trade_id=${tradeId}`;
     await con.execute(sql);
-
+    
     await con.commit();
     return res.status(200).json({ message: '교환 처리가 완료되었습니다.' });
   } catch (err) {
     console.error(err);
-    await con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback();
     con.release();
   }
   
