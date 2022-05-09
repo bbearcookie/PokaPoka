@@ -71,7 +71,8 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
   try {
     let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
     FROM VoucherRequest 
-    WHERE username='${user.username}'`;
+    WHERE username='${user.username}'
+    ORDER BY regist_time`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
@@ -94,7 +95,8 @@ router.get('/request/list/all', verifyLogin, async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
-    FROM VoucherRequest`;
+    FROM VoucherRequest
+    ORDER BY regist_time`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
@@ -255,7 +257,8 @@ router.get('/provision/list/all', verifyLogin, async (req, res) => {
     SELECT provision_id, P.voucher_id, provider, recipient, provide_time, P.permanent, PHOTO.name
     FROM VoucherProvision as P
     INNER JOIN Voucher as V ON P.voucher_id = V.voucher_id
-    INNER JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id`;
+    INNER JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id
+    ORDER BY P.provide_time`;
     let [provisions] = await con.query(sql);
 
     return res.status(200).json({ message: '포토카드 소유권 발급 목록을 조회했습니다.', provisions });

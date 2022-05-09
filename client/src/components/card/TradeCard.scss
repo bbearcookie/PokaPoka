@@ -39,12 +39,13 @@
       border-radius: 10px;
       border: 1px solid rgba(0, 0, 0, 0.2);
       background-color: white;
+      text-align: center;
 
       .image_item {
         display: inline-block;
 
         img {
-          margin: 5px;
+          margin: 5px 15px;
           object-fit: contain;
           border-radius: 50%;
           border: 1px solid rgba(0, 0, 0, 0.2);

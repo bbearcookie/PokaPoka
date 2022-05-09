@@ -185,6 +185,8 @@ export const postConfirmation = (cert_num) => axios.post(`${BACKEND}/api/sms/con
   },
   options
 );
+// 인증 번호 세션 초기화
+export const deleteSmsSession = () => axios.delete(`${BACKEND}/api/sms/session`, options);
 //비밀번호 변경
 export const postPassword = (password, password_check) => axios.post(`${BACKEND}/api/sms/password`,
   {
@@ -374,6 +376,14 @@ export const getTradeListAll = (filter) => axios.get(
 
 // 교환글 상세 조회 요청
 export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detail/${tradeId}`);
+
+// 해당 교환글에게 교환 신청
+export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/api/trade/transaction/${tradeId}`,
+  {
+    useVouchers: form.useVouchers
+  },
+  options
+);
 
 // 해당 교환글이 원하는 포토카드 중에서 자신이 가지고 있는 소유권 목록 조회
 export const getTradeWantcardMine = (tradeId) => axios.get(`${BACKEND}/api/trade/wantcard/mine/${tradeId}`, options);

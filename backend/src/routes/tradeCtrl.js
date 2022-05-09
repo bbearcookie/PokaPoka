@@ -3,47 +3,6 @@ const { db } = require('../config/database');
 const { isNull, getWhereClause } = require('../utils/common');
 const { verifyLogin } = require('../utils/jwt');
 
-// 교환글 등록 요청
-router.post('/trade/new', verifyLogin, async (req, res) => {
-  const { permanent, haveVoucherId, wantPhotocards, wantAmount } = req.body;
-  const { user } = req;
-
-  // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
-
-  // 유효성 검사
-  if (!haveVoucherId) return res.status(400).json({ message: '사용하려는 소유권을 선택해주세요.' });
-  if (isNull(wantPhotocards)) return res.status(400).json({ message: '받으려는 포토카드를 선택해주세요.' });
-  if (!wantAmount) return res.status(400).json({ message: '받으려는 포토카드 개수를 입력해주세요.' });
-  if (permanent === '0' && parseInt(wantAmount) > 1) return res.status(400).json({ message: '임시 소유권으로는 한 개의 포토카드만 받을 수 있습니다.' });
-
-  const con = await db.getConnection();
-  try {
-    await con.beginTransaction();
-
-    // 교환글 등록
-    let sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
-    let [result] = await con.execute(sql, [user.username, haveVoucherId, wantAmount]);
-
-    // 교환글이 원하는 포토카드 목록 등록
-    wantPhotocards.forEach(async (element) => {
-      sql = `INSERT INTO WantCard (trade_id, photocard_id) VALUES (?, ?)`;
-      await con.execute(sql, [result.insertId, element]);
-    });
-
-    await con.commit();
-    return res.status(200).json({ message: '교환글을 등록했습니다.' });
-  } catch (err) {
-    console.error(err);
-    con.rollback();
-    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
-  } finally {
-    con.release();
-  }
-
-  return res.status(501).json({ message: 'end of line' });
-});
-
 // 모든 교환글 목록 조회 요청
 router.get('/trade/list/all', async (req, res) => {
   const { groupId, memberId, albumId } = req.query;
@@ -152,13 +111,6 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
   
   const con = await db.getConnection();
   try {
-    // let sql = `SELECT *
-    // FROM Voucher as V
-    // INNER JOIN Wantcard as W ON W.photocard_id = 
-    // WHERE V.username='${user.username}' AND W.trade_id=${tradeId}`
-
-    // TODO: 임시 소유권으로 등록된 것인지, 정식 소유권으로 등록된 것인지에 따라 조회 조건이 다름.
-
     // 교환글 정보 가져오기
     let sql = `
     SELECT T.trade_id, V.voucher_id, V.state, V.permanent
@@ -171,14 +123,16 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
     // 교환글 존재 유무 검사
     if (!trade) return res.status(404).json({ message: '해당 교환글이 없습니다.' });
 
+    // 공통 조건 작성
     let whereSqls = [];
     whereSqls.push(`W.trade_id='${trade.trade_id}'`);
     whereSqls.push(`V.username='${user.username}'`);
     whereSqls.push(`V.permanent=${trade.permanent}`);
 
     // 임시 소유권이면 아직 거래 한 번도 안한 소유권만 조회하도록 WHERE 조건에 추가
-    if (trade.permanent === 0) whereSqls.push(`V.state='${initial}'`);
+    if (trade.permanent === 0) whereSqls.push(`V.state='initial'`);
 
+    // 해당 교환글과 관련된 자신의 사용 가능한 모든 소유권 목록 조회
     sql = `
     SELECT V.voucher_id, P.image_name, P.name, A.name as album_name
     FROM Voucher as V
@@ -191,6 +145,89 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '사용 가능한 소유권을 조회했습니다.', vouchers });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+  
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 교환글 등록 요청
+router.post('/trade/new', verifyLogin, async (req, res) => {
+  const { permanent, haveVoucherId, wantPhotocards, wantAmount } = req.body;
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  // 유효성 검사
+  if (!haveVoucherId) return res.status(400).json({ message: '사용하려는 소유권을 선택해주세요.' });
+  if (isNull(wantPhotocards)) return res.status(400).json({ message: '받으려는 포토카드를 선택해주세요.' });
+  if (!wantAmount) return res.status(400).json({ message: '받으려는 포토카드 개수를 입력해주세요.' });
+  if (permanent === '0' && parseInt(wantAmount) > 1) return res.status(400).json({ message: '임시 소유권으로는 한 개의 포토카드만 받을 수 있습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    await con.beginTransaction();
+
+    // 교환글 등록
+    let sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
+    let [result] = await con.execute(sql, [user.username, haveVoucherId, wantAmount]);
+
+    // 교환글이 원하는 포토카드 목록 등록
+    wantPhotocards.forEach(async (element) => {
+      sql = `INSERT INTO WantCard (trade_id, photocard_id) VALUES (?, ?)`;
+      await con.execute(sql, [result.insertId, element]);
+    });
+
+    await con.commit();
+    return res.status(200).json({ message: '교환글을 등록했습니다.' });
+  } catch (err) {
+    console.error(err);
+    con.rollback();
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 해당 교환글에게 교환 신청
+router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
+  const { tradeId } = req.params;
+  const { useVouchers } = req.body;
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  // 유효성 검사
+  if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
+  if (!useVouchers) return res.status(400).json({ message: '사용할 포토카드 소유권을 선택해주세요.' });
+
+  const con = await db.getConnection();
+  try {
+    await con.beginTransaction();
+
+    // 교환글 정보 가져오기
+    let sql = `
+    SELECT trade_id, username, want_amount
+    FROM Trade
+    WHERE trade_id=${tradeId}`
+    let [[trade]] = await con.query(sql);
+    console.log(trade);
+
+    // 작성자와 교환 요청자는 같으면 안됨
+    if (user.username === trade.username) return res.status(400).json({ message: '자신이 등록한 교환글에 교환 요청은 불가능합니다.' });
+
+    // 소유권 갯수가 부족하진 않은지 확인
+
+    await con.commit();
+  } catch (err) {
+    console.error(err);
+    con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
     con.release();

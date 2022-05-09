@@ -40,8 +40,13 @@ const SignupPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
+
+      // select 태그에 들어갈 그룹 정보 가져오기
       const res = await request.call(api.getGroupList);
       setGroups(res.groups);
+
+      // 휴대폰 인증 관련 세션정보 초기화
+      await request.call(api.deleteSmsSession);
     } catch (err) {
       setMessage(err.response.data.message);
     }

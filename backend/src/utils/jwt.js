@@ -24,8 +24,10 @@ async function createLoginToken(user, userAgent) {
     const refreshToken = createToken(payload, process.env.REFRESH_TOKEN_EXPIRES);
 
     // 기존에 보관된 로그인 토큰 정보 삭제
-    sql = `DELETE FROM LoginToken WHERE username='${user.username}'`;
-    await con.execute(sql);
+    if (user.username) {
+      sql = `DELETE FROM LoginToken WHERE username='${user.username}'`;
+      await con.execute(sql);
+    }
 
     // DB에 로그인 정보와 새로운 토큰 정보 저장
     sql = `INSERT INTO 

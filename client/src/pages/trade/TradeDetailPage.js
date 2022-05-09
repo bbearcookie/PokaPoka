@@ -74,8 +74,8 @@ const TradeDetailPage = () => {
   // 소유권 선택 모달에서 추가 버튼 클릭시
   const onClickAddVoucherButton = () => {
     if (form.useVouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)))
-      return setModalMessage('이미 받으려는 포토카드로 추가한 포토카드입니다.');
-    if (!form.selectVoucher) return setModalMessage('받을 포토카드를 선택해주세요.');
+      return setModalMessage('이미 사용하기로 등록한 소유권입니다.');
+    if (!form.selectVoucher) return setModalMessage('사용할 소유권을 선택해주세요.');
 
     // 받으려는 포토카드 목록에 해당 포토카드 정보 추가
     setForm(produce(draft => {
@@ -100,9 +100,15 @@ const TradeDetailPage = () => {
   const onBackButton = () => navigate(-1); // 뒤로 돌아가기
 
   // 교환 신청 버튼 클릭시
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     console.log(form);
+    try {
+      const res = await request.call(api.postTradeTransaction, form, tradeId);
+      console.log(res);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
   }
 
   return (

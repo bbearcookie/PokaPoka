@@ -189,7 +189,7 @@ const VoucherProvisionWriter = () => {
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
-          <Button className="submit_button" type="submit">작성</Button>
+          <Button className="submit_button" type="submit">발급</Button>
         </section>
       </form>
     </AdminTemplate>
