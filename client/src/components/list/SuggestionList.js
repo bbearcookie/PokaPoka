@@ -12,7 +12,6 @@ const SuggestionList = ({ className, suggestions, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(suggestions.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
 
   // 문의사항 상세 보기시 작동
   const onClickDetailView = (e) => {
@@ -49,8 +48,8 @@ const SuggestionList = ({ className, suggestions, perPage }) => {
         </thead>
         <tbody>
         {suggestions ?
-          suggestions.filter(suggestion => isInCurrentPage(++count)).map(suggestion => 
-            <tr key={count} suggestion_id={suggestion.suggestion_id} onClick={onClickDetailView}>
+          suggestions.filter((suggestion, idx) => isInCurrentPage(idx + 1)).map((suggestion, idx) => 
+            <tr key={idx} suggestion_id={suggestion.suggestion_id} onClick={onClickDetailView}>
                 <td>{suggestion.suggestion_id}</td>
                 <td><Badge type={suggestion.category} /></td>
                 <td><Badge type={suggestion.state} /></td>

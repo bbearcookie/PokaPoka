@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { getFormattedDate } from '../../utils/common';
@@ -20,7 +20,10 @@ const TradeList = ({ className, contents, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(contents.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
+
+  const onLoad = () => {
+  };
+  useEffect(() => { onLoad(); }, []);
 
   // 상세 보기시 작동
   const onClickDetailView = (e) => {
@@ -33,25 +36,22 @@ const TradeList = ({ className, contents, perPage }) => {
     // else return navigate(`/mypage/suggestion/detail/${suggestionId}`);
   }
   
-  // 해당 문의사항이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.
-  const isInCurrentPage = (suggestionId) => {
-    const first = (currentPage - 1) * parseInt(perPage); // 현재 페이지에서 가장 처음으로 보여줄 문의사항의 id
-    const last = first + parseInt(perPage); // 현재 페이지에서 가장 마지막으로 보여줄 문의사항의 id const last = first + parseInt(perPage) - 1
+  // 해당 내용이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.
+  const isInCurrentPage = (contentId) => {
+    const first = (currentPage - 1) * parseInt(perPage); // 현재 페이지에서 가장 처음으로 보여줄 내용의 id
+    const last = first + parseInt(perPage); // 현재 페이지에서 가장 마지막으로 보여줄 내용의 id
 
-    if (suggestionId > first && suggestionId <= last) return true; // if (suggestionId >= first && suggestionId <= last) return true;
+    if (contentId > first && contentId <= last) return true;
     return false;
   }
-
-  console.log(contents);
-  console.log(count);
 
   return (
     <div className={classNames('TradeList', className)}>
 
       <section className="trade_section">
         {contents ?
-          contents.filter(content => isInCurrentPage(++count)).map(content => 
-            <article className="content_item" key={count} content_id={content.trade_id} onClick={onClickDetailView}>
+          contents.filter((content, idx) => isInCurrentPage(idx + 1)).map((content, idx) => 
+            <article className="content_item" key={idx} content_id={content.trade_id} onClick={onClickDetailView}>
               <section className="card_section">
                 <VoucherCard
                   name={content.name}
