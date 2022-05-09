@@ -67,11 +67,16 @@ const InactiveUserListPage = () => {
       <section className="title_area">
         <h1 className="title-label">사용자 목록</h1>
       </section>
-      <Select name="keword" value="inactive" onChange={onChangeInput}>
-        <option value="default">전체</option>
-        <option value="withdrawal">탈퇴 요청한 사용자</option>
-        <option value="inactive">비활성화된 사용자</option>
-      </Select>
+      <section className="search_area">
+        <article className="search">
+          <p className="label">선택</p>
+          <Select name="keword" value="inactive" onChange={onChangeInput}>
+            <option value="default">전체</option>
+            <option value="withdrawal">탈퇴 요청한 사용자</option>
+            <option value="inactive">비활성화된 사용자</option>
+          </Select>
+        </article>
+      </section>
       <UserList users={user} perPage="10" />
 
     </AdminTemplate>

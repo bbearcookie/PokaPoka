@@ -47,6 +47,7 @@ const UserListSearchPage = () => {
   const onLoad = async (e) => {
     try {
       const res = await request.call(api.getUserListSearch, username);
+      if(!res) navigate(-1);
       setUser(res.user);
       //setUser(createDummyList()); // 페이지네이션 기능 테스트를 위한 더미 데이터
     } catch (err) {
@@ -58,6 +59,7 @@ const UserListSearchPage = () => {
   // input 값 변경시
   const onChangeInput = async (e) => {
     console.log("value: "+e.target.value);
+    if(e.target.value === 'default') navigate('/admin/user/');
     if(e.target.value === 'withdrawal') navigate('/admin/user/withdrawal');
     if(e.target.value === 'inactive') navigate('/admin/user/inactive');
   }
@@ -69,6 +71,12 @@ const UserListSearchPage = () => {
     }));
   }
 
+   // 검색 버튼 클릭시
+   const onClickSearch = async (e) => {
+    if(form.username) navigate(`/admin/user/search/${form.username}`);
+    navigate(0);
+  }
+
   return (
     <AdminTemplate className="UserListPage">
       {request.loading ? <LoadingSpinner /> : null}
@@ -78,10 +86,11 @@ const UserListSearchPage = () => {
       <section className="search_area">
         <article className="search">
           <p className="label">선택</p>
-          <Select name="keword" value={form.keword} onChange={onChangeInput}>
+          <Select name="keword" value="search" onChange={onChangeInput}>
             <option value="default">전체</option>
             <option value="withdrawal">탈퇴 요청한 사용자</option>
             <option value="inactive">비활성화된 사용자</option>
+            <option value="search">검색</option>
           </Select>
         </article>
         <article className="search">
@@ -94,8 +103,8 @@ const UserListSearchPage = () => {
             placeholder="아이디를 입력하세요"
             onChange={onChange}
           />
-          <Link to={`/admin/user/search/${form.username}`}><Button className="search_button">검색</Button></Link>
         </article>
+        <Button className="search_button" onClick={onClickSearch}>검색</Button>
       </section>
       <section>
         <UserList users={user} perPage="10" />

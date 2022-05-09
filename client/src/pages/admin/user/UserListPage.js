@@ -46,7 +46,7 @@ const UserListPage = () => {
   const onLoad = async (e) => {
     try {
       const res = await request.call(api.getUserList);
-      console.log(res.user.regist_time);
+      console.log(res.user);
       setUser(res.user);
       //setUser(createDummyList()); // 페이지네이션 기능 테스트를 위한 더미 데이터
     } catch (err) {
@@ -67,6 +67,11 @@ const UserListPage = () => {
     setForm(produce(draft => {
       draft[e.target.name] = e.target.value;
     }));
+  }
+
+  // 검색 버튼 클릭시
+  const onClickSearch = async (e) => {
+    if(form.username) navigate(`/admin/user/search/${form.username}`);
   }
 
   return (
@@ -94,8 +99,8 @@ const UserListPage = () => {
             placeholder="아이디를 입력하세요"
             onChange={onChange}
           />
-          <Link to={`/admin/user/search/${form.username}`}><Button className="search_button">검색</Button></Link>
         </article>
+        <Button className="search_button" onClick={onClickSearch}>검색</Button>
       </section>
       <section>
         <UserList users={user} perPage="10" />
