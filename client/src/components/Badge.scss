@@ -24,7 +24,7 @@
     color: white;
   }
 
-  &[type="trade"] {
+  &[type="trade"], &[type="finding"] {
     background-color: skyblue;
     color: black;
   }

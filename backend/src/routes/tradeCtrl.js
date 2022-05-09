@@ -53,18 +53,21 @@ router.get('/trade/list/all', async (req, res) => {
     let whereSqls = [];
 
     // 조회 조건에 groupId 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(groupId) && groupId !== 'all') whereSqls.push(`P.group_id='${groupId}'`);
+    if (!isNull(groupId) && groupId !== 'all') whereSqls.push(`P.group_id=${groupId}`);
     // 조회 조건에 memberId 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(memberId) && memberId !== 'all') whereSqls.push(`P.member_id='${memberId}'`);
+    if (!isNull(memberId) && memberId !== 'all') whereSqls.push(`P.member_id=${memberId}`);
     // 조회 조건에 albumId 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(albumId) && albumId !== 'all') whereSqls.push(`P.album_id='${albumId}'`);
+    if (!isNull(albumId) && albumId !== 'all') whereSqls.push(`P.album_id=${albumId}`);
 
     let sql = `
-    SELECT trade_id, T.username, T.voucher_id, want_amount, T.state, T.regist_time
+    SELECT trade_id, T.username, T.voucher_id, want_amount, T.state, T.regist_time, permanent, P.image_name, P.name, A.name as album_name, T.regist_time
     FROM Trade as T
     INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
-    ${getWhereClause(whereSqls)}`;
+    INNER JOIN AlbumData as A ON A.album_id = P.album_id
+    ${getWhereClause(whereSqls)}
+    ORDER BY T.trade_time ASC`;
+    
     const [trades] = await con.query(sql);
     return res.status(200).json({ message: '교환글 목록을 조회했습니다.', trades });
   } catch (err) {

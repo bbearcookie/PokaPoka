@@ -14,7 +14,7 @@ const TYPES = {
   'waiting': '대기중',
   'commented': '완료',
   'finished': '완료',
-  'finding': '진행중'
+  'finding': '진행중',
 }
 
 // 뱃지 컴포넌트
