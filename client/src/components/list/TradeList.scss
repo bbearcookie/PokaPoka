@@ -2,12 +2,6 @@
 
   .trade_section {
 
-    .card_section {
-      .VoucherCard {
-        background-color: white;
-      }
-    }
-
     .content_item {
       padding: 25px;
       margin-bottom: 50px;
@@ -22,6 +16,12 @@
 
       &:hover {
         background-color: rgb(235, 235, 212);
+      }
+      
+      .card_section {
+        .VoucherCard {
+          background-color: white;
+        }
       }
 
       .label_section {

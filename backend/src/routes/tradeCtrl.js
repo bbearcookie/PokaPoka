@@ -21,7 +21,7 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
   try {
     await con.beginTransaction();
 
-    // -교환글 등록
+    // 교환글 등록
     let sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
     let [result] = await con.execute(sql, [user.username, haveVoucherId, wantAmount]);
 
