@@ -2,6 +2,12 @@
 
   .trade_section {
 
+    .card_section {
+      .VoucherCard {
+        background-color: white;
+      }
+    }
+
     .content_item {
       padding: 25px;
       margin-bottom: 50px;
@@ -19,7 +25,9 @@
       }
 
       .label_section {
+        width: 100%;
         margin: 0 10px;
+
         .label {
           margin: 0.5em 0 ;
         }
@@ -31,6 +39,11 @@
         }
   
         .image_section {
+          padding: 5px;
+          border-radius: 10px;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          background-color: white;
+
           .image_item {
             display: inline-block;
 

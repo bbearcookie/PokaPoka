@@ -5,7 +5,6 @@ import { getFormattedDate } from '../../utils/common';
 import { BACKEND } from '../../utils/api';
 import Table from '../table/Table';
 import Badge from '../Badge';
-import ImageCard from '../card/ImageCard';
 import VoucherCard from '../card/VoucherCard';
 import PaginationBar from '../PaginationBar';
 import { STORAGE_KEY_NAME } from '../../contexts/Auth';
@@ -67,7 +66,7 @@ const TradeList = ({ className, contents, perPage }) => {
                 <p className="label"><b>상태</b> <Badge type={content.state} /></p>
                 <p className="label"><b>소유권 상태</b> <Badge type={permanentState[content.permanent]} /></p>
                 <p className="label"><b>등록일</b> {getFormattedDate(content.regist_time)}</p>
-                <p className="label"><b>원하는 포토카드</b> 하단 중에서 {content.want_amount}장</p>
+                <p className="label"><b>원하는 포토카드</b> 아래 카드 중 {content.want_amount}장</p>
                 <section className="image_section">
                   {content.wantcards ?
                     content.wantcards.map(wantcard =>
