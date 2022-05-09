@@ -5,54 +5,34 @@ const fsAsync = require('fs');
 const { db } = require('../config/database');
 const { getTimestampFilename, photocardImageUpload, PHOTOCARD_IMAGE_DIR } = require('../config/multer');
 const { isAdmin, verifyLogin } = require('../utils/jwt');
-const { isNull } = require('../utils/common');
+const { isNull, getWhereClause } = require('../utils/common');
 
 // 포토카드 목록 반환
 router.get('/photocard/list', async (req, res) => {
   const { groupId, memberId } = req.query;
 
-  // 유효성 검사
-  if (!groupId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
-  if (!memberId) return res.status(200).json({ message: '조회할 목록이 없습니다.', photocards: [] });
-
   // 포토카드 목록 조회
   const con = await db.getConnection();
   try {
-    // 해당 그룹 존재 유무 확인
-    if (groupId !== 'all') {
-      let sql = `SELECT name FROM GroupData WHERE group_id=${groupId}`;
-      let [[group]] = await con.query(sql);
-      if (!group) return res.status(404).json({ message: '해당 그룹을 DB에서 찾지 못했습니다.' });
+    let whereSqls = [];
+    // 조회 조건에 특정 그룹과 멤버에 대한 필터링 조건이 있을 경우 WHERE 조건에 추가
+    if (!isNull(groupId) && !isNull(memberId)) {
+      // 모든 그룹의 모든 멤버에 대한 포토카드 목록 조회
+      if (groupId === 'all' && memberId === 'all') {
+        // 특별한 WHERE 조건이 필요하지 않음.
+      // 특정 그룹의 모든 멤버에 대한 포토카드 목록 조회
+      } else if (memberId === 'all') {
+        whereSqls.push(`P.group_id=${groupId}`);
+      // 그 외에 특정 멤버에 대한 포토카드 목록 조회
+      } else {
+        whereSqls.push(`P.member_id=${memberId}`);
+      }
     }
+    let sql = `SELECT photocard_id, P.group_id, P.member_id, P.album_id, P.name, P.image_name, A.name as album_name
+    FROM Photocard as P
+    INNER JOIN AlbumData as A ON P.album_id = A.album_id
+    ${getWhereClause(whereSqls)}`;
 
-    // 해당 멤버 존재 유무 확인
-    if (memberId !== 'all') {
-      let sql = `SELECT name FROM MemberData WHERE member_id=${memberId}`;
-      let [[member]] = await con.query(sql);
-      if (!member) return res.status(404).json({ message: '해당 멤버를 DB에서 찾지 못했습니다.' });
-    }
-
-    // 모든 그룹의 모든 멤버의 포토카드 목록 조회
-    let sql = "";
-    if (groupId === 'all' && memberId === 'all') {
-      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
-      FROM Photocard`;
-    // 특정 그룹의 모든 멤버의 포토카드 목록 조회
-    } else if (memberId === 'all') {
-      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
-      FROM Photocard
-      WHERE group_id=${groupId}`;
-    // 모든 그룹의 특정 멤버의 포토카드 목록 조회
-    } else if (groupId === 'all') {
-      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
-      FROM Photocard
-      WHERE member_id=${memberId}`;
-    // 특정 멤버의 포토카드 목록 조회
-    } else {
-      sql = `SELECT photocard_id, group_id, member_id, album_id, name, image_name
-      FROM Photocard
-      WHERE group_id=${groupId} AND member_id=${memberId}`;
-    }
     let [photocards] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 목록 조회에 성공했습니다.', photocards });
 
@@ -296,7 +276,7 @@ router.delete('/photocard/:photocardId', verifyLogin, async (req, res) => {
     let [[photocard]] = await con.query(sql);
     if (!photocard) return res.status(404).json({ message: '삭제하려는 포토카드가 DB에 없습니다.' });
 
-    // DB에서 멤버 삭제
+    // DB에서 포토카드 삭제
     sql = `DELETE FROM Photocard WHERE photocard_id=${photocardId}`;
     await con.execute(sql);
 

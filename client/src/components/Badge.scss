@@ -24,10 +24,11 @@
     color: white;
   }
 
-  &[type="trade"] {
-    background-color: skyblue;
+  &[type="trade"], &[type="finding"] {
+    background-color: rgb(149, 220, 248);
     color: black;
   }
+
   &[type="temporary"] {
     background-color: rgb(137, 147, 156);
     color: white;

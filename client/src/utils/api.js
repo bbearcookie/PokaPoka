@@ -95,6 +95,7 @@ export const putMember = (form, memberId) => {
 }
 
 // 앨범 목록 데이터 조회 요청
+export const getAllAlbumList = () => axios.get(`${BACKEND}/api/album/list`, options);
 export const getAlbumList = (groupId) => axios.get(`${BACKEND}/api/album/list/${groupId}`, options);
 // 앨범 상세 데이터 조회 요청
 export const getAlbumDetail = (albumId) => axios.get(`${BACKEND}/api/album/detail/${albumId}`, options);
@@ -337,6 +338,39 @@ export const patchInactiveCancel = (state, username) => axios.patch(`${BACKEND}/
 );
 // 관리자 - 회원 탈퇴
 export const deleteUser = (username) => axios.delete(`${BACKEND}/api/admin/user/withdrawal/${username}`, options);
+
+// 사용자가 소유한 포토카드 소유권 목록 조회
+// permanent: (0이면 임시소유권, 1이면 정식소유권 조회)
+// state: (initial이면 거래 안된 소유권, traded이면 한 번이라도 거래 된 소유권 조회)
+// groupId, memberId: (특정 그룹이나 멤버에 대한 소유권만 조회)
+export const getVoucherListMine = (filter) => axios.get(
+  `${BACKEND}/api/voucher/list/mine?` +
+  `permanent=${filter.permanent}&` +
+  `state=${filter.state}&` + 
+  `groupId=${filter.groupId}&` +
+  `memberId=${filter.memberId}`,
+  options
+);
+
+// 교환글 등록 요청
+export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
+  {
+    permanent: form.permanent,
+    haveVoucherId: form.haveVoucherId,
+    wantPhotocards: form.wantPhotocards.map(element => element.photocard_id),
+    wantAmount: form.wantAmount
+  },
+  options
+);
+
+// 모든 교환글 목록 조회 요청
+export const getTradeListAll = (filter) => axios.get(
+  `${BACKEND}/api/trade/list/all?` +
+  `groupId=${filter.groupId}&` +
+  `memberId=${filter.memberId}&` +
+  `albumId=${filter.albumId}&` +
+  options
+);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

@@ -25,18 +25,14 @@ const MainPage = () => {
   return (
     <UserTemplate
       className="MainPage"
-      sidebar={<PhotoStoarageSidebar />}
     >
-      <p>메잉ㄴ페이지</p>
-      <p>메잉ㄴ페이지</p>
-      <p>메잉ㄴ페이지</p>
+      <p>사용자 메인 페이지</p>
       {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">공지사항 목록</h1>
       </section>
 
       <NoticeList notices={notice} perPage="5" />
-
     </UserTemplate>
   );
 };
