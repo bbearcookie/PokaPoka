@@ -128,6 +128,7 @@ const TradeListPage = () => {
       className="TradeListPage"
       sidebar={<TradeSideBar />}
     >
+      {request.loading ? <LoadingSpinner /> : null}
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="title_area">
         <h1 className="title-label">교환글 목록</h1>
@@ -193,6 +194,7 @@ const TradeListPage = () => {
         </article>
         }
       </section>
+      
       <TradeList contents={trades} perPage="10" />
       
     </UserTemplate>

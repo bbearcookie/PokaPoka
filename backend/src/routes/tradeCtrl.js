@@ -60,15 +60,27 @@ router.get('/trade/list/all', async (req, res) => {
     if (!isNull(albumId) && albumId !== 'all') whereSqls.push(`P.album_id=${albumId}`);
 
     let sql = `
-    SELECT trade_id, T.username, T.voucher_id, want_amount, T.state, T.regist_time, permanent, P.image_name, P.name, A.name as album_name, T.regist_time
+    SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,
+    permanent, P.image_name, P.name, A.name as album_name
     FROM Trade as T
     INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id = P.album_id
     ${getWhereClause(whereSqls)}
-    ORDER BY T.trade_time ASC`;
-    
-    const [trades] = await con.query(sql);
+    ORDER BY T.regist_time DESC`;
+
+    // 조회한 게시글마다 원하는 포토카드의 목록을 가져옴
+    let [trades] = await con.query(sql);
+    trades = await Promise.all(trades.map(async (trade) => {
+      let sql = `SELECT W.photocard_id, image_name, name
+      FROM Wantcard as W
+      INNER JOIN Photocard as P ON P.photocard_id = W.photocard_id
+      WHERE W.trade_id=${trade.trade_id}`
+      const [wantcards] = await con.query(sql);
+
+      return { ...trade, wantcards };
+    }));
+
     return res.status(200).json({ message: '교환글 목록을 조회했습니다.', trades });
   } catch (err) {
     console.error(err);

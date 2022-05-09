@@ -1,6 +1,7 @@
 .TradeList {
 
   .trade_section {
+
     .content_item {
       padding: 25px;
       margin-bottom: 50px;
@@ -9,6 +10,13 @@
       border: 1px solid gainsboro;
       box-shadow: 0px 5px 11px 1px #C0C0C0;
       border-radius: 10px;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.1s;
+
+      &:hover {
+        background-color: rgb(235, 235, 212);
+      }
 
       .label_section {
         margin: 0 10px;
@@ -23,9 +31,20 @@
         }
   
         .image_section {
-          img {
-            object-fit: contain;
-            margin: 5px;
+          .image_item {
+            display: inline-block;
+
+            img {
+              margin: 5px;
+              object-fit: contain;
+              border-radius: 50%;
+              border: 1px solid rgba(0, 0, 0, 0.2);
+            }
+
+            p {
+              margin: 0;
+              text-align: center;
+            }
           }
         }
       }

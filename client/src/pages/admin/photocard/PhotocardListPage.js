@@ -122,7 +122,7 @@ const PhotocardListPage = () => {
       <section className="card_section">
         {photocards ?
           photocards.map(photocard =>
-            <Link to={`/admin/photocard/detail/${photocard.photocard_id}`}>
+            <Link key={photocard.photocard_id} to={`/admin/photocard/detail/${photocard.photocard_id}`}>
               <ImageCard
                 key={photocard.photocard_id}
                 name={photocard.name}

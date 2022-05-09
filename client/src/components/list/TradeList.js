@@ -5,6 +5,7 @@ import { getFormattedDate } from '../../utils/common';
 import { BACKEND } from '../../utils/api';
 import Table from '../table/Table';
 import Badge from '../Badge';
+import ImageCard from '../card/ImageCard';
 import VoucherCard from '../card/VoucherCard';
 import PaginationBar from '../PaginationBar';
 import { STORAGE_KEY_NAME } from '../../contexts/Auth';
@@ -45,6 +46,8 @@ const TradeList = ({ className, contents, perPage }) => {
     return false;
   }
 
+  console.log(contents);
+
   return (
     <div className={classNames('TradeList', className)}>
 
@@ -64,15 +67,21 @@ const TradeList = ({ className, contents, perPage }) => {
                 <p className="label"><b>상태</b> <Badge type={content.state} /></p>
                 <p className="label"><b>소유권 상태</b> <Badge type={permanentState[content.permanent]} /></p>
                 <p className="label"><b>등록일</b> {getFormattedDate(content.regist_time)}</p>
-                <p className="label"><b>받으려는 포토카드</b> {content.want_amount}개</p>
+                <p className="label"><b>원하는 포토카드</b> 하단 중에서 {content.want_amount}장</p>
                 <section className="image_section">
-                  <img 
-                    width="165px"
-                    height="165px"
-                    src={'/no_image.jpg'}
-                    onError={e => e.target.src = '/no_image.jpg'}
-                    alt="앨범"
-                  />
+                  {content.wantcards ?
+                    content.wantcards.map(wantcard =>
+                    <article className="image_item">
+                      <img 
+                        width="165px"
+                        height="165px"
+                        src={`${BACKEND}/image/photocard/${wantcard.image_name}`}
+                        onError={e => e.target.src = '/no_image.jpg'}
+                        alt="앨범"
+                      />
+                      <p>{wantcard.name}</p>
+                    </article>
+                  ) : null}
                 </section>
               </section>
             </article>
