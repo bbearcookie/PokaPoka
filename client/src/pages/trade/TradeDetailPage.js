@@ -130,7 +130,7 @@ const TradeDetailPage = () => {
     console.log(form);
     try {
       const res = await request.call(api.postTradeTransaction, form, tradeId);
-      console.log(res);
+      setMessage('');
       onLoad();
     } catch (err) {
       setMessage(err.response.data.message);

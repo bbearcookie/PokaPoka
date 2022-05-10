@@ -282,6 +282,10 @@ export const postVoucherProvisionByRequest = (requestId) => axios.post(`${BACKEN
   options
 );
 
+// 관리자가 포토카드 임시 소유권 발급 취소
+export const postVoucherRevert = (requestId) => axios.post(`${BACKEND}/api/voucher/revert/${requestId}`,
+{}, options);
+
 // 임시 소유권을 영구 소유권으로 전환
 export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}/api/voucher/provision/request`,
   {

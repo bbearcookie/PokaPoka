@@ -418,7 +418,7 @@ const TradeWriterPage = () => {
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
-          <Button className="submit_button" type="submit">작성</Button>
+          <Button className="submit_button" type="submit">{tradeId ? '수정' : '작성'}</Button>
         </section>
 
       </form>
