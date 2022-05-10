@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import qs from 'qs';
 import classNames from 'classnames';
 import produce from 'immer';
 import useRequest from '../../utils/useRequest';
@@ -30,6 +31,7 @@ const permanentState = {
 
 const TradeDetailPage = () => {
   const { tradeId } = useParams(); // URL에 포함된 Params 정보
+  const { backURI } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   const { state: authState, actions: authActions } = useContext(AuthContext);
   const [form, setForm] = useState({
     selectVoucher: '', // 소유권 사용 모달 창에서 사용될 변수
@@ -104,9 +106,10 @@ const TradeDetailPage = () => {
     }));
   }
 
-
   // 뒤로가기 버튼 클릭시
-  const onBackButton = () => navigate(-1); // 뒤로 돌아가기
+  const onBackButton = () => {
+    return navigate(backURI ? backURI : '/trade/all'); // 뒤로 돌아가기
+  }
 
   // 교환글 삭제시
   const onRemove = async (e) => {
@@ -210,7 +213,7 @@ const TradeDetailPage = () => {
         {authState.user.username === trade.username &&
         trade.state === 'finding' &&
         <>
-        <Button className="edit_button">수정</Button>
+        <Link to={`/trade/writer/${tradeId}`}><Button className="edit_button">수정</Button></Link>
         <Button className="submit_button" onClick={openRemoveModal}>삭제</Button>
         </>}
         

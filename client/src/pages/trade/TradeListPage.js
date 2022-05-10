@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelect, setGroups, setMembers, setAlbums, setTrades } from '../../modules/tradeListPage';
 import produce from 'immer';
@@ -26,6 +26,7 @@ const TradeListPage = () => {
   const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [message, setMessage] = useState('');
   const request = useRequest();
+  const navigate = useNavigate();
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -114,6 +115,13 @@ const TradeListPage = () => {
     }
   }
 
+  // 교환글 상세 보기시 작동
+  const onClickDetailView = (e) => {
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    return navigate(`/trade/detail/${tradeId}?backURI=/trade/all`);
+  }
+
   return (
     <UserTemplate
       className="TradeListPage"
@@ -197,7 +205,7 @@ const TradeListPage = () => {
         </article>
       </section>
       
-      <TradeList contents={trades} perPage="10" />
+      <TradeList contents={trades} perPage="10" onClick={onClickDetailView} />
     </UserTemplate>
   );
 };

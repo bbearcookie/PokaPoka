@@ -365,6 +365,17 @@ export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
   options
 );
 
+// 교환글 수정 요청
+export const putTrade = (form, tradeId) => axios.put(`${BACKEND}/api/trade/${tradeId}`,
+  {
+    permanent: form.permanent,
+    haveVoucherId: form.haveVoucherId,
+    wantPhotocards: form.wantPhotocards.map(element => element.photocard_id),
+    wantAmount: form.wantAmount
+  },
+  options
+);
+
 // 특정 교환글 삭제 요청
 export const deleteTrade = (tradeId) => axios.delete(`${BACKEND}/api/trade/${tradeId}`, options);
 

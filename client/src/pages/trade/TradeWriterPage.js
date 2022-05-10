@@ -57,6 +57,24 @@ const TradeWriterPage = () => {
     try {
       const res = await request.call(api.getGroupList);
       setGroups(res.groups);
+
+      // 기존의 교환글을 수정하려는 경우 기본 폼의 내용을 가져옴
+      if (tradeId) {
+        const res2 = await request.call(api.getTradeDetail, tradeId);
+        console.log(res2);
+        const res3 = await request.call(api.getMemberList, res2.trade.group_id);
+        setSelect(produce(draft => {
+          draft.permanent = res2.trade.permanent;
+          draft.have.groupId = res2.trade.group_id;
+          draft.have.memberId = res2.trade.member_id;
+          draft.have.members = res3.members;
+        }));
+        setForm(produce(draft => {
+          draft.haveVoucherId = res2.trade.voucher_id;
+          draft.wantPhotocards = res2.trade.wantcards;
+          draft.wantAmount = res2.trade.want_amount;
+        }));
+      }
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -232,18 +250,20 @@ const TradeWriterPage = () => {
     e.preventDefault();
     console.log(form);
 
-    // 새로 작성하는 경우
-    if (!tradeId) {
-      try {
+    try {
+      // 새로 작성하는 경우
+      if (!tradeId) {
         const res = await request.call(api.postTradeNew, { ...form, permanent: select.permanent });
         console.log(res);
         return navigate('/trade/all');
-      } catch (err) {
-        setMessage(err.response.data.message);
+      // 내용을 수정하는경우
+      } else {
+        const res = await request.call(api.putTrade, { ...form, permanent: select.permanent }, tradeId);
+        console.log(res);
+        return navigate(`/trade/detail/${tradeId}`);
       }
-    // 내용을 수정하는 경우
-    } else {
-
+    } catch (err) {
+      setMessage(err.response.data.message);
     }
   }
 

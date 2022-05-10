@@ -17,7 +17,7 @@ const permanentState = {
   1: 'permanent'
 };
 
-const TradeList = ({ className, contents, perPage }) => {
+const TradeList = ({ className, contents, perPage, onClick }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(contents.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
@@ -25,13 +25,6 @@ const TradeList = ({ className, contents, perPage }) => {
   const onLoad = () => {
   };
   useEffect(() => { onLoad(); }, []);
-
-  // 상세 보기시 작동
-  const onClickDetailView = (e) => {
-    const tradeId = e.currentTarget.getAttribute('trade_id');
-
-    return navigate(`/trade/detail/${tradeId}`);
-  }
   
   // 해당 내용이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.
   const isInCurrentPage = (contentId) => {
@@ -60,7 +53,7 @@ const TradeList = ({ className, contents, perPage }) => {
               registTime={content.regist_time}
               wantAmount={content.want_amount}
               wantcards={content.wantcards}
-              onClick={onClickDetailView}
+              onClick={onClick}
             />
           )
         : null}
@@ -78,7 +71,8 @@ const TradeList = ({ className, contents, perPage }) => {
 };
 
 TradeList.defaultProps = {
-  contents: []
+  contents: [],
+  onClick: () => {}
 };
 
 export default TradeList;

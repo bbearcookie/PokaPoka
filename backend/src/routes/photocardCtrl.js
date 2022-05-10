@@ -31,7 +31,8 @@ router.get('/photocard/list', async (req, res) => {
     let sql = `SELECT photocard_id, P.group_id, P.member_id, P.album_id, P.name, P.image_name, A.name as album_name
     FROM Photocard as P
     INNER JOIN AlbumData as A ON P.album_id = A.album_id
-    ${getWhereClause(whereSqls)}`;
+    ${getWhereClause(whereSqls)}
+    ORDER BY photocard_id`;
 
     let [photocards] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 목록 조회에 성공했습니다.', photocards });
