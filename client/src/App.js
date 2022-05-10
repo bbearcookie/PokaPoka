@@ -58,6 +58,7 @@ import PermanentVoucherListPage from './pages/stoarage/PermanentVoucherListPage'
 import TemporalVoucherListPage from './pages/stoarage/TemporalVoucherListPage';
 import TradeListPage from './pages/trade/TradeListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
+import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -143,6 +144,8 @@ function App() {
         <Route path="/mypage/editUserInfo" element={<EditUserPage />}/>
         <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
+        <Route path="/mypage/shipping/request" element={<ShippingRequestPage />}/>
+
         <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
         <Route path="/stoarage/temporal" element={<TemporalVoucherListPage />}/>
         <Route path="/trade/all" element={<TradeListPage />}/>

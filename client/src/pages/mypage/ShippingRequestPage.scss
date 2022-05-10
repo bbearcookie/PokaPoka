@@ -1,0 +1,78 @@
+.ShippingRequestPage {
+    margin: 0 10%;
+    display: flex;
+    flex-direction: column;
+  
+    .title-label {
+      margin: 20px 0;
+      font-size: 36px;
+      text-align: center;
+    }
+  
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .payment_button {
+      width: 100px; height: 50px;
+      margin-bottom: -50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+      text-align: center;
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  
+    .voucher_section{
+      display: inline-block;
+
+      .card_section {
+        margin-top: 10px;
+        text-align: center;
+        display: inline-block;
+    
+        .VoucherCard {
+          margin: 0 25px 50px 25px;
+          display: inline-block;
+        }
+      }
+    }
+    
+    .btn {
+      margin:100px 0 0 0;
+      width: 80%; height: 50px;
+      margin-bottom: -50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+
+    .delivery{
+      margin: 0px 80px; padding: 0;
+      display: flex;
+      justify-content: center;
+   
+      form{
+       
+          padding: 80px 140px;
+          width: 500px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          border: 1px solid grey;
+      
+          .none{
+            color: darkgrey;
+          }
+      }
+      
+    }
+  }
