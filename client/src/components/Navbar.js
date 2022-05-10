@@ -16,22 +16,18 @@ const Navbar = () => {
     try {
       request.call(api.postLogout);
       authActions.logout();
-      return navigate('/auth/login');
+      // return navigate('/auth/login');
     } catch (err) {}
   }
 
   return (
     <nav className="Navbar">
-      {authState.user &&
-      <>
-        {authState.user.role === 'admin' ? 
-        <Link className="nav-logo" to="/admin">PokaPoka</Link> : 
-        <Link className="nav-logo" to="/main">PokaPoka</Link>}
-      </>
-      }
+      {authState.user.role === 'admin' ? 
+      <Link className="nav-logo" to="/admin">PokaPoka</Link> : 
+      <Link className="nav-logo" to="/main">PokaPoka</Link>}
       
       <section className="nav-items">
-        {authState.user ?
+        {authState.user.username ?
         <>
           <section className="link_section">
             {authState.user.role === 'user' ?

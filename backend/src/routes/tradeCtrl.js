@@ -171,8 +171,13 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
   try {
     await con.beginTransaction();
 
+    // 이미 해당 소유권으로 등록된 거래 진행중인 교환글이 있다면 등록 불가능.
+    let sql = `SELECT trade_id FROM Trade WHERE voucher_id=${haveVoucherId} AND state='finding'`;
+    let [[trade]] = await con.query(sql);
+    if (trade) return res.status(400).json({ message: '해당 소유권으로 교환하려는 교환글을 이미 등록했습니다.' });
+
     // 교환글 등록
-    let sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
+    sql = `INSERT INTO Trade (username, voucher_id, want_amount) VALUES (?, ?, ?)`;
     let [result] = await con.execute(sql, [user.username, haveVoucherId, wantAmount]);
 
     // 교환글이 원하는 포토카드 목록 등록

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import produce from 'immer';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
+import AuthContext from '../../contexts/Auth';
 import Button from '../../components/form/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Select from '../../components/form/Select';
@@ -29,11 +30,14 @@ const permanentState = {
 
 const TradeDetailPage = () => {
   const { tradeId } = useParams(); // URL에 포함된 Params 정보
+  const { state: authState, actions: authActions } = useContext(AuthContext);
   const [form, setForm] = useState({
     selectVoucher: '', // 소유권 사용 모달 창에서 사용될 변수
     useVouchers: [] // 사용하기로 등록한 소유권 목록
   });
-  const [trade, setTrade] = useState({}); // 교환글 상세 정보
+  const [trade, setTrade] = useState({ // 교환글 상세 정보
+    state: ''
+  });
   const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [showAddModal, setShowAddModal] = useState(false);
   const [message, setMessage] = useState('');
@@ -106,11 +110,14 @@ const TradeDetailPage = () => {
     try {
       const res = await request.call(api.postTradeTransaction, form, tradeId);
       console.log(res);
+      onLoad();
     } catch (err) {
       setMessage(err.response.data.message);
     }
   }
 
+  console.log(authState);
+  console.log(trade);
   return (
     <UserTemplate
       className="TradeDetailPage"
@@ -170,6 +177,7 @@ const TradeDetailPage = () => {
         <Button className="submit_button">삭제</Button>
       </section>
 
+      {trade.state === 'finding' && authState.user.username &&
       <form onSubmit={onSubmit}>
         <h1 className="title-label">교환 신청</h1>
         {message ? <MessageLabel>{message}</MessageLabel> : null}
@@ -197,6 +205,7 @@ const TradeDetailPage = () => {
           <Button className="submit_button" type="submit">신청</Button>
         </section>
       </form>
+      }
 
     </UserTemplate>
   );
