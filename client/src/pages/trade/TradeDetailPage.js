@@ -40,6 +40,7 @@ const TradeDetailPage = () => {
   });
   const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [message, setMessage] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const request = useRequest();
@@ -64,6 +65,10 @@ const TradeDetailPage = () => {
     setModalMessage('');
     setShowAddModal(false);
   }
+
+  // 교환글 삭제 모달 열기 / 닫기
+  const openRemoveModal = () => setShowRemoveModal(true);
+  const closeRemoveModal = () => setShowRemoveModal(false);
 
   // 사용할 소유권 선택시
   const onClickVoucher = (e) => {
@@ -103,6 +108,19 @@ const TradeDetailPage = () => {
   // 뒤로가기 버튼 클릭시
   const onBackButton = () => navigate(-1); // 뒤로 돌아가기
 
+  // 교환글 삭제시
+  const onRemove = async (e) => {
+    console.log('onremove');
+    try {
+      const res = await request.call(api.deleteTrade, tradeId);
+      console.log(res);
+      return navigate('/trade/all');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeRemoveModal();
+  }
+
   // 교환 신청 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -116,8 +134,6 @@ const TradeDetailPage = () => {
     }
   }
 
-  console.log(authState);
-  console.log(trade);
   return (
     <UserTemplate
       className="TradeDetailPage"
@@ -156,7 +172,24 @@ const TradeDetailPage = () => {
       </Modal>
       : null}
 
+      {/* 교환글 삭제 모달 */}
+      {showRemoveModal ?
+      <Modal className="remove_modal" onClose={closeRemoveModal}>
+        <ModalHeader onClose={closeRemoveModal}>
+          <h1>교환글 삭제</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>정말로 {trade.name}에 대한 교환글을 삭제하시겠습니까?</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeRemoveModal}>취소</Button>
+          <Button className="remove_button" onClick={onRemove}>삭제</Button>
+        </ModalFooter>
+      </Modal>
+      : null}
+
       <h1 className="title-label">교환글 상세 정보</h1>
+      {message ? <MessageLabel>{message}</MessageLabel> : null}
       <TradeCard
         key={trade.trade_id}
         tradeId={trade.trade_id}
@@ -173,14 +206,21 @@ const TradeDetailPage = () => {
 
       <section className="submit_section">
         <Button className="cancel_button" type="button" onClick={onBackButton}>뒤로가기</Button>
+        
+        {authState.user.username === trade.username &&
+        trade.state === 'finding' &&
+        <>
         <Button className="edit_button">수정</Button>
-        <Button className="submit_button">삭제</Button>
+        <Button className="submit_button" onClick={openRemoveModal}>삭제</Button>
+        </>}
+        
       </section>
 
-      {trade.state === 'finding' && authState.user.username &&
+      {trade.state === 'finding' &&
+      authState.user.username &&
+      authState.user.username !== trade.username &&
       <form onSubmit={onSubmit}>
         <h1 className="title-label">교환 신청</h1>
-        {message ? <MessageLabel>{message}</MessageLabel> : null}
 
         <div className="label_area">
           <p className="label">소유권 선택</p>

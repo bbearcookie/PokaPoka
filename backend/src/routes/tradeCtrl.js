@@ -305,4 +305,47 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 교환글 삭제 요청
+router.delete('/trade/:tradeId', verifyLogin, async (req, res) => {
+  const { tradeId } = req.params;
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  // 유효성 검사
+  if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
+
+  const con = await db.getConnection();
+  try {
+    // 해당 교환글 존재 유무 확인
+    let sql = `SELECT trade_id, username, state FROM Trade WHERE trade_id=${tradeId}`;
+    let [[trade]] = await con.query(sql);
+    if (!trade) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
+
+    // 관리자이면 권한 비교할 필요 없음.
+    if (user.role !== 'admin') {
+      // 교환글 작성자와 삭제 요청자가 동일한 인물인지 확인
+      if (trade.username !== user.username) {
+        return res.status(400).json({ message: '삭제 권한이 없습니다.' });
+      }
+    }
+
+    // 이미 교환이 완료된 교환글은 삭제 불가능
+    if (trade.state !== 'finding') return res.status(400).json({ message: '이미 교환이 완료된 교환글은 삭제할 수 없습니다.' });
+
+    // 교환글 삭제 처리
+    sql = `DELETE FROM Trade WHERE trade_id=${tradeId}`;
+    await con.execute(sql);
+    return res.status(200).json({ message: '해당 교환글을 삭제했습니다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+  
+  return res.status(501).json({ message: 'end of line' });
+});
+
 module.exports = router;

@@ -66,7 +66,7 @@ function App() {
   // 세션 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 상태를 업데이트함.
   const onLoad = async () => {
     try {
-      if (!authState.user) {
+      if (!authState.user.username) {
         const user = sessionStorage.getItem(STORAGE_KEY_NAME);
         if (user) authActions.login(JSON.parse(user));
       }

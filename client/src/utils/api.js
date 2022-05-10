@@ -365,6 +365,9 @@ export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
   options
 );
 
+// 특정 교환글 삭제 요청
+export const deleteTrade = (tradeId) => axios.delete(`${BACKEND}/api/trade/${tradeId}`, options);
+
 // 모든 교환글 목록 조회 요청
 export const getTradeListAll = (filter) => axios.get(
   `${BACKEND}/api/trade/list/all?` +
