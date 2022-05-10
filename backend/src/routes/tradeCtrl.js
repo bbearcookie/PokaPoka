@@ -141,7 +141,8 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
     INNER JOIN Wantcard as W ON W.photocard_id = V.photocard_id
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id = P.album_id
-    ${getWhereClause(whereSqls)}`
+    ${getWhereClause(whereSqls)}
+    ORDER BY V.voucher_id`
     let [vouchers] = await con.query(sql);
 
     return res.status(200).json({ message: '사용 가능한 소유권을 조회했습니다.', vouchers });

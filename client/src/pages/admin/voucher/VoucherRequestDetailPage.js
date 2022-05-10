@@ -115,7 +115,7 @@ const VoucherRequestDetailPage = () => {
   const onClickProvisionCancel = async () => {
     try {
       const res = await request.call(api.postVoucherRevert, requestId);
-      console.log(res);
+      onLoad();
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -233,7 +233,7 @@ const VoucherRequestDetailPage = () => {
         <Link to="/admin/voucher/request"><Button className="cancel_button">뒤로 가기</Button></Link>
         {voucherRequest.state !== 'finished' && <Button className="edit_button" onClick={openProvisionModal}>발급</Button>}
         {voucherRequest.state === 'temporary' && <Button className="remove_button" onClick={openCancelModal}>발급 취소</Button>}
-        {voucherRequest.state !== 'finished' && <Button className="remove_button" onClick={openRemoveModal}>삭제</Button>}
+        {voucherRequest.state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>삭제</Button>}
         
       </section>
     </AdminTemplate>

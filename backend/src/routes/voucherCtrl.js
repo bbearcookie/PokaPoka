@@ -39,6 +39,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
       }
     }
 
+    // 목록 조회
     let sql = `
     SELECT voucher_id, state, permanent, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, P.name, A.name AS album_name
     FROM Voucher as V
@@ -46,7 +47,6 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
     INNER JOIN AlbumData as A ON P.album_id = A.album_id
     ${getWhereClause(whereSqls)}
     ORDER BY P.group_id, voucher_id`;
-
     let [vouchers] = await con.query(sql);
 
     return res.status(200).json({ message: '포토카드 소유권 목록 조회에 성공했습니다.', vouchers });
@@ -72,7 +72,7 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
     let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
     FROM VoucherRequest 
     WHERE username='${user.username}'
-    ORDER BY regist_time`;
+    ORDER BY regist_time DESC`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
@@ -96,7 +96,7 @@ router.get('/request/list/all', verifyLogin, async (req, res) => {
   try {
     let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
     FROM VoucherRequest
-    ORDER BY regist_time`;
+    ORDER BY regist_time DESC`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
@@ -218,10 +218,10 @@ router.delete('/request/:requestId', verifyLogin, async (req, res) => {
     let sql = `SELECT request_id, username, state, image_name FROM VoucherRequest WHERE request_id=${requestId}`;
     let [[request]] = await con.query(sql);
     if (!request) return res.status(404).json({ message: '삭제하려는 소유권 요청이 없습니다.' });
+    if (request.state !== 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
 
     // 관리자이거나 해당 소유권을 등록한 것이 자신인 경우에만 삭제 가능
     if (isAdmin(accessToken) || request.username === user.username) {
-      // if (request.state != 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
 
       // DB에서 소유권 요청 삭제
       sql = `DELETE FROM VoucherRequest WHERE request_id=${requestId}`;
@@ -258,7 +258,7 @@ router.get('/provision/list/all', verifyLogin, async (req, res) => {
     FROM VoucherProvision as P
     INNER JOIN Voucher as V ON P.voucher_id = V.voucher_id
     INNER JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id
-    ORDER BY P.provide_time`;
+    ORDER BY P.provide_time DESC`;
     let [provisions] = await con.query(sql);
 
     return res.status(200).json({ message: '포토카드 소유권 발급 목록을 조회했습니다.', provisions });

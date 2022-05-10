@@ -16,7 +16,7 @@ const Navbar = () => {
     try {
       request.call(api.postLogout);
       authActions.logout();
-      // return navigate('/auth/login');
+      return navigate('/auth/login');
     } catch (err) {}
   }
 
