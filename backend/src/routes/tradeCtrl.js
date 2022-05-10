@@ -5,7 +5,7 @@ const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
 router.get('/trade/list/all', async (req, res) => {
-  const { groupId, memberId, albumId } = req.query;
+  const { groupId, memberId, albumId, state } = req.query;
 
   const con = await db.getConnection();
   try {
@@ -17,6 +17,8 @@ router.get('/trade/list/all', async (req, res) => {
     if (!isNull(memberId) && memberId !== 'all') whereSqls.push(`P.member_id=${memberId}`);
     // 조회 조건에 albumId 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(albumId) && albumId !== 'all') whereSqls.push(`P.album_id=${albumId}`);
+    // 조회 조건에 state 필드에 대한 조건이 있으면 WHERE 조건에 추가
+    if (!isNull(state) && state !== 'all') whereSqls.push(`T.state='${state}'`);
 
     let sql = `
     SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,

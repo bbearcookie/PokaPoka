@@ -4,6 +4,7 @@ import { createAction, handleActions } from 'redux-actions';
 const initialState = {
   select: {
     searchType: '',
+    state: '', // 조회할 교환글 진행중 or 완료 상태
     groupId: '',
     memberId: '',
     albumId: ''

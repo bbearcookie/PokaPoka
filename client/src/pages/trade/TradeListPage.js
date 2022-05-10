@@ -54,7 +54,8 @@ const TradeListPage = () => {
       const res = await request.call(api.getTradeListAll, {
         groupId: select.groupId,
         memberId: select.memberId,
-        albumId: select.albumId
+        albumId: select.albumId,
+        state: select.state
       });
       dispatch(setTrades(res.trades));
       console.log(res);
@@ -126,8 +127,8 @@ const TradeListPage = () => {
           <Button className="add_button">작성</Button>
         </Link>
       </section>
-      <section className="search_area">
 
+      <section className="search_area">
         <article className="search">
           <p className="label">필터링 조건</p>
           <Select name="searchType" value={select.searchType} onChange={onChangeSelect}>
@@ -183,6 +184,17 @@ const TradeListPage = () => {
           </Select>
         </article>
         }
+      </section>
+
+      <section className="search_area">
+        <article className="search">
+          <p className="label">상태</p>
+          <Select name="state" value={select.state} onChange={onChangeSelect}>
+            <option value="all">전체</option>
+            <option value="finding">진행중</option>
+            <option value="finished">완료</option>
+          </Select>
+        </article>
       </section>
       
       <TradeList contents={trades} perPage="10" />
