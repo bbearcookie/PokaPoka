@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import produce from 'immer';
+import classNames from 'classnames';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
@@ -10,6 +12,7 @@ import Select from '../../components/form/Select';
 import VoucherCard from '../../components/card/VoucherCard';
 import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
 import UserTemplate from '../../templates/UserTemplate';
+import Payment from '../../components/payment';
 import './ShippingRequestPage.scss';
 
 //마이페이지 - 배송 요청
@@ -23,6 +26,9 @@ const ShippingRequestPage = () => {
     name: '',
     phone: '',
     address: ''
+});
+const [form, setForm] = useState({
+  voucherId: ''
 });
 const [visible, setVisible] = useState(false);  // 주소 데이터가 있을 때와 없을 때 구분
 
@@ -48,10 +54,15 @@ const [visible, setVisible] = useState(false);  // 주소 데이터가 있을 �
   };
   useEffect(() => { onLoad(); }, []);
 
-  //결제하기 버튼 클릭시
-  const onClickPayment = async () => {
-    //openModal();
-  };
+  // 소유권 선택시
+  const onClickVoucher = (e) => {
+    const target = e.currentTarget;
+    const voucherId = target.getAttribute('value');
+
+    setForm(produce(draft => {
+      draft.voucherId = voucherId;
+    }));
+  }
 
   return (
     <UserTemplate
@@ -72,10 +83,13 @@ const [visible, setVisible] = useState(false);  // 주소 데이터가 있을 �
             <p className="label">{group.name}</p>}
             {vouchers.filter(v => v.group_id === group.group_id).map(v =>
                 <VoucherCard
+                className={classNames({"active": v.voucher_id === parseInt(form.voucherId) })}
                 key={v.voucher_id}
+                value={v.voucher_id}
                 name={v.name}
                 albumName={v.album_name}
                 src={`${BACKEND}/image/photocard/${v.image_name}`}
+                onClick={onClickVoucher}
                 />
             )}
             </section>
@@ -102,7 +116,7 @@ const [visible, setVisible] = useState(false);  // 주소 데이터가 있을 �
             <p className='none'>작성중...</p>
         </form>
       </section>
-      <Button className="payment_button" onClick={onClickPayment}>결제하기</Button>
+      <Payment users={users} voucher={form} />
     </UserTemplate>
   );
 };

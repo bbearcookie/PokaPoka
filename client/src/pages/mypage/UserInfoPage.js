@@ -153,7 +153,7 @@ const UserInfoPage = () => {
                       {users.withdrawal ?
                       <Button className="withdrawal_button" onClick={onClickCancel}>탈퇴 요청 취소</Button> :
                       <Button className="withdrawal_button" onClick={onClickWithdrawal}>탈퇴 요청</Button>}
-                      <Link to="/mypage/editUserInfo"><Button className="edit_button" submit="submit" >수정</Button></Link>
+                      <Link to="/mypage/userInfo/edit"><Button className="edit_button" submit="submit" >수정</Button></Link>
                     </section>
                 </form>
             </section>

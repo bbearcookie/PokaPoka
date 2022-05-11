@@ -24,7 +24,8 @@ const MyPageSidebar = () => {
       <Link
         className={classNames("link", {"active": URI.includes('/mypage/voucher')})}
         to="/mypage/voucher">포토카드 소유권</Link>
-      <Link className="link" to="#">포토카드 배송</Link>
+      <Link className={classNames("link", {"active": URI.includes('/mypage/shipping')})}
+        to="/mypage/shipping">포토카드 배송</Link>
     </SidebarTemplate>
   );
 };
