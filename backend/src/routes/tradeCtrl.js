@@ -5,12 +5,15 @@ const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
 router.get('/trade/list/all', async (req, res) => {
-  const { groupId, memberId, albumId, state, username } = req.query;
+  const { groupId, memberId, albumId, state } = req.query;
+  let { username } = req.query;
 
   const con = await db.getConnection();
   try {
-    let whereSqls = [];
+    // 쿼리에 사용할 수 있는 형태로 변환
+    username = convertToMysqlStr(username);
 
+    let whereSqls = [];
     // 조회 조건에 groupId 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(groupId) && groupId !== 'all') whereSqls.push(`P.group_id=${groupId}`);
     // 조회 조건에 memberId 필드에 대한 조건이 있으면 WHERE 조건에 추가
@@ -20,7 +23,7 @@ router.get('/trade/list/all', async (req, res) => {
     // 조회 조건에 state 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(state) && state !== 'all') whereSqls.push(`T.state='${state}'`);
     // 조회 조건에 username 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(username)) whereSqls.push(`T.username LIKE '%${convertToMysqlStr(username)}%'`);
+    if (!isNull(username)) whereSqls.push(`T.username LIKE '%${username}%'`);
 
     let sql = `
     SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,
@@ -77,9 +80,10 @@ router.get('/trade/detail/:tradeId', async (req, res) => {
     let [[trade]] = await con.query(sql);
 
     // 교환글이 원하는 포토카드의 목록을 가져옴
-    sql = `SELECT W.photocard_id, image_name, name
+    sql = `SELECT W.photocard_id, P.image_name, P.name, A.name as album_name
     FROM Wantcard as W
     INNER JOIN Photocard as P ON P.photocard_id = W.photocard_id
+    INNER JOIN AlbumData as A ON A.album_id = P.album_id
     WHERE W.trade_id=${trade.trade_id}`;
     let [wantcards] = await con.query(sql);
 
