@@ -69,8 +69,9 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
-    FROM VoucherRequest 
+    let sql = `SELECT REQ.request_id, REQ.username, REQ.photocard_id, REQ.delivery, REQ.tracking_number, REQ.state, REQ.regist_time, P.name
+    FROM VoucherRequest as REQ
+    INNER JOIN Photocard as P ON P.photocard_id=REQ.Photocard_id
     WHERE username='${user.username}'
     ORDER BY regist_time DESC`;
     let [requests] = await con.query(sql);
@@ -94,8 +95,9 @@ router.get('/request/list/all', verifyLogin, async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
-    FROM VoucherRequest
+    let sql = `SELECT REQ.request_id, REQ.username, REQ.photocard_id, REQ.delivery, REQ.tracking_number, REQ.state, REQ.regist_time, P.name
+    FROM VoucherRequest as REQ
+    INNER JOIN Photocard as P ON P.photocard_id=REQ.Photocard_id
     ORDER BY regist_time DESC`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
