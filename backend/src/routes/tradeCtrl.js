@@ -92,8 +92,12 @@ router.get('/trade/detail/:tradeId', async (req, res) => {
     INNER JOIN AlbumData as A ON A.album_id = P.album_id
     WHERE W.trade_id=${trade.trade_id}`;
     let [wantcards] = await con.query(sql);
-
     trade = { ...trade, wantcards };
+
+    // 찜하기 정보를 가져옴
+    sql = `SELECT username, trade_id FROM TradeFavorite WHERE trade_id=${trade.trade_id}`;
+    let [favorites] = await con.query(sql);
+    trade = { ...trade, favorites };
 
     return res.status(200).json({ message: '교환글을 상세 조회했습니다.', trade });
   } catch (err) {

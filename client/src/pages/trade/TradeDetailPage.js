@@ -82,6 +82,19 @@ const TradeDetailPage = () => {
     }));
   }
 
+  // 찜하기 버튼 클릭시
+  const onClickFavorite = async (e) => {
+    e.stopPropagation();
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    try {
+      const res = await request.call(api.postTradeFavorite, tradeId);
+      setTrade({ ...trade, favorites: res.favorites });
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+
   // 소유권 선택 모달에서 추가 버튼 클릭시
   const onClickAddVoucherButton = () => {
     if (form.useVouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)))
@@ -205,6 +218,8 @@ const TradeDetailPage = () => {
         registTime={trade.regist_time}
         wantAmount={trade.want_amount}
         wantcards={trade.wantcards}
+        favorites={trade.favorites}
+        onFavorite={onClickFavorite}
       />
 
       <section className="submit_section">
@@ -219,6 +234,7 @@ const TradeDetailPage = () => {
         
       </section>
 
+      {/* 교환 신청이 가능한 교환글이면 교환 신청 폼 보여줌  */}
       {trade.state === 'finding' &&
       authState.user.username &&
       authState.user.username !== trade.username &&
