@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faCartArrowDown } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import Badge from '../Badge';
 import VoucherCard from './VoucherCard';
@@ -39,7 +39,7 @@ const TradeCard = ({ className,
         >
           <span className="icon_section">
             <FontAwesomeIcon
-              icon={faStar}
+              icon={faCartArrowDown}
             />
           </span>
           <span className="value">{favorites.length}</span>

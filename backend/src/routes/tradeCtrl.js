@@ -64,6 +64,55 @@ router.get('/trade/list/all', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 내가 찜한 교환글 목록 조회 요청
+router.get('/trade/list/favorite', verifyLogin, async (req, res) => {
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  const con = await db.getConnection();
+  try {
+    let sql = `
+    SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,
+    permanent, P.image_name, P.name, A.name as album_name
+    FROM Trade as T
+    INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
+    INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
+    INNER JOIN AlbumData as A ON A.album_id = P.album_id
+    WHERE T.trade_id IN (SELECT trade_id FROM TradeFavorite WHERE username='${user.username}')
+    ORDER BY T.regist_time DESC`;
+
+    // 조회한 게시글마다 반복
+    let [trades] = await con.query(sql);
+    trades = await Promise.all(trades.map(async (trade) => {
+
+      // 원하는 포토카드의 목록을 가져옴
+      let sql = `SELECT W.photocard_id, image_name, name
+      FROM Wantcard as W
+      INNER JOIN Photocard as P ON P.photocard_id = W.photocard_id
+      WHERE W.trade_id=${trade.trade_id}`
+      let [wantcards] = await con.query(sql);
+
+      // 찜하기 정보를 가져옴
+      sql = `SELECT username, trade_id FROM TradeFavorite WHERE trade_id=${trade.trade_id}`;
+      let [favorites] = await con.query(sql);
+
+      return { ...trade, wantcards, favorites };
+    }));
+    
+    return res.status(200).json({ message: '찜한 교환글 목록을 조회했습니다.', trades });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 특정 교환글 상세 조회 요청
 router.get('/trade/detail/:tradeId', async (req, res) => {
   const { tradeId } = req.params;
@@ -130,7 +179,6 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
     INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
     WHERE T.trade_id=${tradeId}`
     const [[trade]] = await con.query(sql);
-    console.log(trade);
 
     // 교환글 존재 유무 검사
     if (!trade) return res.status(404).json({ message: '해당 교환글이 없습니다.' });

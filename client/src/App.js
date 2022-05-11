@@ -56,6 +56,7 @@ import UserListSearchPage from './pages/admin/user/UserListSearchPage';
 import PermanentVoucherListPage from './pages/stoarage/PermanentVoucherListPage';
 import TemporalVoucherListPage from './pages/stoarage/TemporalVoucherListPage';
 import TradeListPage from './pages/trade/TradeListPage';
+import TradeFavoriteListPage from './pages/trade/TradeFavoriteListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
 import TradeDetailPage from './pages/trade/TradeDetailPage';
 
@@ -142,9 +143,12 @@ function App() {
         <Route path="/mypage/editUserInfo" element={<EditUserPage />}/>
         <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
+
         <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
         <Route path="/stoarage/temporal" element={<TemporalVoucherListPage />}/>
+
         <Route path="/trade/all" element={<TradeListPage />}/>
+        <Route path="/trade/favorite" element={<TradeFavoriteListPage />}/>
         <Route path="/trade/writer" element={<TradeWriterPage />}/>
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
         <Route path="/trade/detail/:tradeId" element={<TradeDetailPage />}/>

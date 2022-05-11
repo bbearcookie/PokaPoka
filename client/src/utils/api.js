@@ -394,6 +394,9 @@ export const getTradeListAll = (filter) => axios.get(
   options
 );
 
+// 내가 찜한 교환글 목록 조회 요청
+export const getTradeListFavorite = () => axios.get(`${BACKEND}/api/trade/list/favorite`, options);
+
 // 교환글 상세 조회 요청
 export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detail/${tradeId}`);
 
