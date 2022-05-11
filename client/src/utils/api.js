@@ -389,7 +389,8 @@ export const getTradeListAll = (filter) => axios.get(
   `groupId=${filter.groupId}&` +
   `memberId=${filter.memberId}&` +
   `albumId=${filter.albumId}&` +
-  `state=${filter.state}` ,
+  `state=${filter.state}&` +
+  `username=${filter.username}` ,
   options
 );
 

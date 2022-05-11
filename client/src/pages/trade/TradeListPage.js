@@ -8,6 +8,7 @@ import * as api from '../../utils/api';
 import Button from '../../components/form/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Select from '../../components/form/Select';
+import Input from '../../components/form/Input';
 import MessageLabel from '../../components/MessageLabel';
 import TradeList from '../../components/list/TradeList';
 import TradeSideBar from '../../components/sidebar/TradeSideBar';
@@ -52,11 +53,13 @@ const TradeListPage = () => {
     }
 
     try {
+      console.log(select);
       const res = await request.call(api.getTradeListAll, {
         groupId: select.groupId,
         memberId: select.memberId,
         albumId: select.albumId,
-        state: select.state
+        state: select.state,
+        username: select.username
       });
       dispatch(setTrades(res.trades));
       console.log(res);
@@ -202,6 +205,17 @@ const TradeListPage = () => {
             <option value="finding">진행중</option>
             <option value="finished">완료</option>
           </Select>
+        </article>
+        <article className="search">
+          <p className="label">작성자</p>
+          <Input
+            type="text"
+            name="username"
+            value={select.username}
+            autoComplete="off"
+            placeholder="전체"
+            onChange={onChangeSelect}
+          />
         </article>
       </section>
       

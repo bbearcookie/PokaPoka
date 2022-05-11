@@ -7,7 +7,8 @@ const initialState = {
     state: '', // 조회할 교환글 진행중 or 완료 상태
     groupId: '',
     memberId: '',
-    albumId: ''
+    albumId: '',
+    username: '' // 작성자 필터링
   },
   groups: [], // Select 태그에 보여줄 그룹 목록
   members: [], // Select 태그에 보여줄 멤버 목록

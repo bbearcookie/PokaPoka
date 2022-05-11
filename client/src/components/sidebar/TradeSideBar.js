@@ -15,8 +15,8 @@ const TradeSidebar = () => {
         {"active": URI.includes('/trade/all')})}
         to="/trade/all"
       >전체 교환글</Link>
-      <Link className="link" to="#">내 교환글</Link>
       <Link className="link" to="#">찜한 교환글</Link>
+      <Link className="link" to="#">교환 내역</Link>
       <Link className="link" to="#">교환 탐색</Link>
     </SidebarTemplate>
   );
