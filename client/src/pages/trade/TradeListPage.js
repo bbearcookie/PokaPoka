@@ -53,7 +53,6 @@ const TradeListPage = () => {
     }
 
     try {
-      console.log(select);
       const res = await request.call(api.getTradeListAll, {
         groupId: select.groupId,
         memberId: select.memberId,
@@ -62,7 +61,6 @@ const TradeListPage = () => {
         username: select.username
       });
       dispatch(setTrades(res.trades));
-      console.log(res);
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -123,6 +121,12 @@ const TradeListPage = () => {
     const tradeId = e.currentTarget.getAttribute('trade_id');
 
     return navigate(`/trade/detail/${tradeId}?backURI=/trade/all`);
+  }
+
+  // 찜하기 버튼 클릭시 작동
+  const onClickFavorite = (e) => {
+    e.stopPropagation();
+    console.log('onClickFavorite');
   }
 
   return (
@@ -219,7 +223,7 @@ const TradeListPage = () => {
         </article>
       </section>
       
-      <TradeList contents={trades} perPage="10" onClick={onClickDetailView} />
+      <TradeList contents={trades} perPage="10" onDetailView={onClickDetailView} onFavorite={onClickFavorite} />
     </UserTemplate>
   );
 };

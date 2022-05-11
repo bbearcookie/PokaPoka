@@ -15,9 +15,38 @@
   }
   
   .card_section {
+    text-align: center;
+
     .VoucherCard {
       background-color: white;
     }
+
+    .favorite_button {
+      margin: 10px;
+      padding: 5px 15px 8px 15px;
+      display: inline-block;
+      color: coral;
+      background-color: white;
+      border: 2px solid coral;
+      border-radius: 50rem;
+
+      &:hover, &.active {
+        color: white;
+        background-color: coral;
+      }
+
+      .value {
+        margin-left: 8px;
+        max-width: 70px;
+        display: inline-block;
+        position: relative;
+        top: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
   }
 
   .label_section {

@@ -1,18 +1,20 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import Badge from '../Badge';
-import { getFormattedDate } from '../../utils/common';
 import VoucherCard from './VoucherCard';
 import { BACKEND } from '../../utils/api';
+import { getFormattedDate } from '../../utils/common';
 import './TradeCard.scss';
 
-const TradeCard = ({ className, tradeId, username, name, imageName, albumName, state, permanentState, registTime, wantAmount, wantcards, onClick }) => {
+const TradeCard = ({ className, tradeId, username, name, imageName, albumName, state, permanentState, registTime, wantAmount, wantcards, onDetailView, onFavorite }) => {
   return (
     <article
       className={classNames("TradeCard", className)}
       key={tradeId}
       trade_id={tradeId}
-      onClick={onClick}
+      onClick={onDetailView}
     >
       <section className="card_section">
         <VoucherCard
@@ -20,6 +22,14 @@ const TradeCard = ({ className, tradeId, username, name, imageName, albumName, s
           albumName={albumName}
           src={`${BACKEND}/image/photocard/${imageName}`}
         />
+        <span className="favorite_button" onClick={onFavorite}>
+          <span className="icon_section">
+            <FontAwesomeIcon
+              icon={faStar}
+            />
+          </span>
+          <span className="value">123412341234</span>
+        </span>
       </section>
       <section className="label_section">
         <p className="label"><b>작성자</b> {username}</p>
@@ -54,7 +64,8 @@ TradeCard.defaultProps = {
   permanentState: '상태',
   wantAmount: 0,
   wantcards: [],
-  onClick: () => {}
+  onDetailView: () => {},
+  onFavorite: () => {}
 };
 
 export default TradeCard;

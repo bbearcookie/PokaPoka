@@ -17,7 +17,7 @@ const permanentState = {
   1: 'permanent'
 };
 
-const TradeList = ({ className, contents, perPage, onClick }) => {
+const TradeList = ({ className, contents, perPage, onDetailView, onFavorite }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(contents.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
@@ -53,7 +53,8 @@ const TradeList = ({ className, contents, perPage, onClick }) => {
               registTime={content.regist_time}
               wantAmount={content.want_amount}
               wantcards={content.wantcards}
-              onClick={onClick}
+              onDetailView={onDetailView}
+              onFavorite={onFavorite}
             />
           )
         : null}
@@ -72,7 +73,8 @@ const TradeList = ({ className, contents, perPage, onClick }) => {
 
 TradeList.defaultProps = {
   contents: [],
-  onClick: () => {}
+  onDetailView: () => {},
+  onFavorite: () => {}
 };
 
 export default TradeList;
