@@ -1,6 +1,6 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
-const { isNull, getWhereClause, convertToMysqlTime } = require('../utils/common');
+const { isNull, getWhereClause, convertToMysqlTime, convertToMysqlStr } = require('../utils/common');
 const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
@@ -20,7 +20,7 @@ router.get('/trade/list/all', async (req, res) => {
     // 조회 조건에 state 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(state) && state !== 'all') whereSqls.push(`T.state='${state}'`);
     // 조회 조건에 username 필드에 대한 조건이 있으면 WHERE 조건에 추가
-    if (!isNull(username)) whereSqls.push(`T.username LIKE '%${username}%'`);
+    if (!isNull(username)) whereSqls.push(`T.username LIKE '%${convertToMysqlStr(username)}%'`);
 
     let sql = `
     SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,
