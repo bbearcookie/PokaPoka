@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import Badge from '../Badge';
 import VoucherCard from './VoucherCard';
+import AuthContext from '../../contexts/Auth';
 import { BACKEND } from '../../utils/api';
 import { getFormattedDate } from '../../utils/common';
 import './TradeCard.scss';
 
-const TradeCard = ({ className, tradeId, username, name, imageName, albumName, state, permanentState, registTime, wantAmount, wantcards, onDetailView, onFavorite }) => {
+const TradeCard = ({ className,
+  tradeId, username, name, imageName, albumName, state, permanentState, registTime, wantAmount,
+  wantcards, favorites,
+  onDetailView, onFavorite
+}) => {
+  const { state: authState, actions: authActions } = useContext(AuthContext);
+
   return (
     <article
       className={classNames("TradeCard", className)}
@@ -22,13 +29,20 @@ const TradeCard = ({ className, tradeId, username, name, imageName, albumName, s
           albumName={albumName}
           src={`${BACKEND}/image/photocard/${imageName}`}
         />
-        <span className="favorite_button" onClick={onFavorite}>
+        <span
+          className={classNames(
+            "favorite_button",
+            {"active": favorites.find(item => item.username === authState.user.username)}
+          )}
+          trade_id={tradeId}
+          onClick={onFavorite}
+        >
           <span className="icon_section">
             <FontAwesomeIcon
               icon={faStar}
             />
           </span>
-          <span className="value">123412341234</span>
+          <span className="value">{favorites.length}</span>
         </span>
       </section>
       <section className="label_section">
@@ -64,6 +78,7 @@ TradeCard.defaultProps = {
   permanentState: '상태',
   wantAmount: 0,
   wantcards: [],
+  favorites: [],
   onDetailView: () => {},
   onFavorite: () => {}
 };

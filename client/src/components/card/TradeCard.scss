@@ -35,6 +35,11 @@
         background-color: coral;
       }
 
+      &.active:hover {
+        color: coral;
+        background-color: white;
+      }
+
       .value {
         margin-left: 8px;
         max-width: 70px;

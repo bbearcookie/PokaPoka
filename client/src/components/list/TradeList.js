@@ -53,6 +53,7 @@ const TradeList = ({ className, contents, perPage, onDetailView, onFavorite }) =
               registTime={content.regist_time}
               wantAmount={content.want_amount}
               wantcards={content.wantcards}
+              favorites={content.favorites}
               onDetailView={onDetailView}
               onFavorite={onFavorite}
             />

@@ -405,6 +405,9 @@ export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/ap
   options
 );
 
+// 해당 교환글에게 찜하기 요청
+export const postTradeFavorite = (tradeId) => axios.post(`${BACKEND}/api/trade/favorite/${tradeId}`, {}, options);
+
 // 해당 교환글이 원하는 포토카드 중에서 자신이 가지고 있는 소유권 목록 조회
 export const getTradeWantcardMine = (tradeId) => axios.get(`${BACKEND}/api/trade/wantcard/mine/${tradeId}`, options);
 

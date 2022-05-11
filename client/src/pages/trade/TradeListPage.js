@@ -61,6 +61,7 @@ const TradeListPage = () => {
         username: select.username
       });
       dispatch(setTrades(res.trades));
+      console.log(res.trades);
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -124,9 +125,22 @@ const TradeListPage = () => {
   }
 
   // 찜하기 버튼 클릭시 작동
-  const onClickFavorite = (e) => {
+  const onClickFavorite = async (e) => {
     e.stopPropagation();
-    console.log('onClickFavorite');
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    try {
+      const res = await request.call(api.postTradeFavorite, tradeId);
+      dispatch(setTrades(
+        trades.map(trade =>
+          trade.trade_id === parseInt(tradeId) ?
+          { ...trade, favorites: res.favorites } :
+          { ...trade }
+        )
+      ));
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
   }
 
   return (
