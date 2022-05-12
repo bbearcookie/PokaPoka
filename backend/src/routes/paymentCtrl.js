@@ -5,18 +5,19 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 //결제 시도시 결제 내용 등록
-router.post('/request', verifyLogin, async (req, res) => {
+router.post('/mypage/request', verifyLogin, async (req, res) => {
     const { payment } = req.body;
     payment.merchant_uid = `mid_${crypto.randomBytes(16).toString('hex')}`;
     let { user } = req;
 
-    if(!payment.voucher_id) return res.status(400).json({ message: '배송하실 소유권을 선택해주세요.' });
-    console.log("username: "+user.username+"\npayment_uid: "+payment.merchant_uid+"\npayment_price: "+payment.amount+"\nvoucher_id: "+payment.voucher_id);
+    //if(!vouchers) return res.status(400).json({ message: '배송하실 소유권을 추가해주세요.' });
+    //console.log("username: "+user.username+"\npayment_uid: "+payment.merchant_uid+"\npayment_price: "+payment.amount+"\nvoucher_id: "+useVouchers);
   
     const con = await db.getConnection();
     try {
-      let sql = `INSERT INTO ShippingRequest (username, payment_uid, payment_price, voucher_id) VALUES (?, ?, ?, ?)`;
-      await con.execute(sql, [user.username, payment.merchant_uid, payment.amount, payment.voucher_id]);
+      let sql = `INSERT INTO ShippingRequest (username, payment_uid, payment_price) VALUES (?, ?, ?)`;
+      await con.execute(sql, [user.username, payment.merchant_uid, payment.amount]);
+      
       return res.status(200).json({
         payment,
         impcode: process.env.IMPORT_IMPCODE
@@ -30,7 +31,7 @@ router.post('/request', verifyLogin, async (req, res) => {
 });
   
 // 결제 성공시 위변조 검증 후 완료 처리
-router.post('/complete', async (req, res) => {
+router.post('/mypage/complete', async (req, res) => {
     const { imp_uid, merchant_uid } = req.body;
   
     const con = await db.getConnection();
@@ -87,7 +88,7 @@ router.post('/complete', async (req, res) => {
   
 // 사용자가 결제 시도를 해서 결제 정보를 DB에 저장을 해놓고 취소했을 때 그 결제 내용은 필요없으니 삭제함.
 // 단, 해당 merchant_uid 결제의 주인만 이 API에 접근할 수 있게끔 해야한다. DB에 사용자 계정의 고유한 ID로 저장하고 그 값 비교하면 될듯.
-router.delete('/:merchant_uid', async (req, res) => {
+router.delete('/mypage/:merchant_uid', async (req, res) => {
     const { merchant_uid } = req.params;
     console.log(merchant_uid);
   

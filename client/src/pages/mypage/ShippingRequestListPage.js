@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import VoucherRequestList from '../../components/list/VoucherRequestList';
+import ShippingRequestList from '../../components/list/ShippingRequestList';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import Button from '../../components/form/Button';
@@ -16,8 +16,8 @@ const ShippingRequestListPage = () => {
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      //const res = await request.call(api.getVoucherRequestListMine);
-      //setRequests(res.requests);
+      const res = await request.call(api.getShippingRequestList);
+      setRequests(res.request);
     } catch (err) {
       console.error(err);
     }
@@ -36,7 +36,7 @@ const ShippingRequestListPage = () => {
         </Link>
       </section>
 
-      <VoucherRequestList requests={requests} perPage="10" />
+      <ShippingRequestList requests={requests} perPage="10" />
 
     </UserTemplate>
   );

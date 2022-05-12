@@ -405,9 +405,26 @@ export const putAddress = (form) => axios.put(`${BACKEND}/api/shipping/addressUp
   }, 
   options
 );
-
 // paymentCtrl
 // 백엔드 서버에 거래 데이터 생성 요청
+export const postPayment = (payment, vouchers) => axios.post(`${BACKEND}/api/payment/mypage/request`,
+  {
+    payment,
+    useVouchers: vouchers.useVouchers.map(element => element.voucher_id)
+  },
+  options
+);
+//ShippingWant에 데이터 등록
+export const postShippingWant = (vouchers, merchant_uid) => axios.post(`${BACKEND}/api/shipping/mypage/voucher`,
+  {
+    useVouchers: vouchers.useVouchers.map(element => element.voucher_id),
+    merchant_uid: merchant_uid
+  },
+  options
+);
+// 배송 요청 리스트
+export const getShippingRequestList = () => axios.get(`${BACKEND}/api/shipping/list`, options);
+
 
 // 내가 찜한 교환글 목록 조회 요청
 export const getTradeListFavorite = () => axios.get(`${BACKEND}/api/trade/list/favorite`, options);
