@@ -4,7 +4,7 @@ const { verifyLogin, isAdmin } = require('../utils/jwt');
 const crypto = require('crypto');
 const axios = require('axios');
 
-// 결제 시도시 결제 내용 등록
+//결제 시도시 결제 내용 등록
 router.post('/request', verifyLogin, async (req, res) => {
     const { payment } = req.body;
     payment.merchant_uid = `mid_${crypto.randomBytes(16).toString('hex')}`;
