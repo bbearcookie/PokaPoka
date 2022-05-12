@@ -13,13 +13,18 @@ import './MainPage.scss';
 
 const MainPage = () => {
   const request = useRequest();
-  const [notice, setNotice] = useState([]);
+  const [notices, setNotices] = useState([]);
+  const [trades, setTrades] = useState([]);
 
   // 화면 로드시 작동
   const onLoad = async (e) => {
     try {
       const res = await request.call(api.getNoticeList);
-      setNotice(res.notice);
+      setNotices(res.notice);
+      const res2 = await request.call(api.getTradeListAll, {
+        state: 'finding'
+      });
+      setTrades(res2.trades);
     } catch (err) {
       console.error(err);
     }
@@ -28,9 +33,10 @@ const MainPage = () => {
 
   return (
     <UserTemplate className="MainPage">
+      {request.loading ? <LoadingSpinner /> : null}
 
       <section className="title_area">
-        <h1 className="title-label">이벤트 베너</h1>
+        <h1 className="title-label">이벤트 배너</h1>
       </section>
 
       <section className="slider_area">
@@ -52,21 +58,16 @@ const MainPage = () => {
         </Slider>
       </section>
 
-
-      {request.loading ? <LoadingSpinner /> : null}
-      <section className="title_area">
-        <h1 className="title-label">포토카드 목록</h1>
-      </section>
-
-      <TradeList contents={notice} perPage="5" />
-
-
-      {request.loading ? <LoadingSpinner /> : null}
       <section className="title_area">
         <h1 className="title-label">공지사항 목록</h1>
       </section>
+      <NoticeList notices={notices} perPage="5" />
 
-      <NoticeList notices={notice} perPage="5" />
+      <section className="title_area">
+        <h1 className="title-label">최근 진행중인 포토카드 교환글</h1>
+      </section>
+      <TradeList contents={trades} perPage="5" />
+
     </UserTemplate>
   );
 };
