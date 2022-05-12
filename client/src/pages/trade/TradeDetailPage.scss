@@ -89,6 +89,9 @@
     text-align: center;
 
     .VoucherCard {
+      margin: 0 25px 50px 25px;
+      display: inline-block;
+
       &.active {
         outline: none;
         border: 1px solid rgb(206, 28, 73);
@@ -128,6 +131,12 @@
       &:hover {
         background-color: rgb(163, 33, 66);
       }
+    }
+  }
+
+  .TradeCard {
+    .VoucherCard {
+      margin: 0;
     }
   }
 

@@ -32,7 +32,7 @@ module.exports.config = () => {
 
   // 클라이언트 서버로부터 들어오는 요청 허가
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: process.env.CLIENT_SERVER_URL,
     credentials: true
   }
   app.use(cors(corsOptions));

@@ -60,7 +60,7 @@ const LoginPage = () => {
       setMessage(res.message);
 
       // 사용자와 관리자 각각 메인 페이지로 리디렉션
-      if (res.role === 'admin') return navigate('/admin');
+      if (res.role === 'admin') return navigate('/admin/user');
       if (res.role === 'user') return navigate('/main');
     } catch (err) {
       console.error(err);

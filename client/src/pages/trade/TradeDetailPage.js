@@ -97,11 +97,21 @@ const TradeDetailPage = () => {
 
   // 소유권 선택 모달에서 추가 버튼 클릭시
   const onClickAddVoucherButton = () => {
-    if (form.useVouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)))
-      return setModalMessage('이미 사용하기로 등록한 소유권입니다.');
+
+    // 사용할 소유권 선택했는지 확인
     if (!form.selectVoucher) return setModalMessage('사용할 소유권을 선택해주세요.');
 
-    // 받으려는 포토카드 목록에 해당 포토카드 정보 추가
+    // 같은 소유권은 선택 불가
+    if (form.useVouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)))
+      return setModalMessage('이미 사용하기로 등록한 소유권입니다.');
+
+    // 같은 종류의 포토카드는 하나만 등록 가능
+    let selectVoucher = vouchers.find(element => element.voucher_id === parseInt(form.selectVoucher));
+    if (form.useVouchers.find(element => element.photocard_id === selectVoucher.photocard_id && element.voucher_id !== selectVoucher.voucher_id)) {
+      return setModalMessage('같은 종류의 포토카드는 하나의 소유권만 선택 가능합니다.');
+    }
+
+    // 사용하려는 소유권 목록에 해당 소유권 정보 추가
     setForm(produce(draft => {
       draft.useVouchers = draft.useVouchers.concat(vouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)));
       draft.selectVoucher = '';
@@ -242,7 +252,7 @@ const TradeDetailPage = () => {
         <h1 className="title-label">교환 신청</h1>
 
         <div className="label_area">
-          <p className="label">소유권 선택</p>
+          <p className="label">사용할 소유권 선택</p>
           <Button className="add_button" onClick={openAddModal}>추가</Button>
         </div>
 

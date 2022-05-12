@@ -4,7 +4,6 @@ import AuthContext from './contexts/Auth';
 import { STORAGE_KEY_NAME } from './contexts/Auth';
 import IndexPage from './pages/IndexPage';
 import TestPage from './pages/TestPage';
-import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
 import AdminMainPage from './pages/admin/MainPage';
@@ -87,7 +86,6 @@ function App() {
         <Route path="/main/notice/detail/:noticeId" element={<NoticeDetailUserPage />}/>
 
         <Route path="/test" element={<TestPage />} />
-        <Route path="/social" element={<SocialLoginTestPage />} />
 
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />

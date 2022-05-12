@@ -27,7 +27,7 @@ const TradeWriterPage = () => {
     haveVoucherId: '',
     wantPhotocardId: '', // 포토카드 추가 모달 창에서 사용될 변수
     wantPhotocards: [], // 사용자에 의해 추가된 원하는 포토카드 목록
-    wantAmount: ''
+    wantAmount: '1'
   });
   const [select, setSelect] = useState({
     permanent: '1',
@@ -406,7 +406,22 @@ const TradeWriterPage = () => {
         </section>
 
         <p className="label">받으려는 포토카드 개수</p>
-        <Input
+
+        <section className="want_amount_section">
+          <Select name="wantAmount" value={form.wantAmount} onChange={onChangeInput}>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </Select>
+        </section>
+
+        {/* <Input
           type="text"
           name="wantAmount"
           value={form.wantAmount}
@@ -414,7 +429,7 @@ const TradeWriterPage = () => {
           autoComplete="off"
           placeholder="받으려는 포토카드의 개수를 입력하세요 (숫자)"
           onChange={onChangeNumberInput}
-        />
+        /> */}
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
