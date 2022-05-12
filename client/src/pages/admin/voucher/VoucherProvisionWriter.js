@@ -143,7 +143,7 @@ const VoucherProvisionWriter = () => {
         <p className="label">임시 소유권 여부</p>
         <Select name="permanent" value={form.permanent} onChange={onChangeInput}>
           <option value="0">임시</option>
-          <option value="1">영구</option>
+          <option value="1">정식</option>
         </Select>
 
         <p className="label">포토카드 선택</p>
@@ -189,7 +189,7 @@ const VoucherProvisionWriter = () => {
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
-          <Button className="submit_button" type="submit">작성</Button>
+          <Button className="submit_button" type="submit">발급</Button>
         </section>
       </form>
     </AdminTemplate>

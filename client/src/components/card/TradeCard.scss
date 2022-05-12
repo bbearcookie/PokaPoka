@@ -1,0 +1,90 @@
+.TradeCard {
+  padding: 25px;
+  margin-bottom: 50px;
+  display: flex;
+  background-color: beige;
+  border: 1px solid gainsboro;
+  box-shadow: 0px 5px 11px 1px #C0C0C0;
+  border-radius: 10px;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.1s;
+
+  &:hover {
+    background-color: rgb(235, 235, 212);
+  }
+  
+  .card_section {
+    text-align: center;
+
+    .VoucherCard {
+      background-color: white;
+    }
+
+    .favorite_button {
+      margin: 10px;
+      padding: 5px 15px 8px 15px;
+      display: inline-block;
+      color: coral;
+      background-color: white;
+      border: 2px solid coral;
+      border-radius: 50rem;
+
+      &:hover, &.active {
+        color: white;
+        background-color: coral;
+      }
+
+      .value {
+        margin-left: 8px;
+        max-width: 70px;
+        display: inline-block;
+        position: relative;
+        top: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+  }
+
+  .label_section {
+    width: 100%;
+    margin: 0 20px;
+
+    .label {
+      margin: 0.5em 0;
+    }
+
+    .Badge {
+      min-width: 0;
+      padding: 5px;
+      text-align: center;
+    }
+
+    .image_section {
+      padding: 5px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background-color: white;
+      text-align: center;
+
+      .image_item {
+        display: inline-block;
+
+        img {
+          margin: 5px;
+          object-fit: contain;
+          border-radius: 50%;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        p {
+          margin: 0;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

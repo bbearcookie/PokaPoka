@@ -47,7 +47,6 @@ async function renewAccessToken(refreshToken, userAgent) {
   // DB 사용
   const con = await db.getConnection();
   try {
-
     // 리프레쉬 토큰이 유효한지 확인
     try {
       await jwt.verify(refreshToken, process.env.JWT_SECRET);
@@ -110,20 +109,19 @@ async function renewAccessToken(refreshToken, userAgent) {
         const error = new Error('리프레쉬 토큰이 유효하지 않음.');
         error.name = "InvalidRefreshToken";
         throw error;
-
       // 그외 오류는 콘솔에 출력되게끔 그대로 오류를 반환해줌
       } else {
         throw err;
       }
     }
   } catch (err) {
-
     // 리프레쉬 토큰과 관련한 문제가 발생하면 DB에 저장된 토큰 정보를 지움.
     if (err.name === 'InvalidRefreshToken' || err.name === 'UnknownRefreshToken' || err.name === 'StolenRefreshToken') {
       let sql = `DELETE FROM LoginToken WHERE refresh='${refreshToken}'`;
       await con.execute(sql);
     }
     throw err;
+
   } finally {
     con.release();
   }

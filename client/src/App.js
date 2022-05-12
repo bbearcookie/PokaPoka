@@ -56,7 +56,9 @@ import UserListSearchPage from './pages/admin/user/UserListSearchPage';
 import PermanentVoucherListPage from './pages/stoarage/PermanentVoucherListPage';
 import TemporalVoucherListPage from './pages/stoarage/TemporalVoucherListPage';
 import TradeListPage from './pages/trade/TradeListPage';
+import TradeFavoriteListPage from './pages/trade/TradeFavoriteListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
+import TradeDetailPage from './pages/trade/TradeDetailPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -65,7 +67,7 @@ function App() {
   // 세션 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 상태를 업데이트함.
   const onLoad = async () => {
     try {
-      if (!authState.user) {
+      if (!authState.user.username) {
         const user = sessionStorage.getItem(STORAGE_KEY_NAME);
         if (user) authActions.login(JSON.parse(user));
       }
@@ -141,11 +143,15 @@ function App() {
         <Route path="/mypage/editUserInfo" element={<EditUserPage />}/>
         <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
+
         <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
         <Route path="/stoarage/temporal" element={<TemporalVoucherListPage />}/>
+
         <Route path="/trade/all" element={<TradeListPage />}/>
+        <Route path="/trade/favorite" element={<TradeFavoriteListPage />}/>
         <Route path="/trade/writer" element={<TradeWriterPage />}/>
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
+        <Route path="/trade/detail/:tradeId" element={<TradeDetailPage />}/>
       </Routes>
     </div>
   );

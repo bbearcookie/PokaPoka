@@ -18,6 +18,13 @@ function convertToMysqlTime(date) {
       ('00' + date.getUTCSeconds()).slice(-2);
 };
 
+// DB SQL문에는 작은 따옴표를 '' 형태로 바꿔줘야 하는데 문자열의 모든 '를 ''로 변환하여 반환함.
+function convertToMysqlStr(str) {
+  if (isNull(str)) return "";
+
+  return str.replace(/'/gi, "''");
+}
+
 // DB SQL문 사용시 필요한 조건이 담긴 배열을 WHERE절의 조건에 들어갈 부분의 문자열 형태로 반환함.
 function getWhereClause(queries) {
   if (isNull(queries)) return '';
@@ -33,4 +40,5 @@ function getWhereClause(queries) {
 
 module.exports.isNull = isNull;
 module.exports.convertToMysqlTime = convertToMysqlTime;
+module.exports.convertToMysqlStr = convertToMysqlStr;
 module.exports.getWhereClause = getWhereClause;

@@ -38,8 +38,8 @@ const VoucherRequestList = ({ className, requests, perPage }) => {
       <Table>
         <thead>
           <tr>
-            <th className="request_id">번호</th>
             <th className="state">처리 상태</th>
+            <th className="photocard">포토카드</th>
             <th className="delivery">택배사</th>
             <th className="tracking_number">운송장 번호</th>
             <th className="username">요청자</th>
@@ -50,8 +50,8 @@ const VoucherRequestList = ({ className, requests, perPage }) => {
         {requests ?
           requests.filter((req, idx) => isInCurrentPage(idx + 1)).map((req, idx) => 
             <tr key={idx} request_id={req.request_id} onClick={onClickDetailView}>
-                <td>{req.request_id}</td>
                 <td><Badge type={req.state} /></td>
+                <td>{req.name}</td>
                 <td>{req.delivery}</td>
                 <td>{req.tracking_number}</td>
                 <td>{req.username}</td>

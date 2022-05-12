@@ -44,6 +44,7 @@ const VoucherRequestDetailPage = () => {
   });
   const [showRemoveModal, setShowRemoveModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
   const [showProvisionModal, setShowProvisionModal] = useState(false); // 삭제 모달 창 화면에 띄우기 on/off
+  const [showCancelModal, setShowCancelModal] = useState(false); // 발급 취소 모달 창 화면에 띄우기 on/off
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
@@ -51,8 +52,7 @@ const VoucherRequestDetailPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-
-      // 문의사항 정보 가져오기
+      // 목록 정보 가져오기
       let res = await request.call(api.getVoucherRequestDetail, requestId);
       setVoucherRequest({
         request_id: res.request.request_id,
@@ -83,6 +83,10 @@ const VoucherRequestDetailPage = () => {
   const openProvisionModal = () => setShowProvisionModal(true);
   const closeProvisionModal = () => setShowProvisionModal(false);
 
+  // 발급 취소 모달 열기 / 닫기
+  const openCancelModal = () => setShowCancelModal(true);
+  const closeCancelModal = () => setShowCancelModal(false);
+
   // 발급 버튼 클릭시
   const onClickProvision = async () => {
     if (!voucherRequest.state) return; // 값이 비정상적으로 비어있으면 처리 안함
@@ -105,6 +109,17 @@ const VoucherRequestDetailPage = () => {
       }
     }
     closeProvisionModal();
+  }
+  
+  // 발급 취소 버튼 클릭시
+  const onClickProvisionCancel = async () => {
+    try {
+      const res = await request.call(api.postVoucherRevert, requestId);
+      onLoad();
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeCancelModal();
   }
 
   // 삭제 버튼 클릭시
@@ -150,6 +165,21 @@ const VoucherRequestDetailPage = () => {
         <ModalFooter>
           <Button className="cancel_button" onClick={closeProvisionModal}>취소</Button>
           <Button className="edit_button" onClick={onClickProvision}>발급</Button>
+        </ModalFooter>
+      </Modal> : null}
+
+      {/* 발급 취소 버튼 눌리면 삭제 모달 창 띄움 */}
+      {showCancelModal ?
+      <Modal className="remove_modal" onClose={closeCancelModal}>
+        <ModalHeader onClose={closeCancelModal}>
+          <h1>임시 소유권 발급 취소</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>{voucherRequest.username} 님의 임시 소유권을 발급 취소하시겠습니까?</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeCancelModal}>아니오</Button>
+          <Button className="remove_button" onClick={onClickProvisionCancel}>예</Button>
         </ModalFooter>
       </Modal> : null}
 
@@ -202,7 +232,9 @@ const VoucherRequestDetailPage = () => {
       <section className="submit_section">
         <Link to="/admin/voucher/request"><Button className="cancel_button">뒤로 가기</Button></Link>
         {voucherRequest.state !== 'finished' && <Button className="edit_button" onClick={openProvisionModal}>발급</Button>}
-        <Button className="remove_button" onClick={openRemoveModal}>삭제</Button>
+        {voucherRequest.state === 'temporary' && <Button className="remove_button" onClick={openCancelModal}>발급 취소</Button>}
+        {voucherRequest.state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>삭제</Button>}
+        
       </section>
     </AdminTemplate>
   );

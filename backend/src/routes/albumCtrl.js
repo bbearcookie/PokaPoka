@@ -5,7 +5,7 @@ const fsAsync = require('fs');
 const { db } = require('../config/database');
 const { getTimestampFilename, albumImageUpload, ALBUM_IMAGE_DIR } = require('../config/multer');
 const { isAdmin, verifyLogin } = require('../utils/jwt');
-const { isNull } = require('../utils/common');
+const { isNull, convertToMysqlStr } = require('../utils/common');
 
 // 모든 아이돌 앨범 목록 반환
 router.get('/album/list', async (req, res) => {
@@ -81,7 +81,7 @@ router.get('/album/detail/:albumId', async (req, res) => {
 
 // 앨범 등록 처리
 router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req, res) => {
-  const { groupId, name } = req.body;
+  let { groupId, name } = req.body;
   const { accessToken, file } = req;
 
   // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
@@ -110,6 +110,9 @@ router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req,
 
   const con = await db.getConnection();
   try {
+    // 쿼리에 사용할 수 있는 형태로 변환
+    name = convertToMysqlStr(name);
+
     // 해당 그룹 존재 여부 확인
     let sql = `SELECT name FROM GroupData WHERE group_id='${groupId}'`;
     let [[group]] = await con.query(sql);
@@ -127,8 +130,10 @@ router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req,
     }
 
     // DB에 저장
-    sql = `INSERT INTO AlbumData (name, group_id) VALUES (?, ?)`;
-    let [result] = await con.execute(sql, [name, groupId]);
+    sql = `
+    INSERT INTO AlbumData (name, group_id)
+    VALUES ('${name}', ${groupId})`;
+    let [result] = await con.execute(sql);
 
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
     let filename = "";
@@ -155,7 +160,7 @@ router.post('/album', albumImageUpload.single('image'), verifyLogin, async (req,
 // 앨범 수정 처리
 router.put('/album/:albumId', albumImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { albumId } = req.params;
-  const { name } = req.body;
+  let { name } = req.body;
   const { accessToken, file } = req;
 
   // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
@@ -184,6 +189,9 @@ router.put('/album/:albumId', albumImageUpload.single('image'), verifyLogin, asy
 
   const con = await db.getConnection();
   try {
+    // 쿼리에 사용할 수 있는 형태로 변환
+    name = convertToMysqlStr(name);
+
     // 수정하려는 앨범 존재 유무 확인
     let sql = `SELECT album_id, image_name FROM AlbumData WHERE album_id=${albumId}`;
     let [[album]] = await con.query(sql);
@@ -196,8 +204,10 @@ router.put('/album/:albumId', albumImageUpload.single('image'), verifyLogin, asy
     let filename = "";
     if (file) {
       // 기존 이미지 삭제
-      try { fs.rm(path.join(file.destination, album.image_name)); }
-      catch (err) { console.error(err); }
+      if (album.image_name) {
+        try { fs.rm(path.join(file.destination, album.image_name)); }
+        catch (err) { console.error(err); }
+      }
 
       // 이미지 이름 변경
       filename = getTimestampFilename(albumId, file.mimetype);
@@ -247,8 +257,10 @@ router.delete('/album/:albumId', verifyLogin, async (req, res) => {
     await con.execute(sql);
 
     // 이미지 파일 삭제
-    try { fs.rm(path.join(ALBUM_IMAGE_DIR, album.image_name)); }
-    catch (err) { console.error(err); }
+    if (album.image_name) {
+      try { fs.rm(path.join(ALBUM_IMAGE_DIR, album.image_name)); }
+      catch (err) { console.error(err); }
+    }
 
     return res.status(200).json({ message: '앨범 정보를 삭제했습니다.' });
   } catch (err) {

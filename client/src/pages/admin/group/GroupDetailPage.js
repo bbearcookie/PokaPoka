@@ -137,7 +137,7 @@ const GroupDetailPage = () => {
       <section className="card_section">
         {members ?
         members.map(member =>
-          <Link to={`/admin/member/detail/${member.member_id}?groupId=${groupId}`}>
+          <Link key={member.member_id} to={`/admin/member/detail/${member.member_id}?groupId=${groupId}`}>
             <ImageCard
               key={member.member_id}
               name={member.name}
@@ -155,7 +155,7 @@ const GroupDetailPage = () => {
       <section className="card_section">
         {albums ?
         albums.map(album =>
-          <Link to={`/admin/album/detail/${album.album_id}?groupId=${groupId}`}>
+          <Link key={album.album_id} to={`/admin/album/detail/${album.album_id}?groupId=${groupId}`}>
             <ImageCard
               key={album.album_id}
               name={album.name}

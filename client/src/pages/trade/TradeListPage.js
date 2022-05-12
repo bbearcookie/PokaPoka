@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelect, setGroups, setMembers, setAlbums, setTrades } from '../../modules/tradeListPage';
 import produce from 'immer';
-import { Link } from 'react-router-dom';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import Button from '../../components/form/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Select from '../../components/form/Select';
+import Input from '../../components/form/Input';
 import MessageLabel from '../../components/MessageLabel';
 import TradeList from '../../components/list/TradeList';
 import TradeSideBar from '../../components/sidebar/TradeSideBar';
@@ -13,24 +16,24 @@ import UserTemplate from '../../templates/UserTemplate';
 import './TradeListPage.scss';
 
 const TradeListPage = () => {
-  const [select, setSelect] = useState({
-    searchType: '',
-    groupId: '',
-    memberId: '',
-    albumId: ''
-  });
-  const [groups, setGroups] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [albums, setAlbums] = useState([]);
+  // 리덕스 스토어에 저장한 상태값. 페이지 이동시에도 상태를 보관해두기 위함.
+  const { select, groups, members, albums, trades } = useSelector(state => ({
+    select: state.tradeListPage.select,
+    groups: state.tradeListPage.groups,
+    members: state.tradeListPage.members,
+    albums: state.tradeListPage.albums,
+    trades: state.tradeListPage.trades
+  }));
+  const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [message, setMessage] = useState('');
-  const [trades, setTrades] = useState([]);
   const request = useRequest();
+  const navigate = useNavigate();
 
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
       const res = await request.call(api.getGroupList);
-      setGroups(res.groups);
+      dispatch(setGroups(res.groups));
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -40,23 +43,25 @@ const TradeListPage = () => {
   // 화면에 보여줄 교환글 목록 업데이트
   const onUpdateTrades = async () => {
     if (select.searchType === '') {
-      return setTrades([]);
+      return dispatch(setTrades([]));
     } else if (select.searchType === 'group') {
-      if (select.groupId === '') return setTrades([]);
+      if (select.groupId === '') return dispatch(setTrades([]));
     } else if (select.searchType === 'member') {
-      if (select.groupId === '' || select.memberId === '') return setTrades([]);
+      if (select.groupId === '' || select.memberId === '') return dispatch(setTrades([]));
     } else if (select.searchType === 'album') {
-      if (select.groupId === '' || select.albumId === '') return setTrades([]);
+      if (select.groupId === '' || select.albumId === '') return dispatch(setTrades([]));
     }
 
     try {
       const res = await request.call(api.getTradeListAll, {
         groupId: select.groupId,
         memberId: select.memberId,
-        albumId: select.albumId
+        albumId: select.albumId,
+        state: select.state,
+        username: select.username
       });
-      setTrades(res.trades);
-      console.log(res);
+      dispatch(setTrades(res.trades));
+      console.log(res.trades);
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -68,29 +73,20 @@ const TradeListPage = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    setSelect(produce(draft => {
-      draft[name] = value;
-    }));
-
     // 필터링 조건이 눌린 경우 조건에 따라 초기값 설정
     if (name === 'searchType') {
       if (value === '' || value === 'all') {
-        setSelect(produce(draft => {
-          draft.groupId = "";
-          draft.memberId = "";
-          draft.albumId = "";
-        }));
+        return dispatch(setSelect({ ...select, [name]: value, groupId: '', memberId: '', albumId: '' }));
       } else if (value === 'group') {
-        setSelect(produce(draft => {
-          draft.memberId = "";
-          draft.albumId = "";
-        }));
+        return dispatch(setSelect({ ...select, [name]: value, memberId: '', albumId: '' }));
       } else if (value === 'member') {
-        setSelect(produce(draft => { draft.albumId = ""; }));
+        return dispatch(setSelect({ ...select, [name]: value, albumId: '' }));
       } else if (value === 'album') {
-        setSelect(produce(draft => { draft.memberId = ""; }));
+        return dispatch(setSelect({ ...select, [name]: value, memberId: '' }));
       }
     }
+
+    dispatch(setSelect({ ...select, [name]: value }));
   }
 
   // 그룹 선택 변경시 동작
@@ -98,27 +94,51 @@ const TradeListPage = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    setSelect(produce(draft => {
-      draft[name] = value;
-    }));
+    dispatch(setSelect({ ...select, [name]: value}));
 
     try {
       if (value === '') {
-        setMembers([]);
-        setAlbums([]);
+        dispatch(setMembers([]));
+        dispatch(setAlbums([]));
       } else if (value === 'all') {
         const res = await request.call(api.getAllMemberList);
         const res2 = await request.call(api.getAllAlbumList);
-        setMembers(res.members);
-        setAlbums(res2.albums);
+        dispatch(setMembers(res.members));
+        dispatch(setAlbums(res2.albums));
       } else {
         const res = await request.call(api.getMemberList, value);
         const res2 = await request.call(api.getAlbumList, value);
-        setMembers(res.members);
-        setAlbums(res2.albums);
+        dispatch(setMembers(res.members));
+        dispatch(setAlbums(res2.albums));
       }
     } catch (err) {
       console.error(err);
+      setMessage(err.response.data.message);
+    }
+  }
+
+  // 교환글 상세 보기시 작동
+  const onClickDetailView = (e) => {
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    return navigate(`/trade/detail/${tradeId}?backURI=/trade/all`);
+  }
+
+  // 찜하기 버튼 클릭시 작동
+  const onClickFavorite = async (e) => {
+    e.stopPropagation();
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    try {
+      const res = await request.call(api.postTradeFavorite, tradeId);
+      dispatch(setTrades(
+        trades.map(trade =>
+          trade.trade_id === parseInt(tradeId) ?
+          { ...trade, favorites: res.favorites } :
+          { ...trade }
+        )
+      ));
+    } catch (err) {
       setMessage(err.response.data.message);
     }
   }
@@ -136,8 +156,8 @@ const TradeListPage = () => {
           <Button className="add_button">작성</Button>
         </Link>
       </section>
-      <section className="search_area">
 
+      <section className="search_area">
         <article className="search">
           <p className="label">필터링 조건</p>
           <Select name="searchType" value={select.searchType} onChange={onChangeSelect}>
@@ -194,9 +214,30 @@ const TradeListPage = () => {
         </article>
         }
       </section>
+
+      <section className="search_area">
+        <article className="search">
+          <p className="label">상태</p>
+          <Select name="state" value={select.state} onChange={onChangeSelect}>
+            <option value="all">전체</option>
+            <option value="finding">진행중</option>
+            <option value="finished">완료</option>
+          </Select>
+        </article>
+        <article className="search">
+          <p className="label">작성자</p>
+          <Input
+            type="text"
+            name="username"
+            value={select.username}
+            autoComplete="off"
+            placeholder="전체"
+            onChange={onChangeSelect}
+          />
+        </article>
+      </section>
       
-      <TradeList contents={trades} perPage="10" />
-      
+      <TradeList contents={trades} perPage="10" onDetailView={onClickDetailView} onFavorite={onClickFavorite} />
     </UserTemplate>
   );
 };

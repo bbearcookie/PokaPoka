@@ -116,7 +116,7 @@ router.post('/login/local', async (req, res) => {
     // DB에서 사용자 정보 가져오기
     let sql = `
     SELECT username, password, salt, role, strategy, inactive
-    FROM USER
+    FROM User
     WHERE username='${username}'`;
     let [[user]] = await con.query(sql);
 

@@ -37,7 +37,7 @@ const GroupListPage = () => {
       <section className="card_section">
         {groups ?
         groups.map(group =>
-          <Link to={`/admin/group/detail/${group.group_id}`}>
+          <Link key={group.group_id} to={`/admin/group/detail/${group.group_id}`}>
             <ImageCard
               key={group.group_id}
               name={group.name}
