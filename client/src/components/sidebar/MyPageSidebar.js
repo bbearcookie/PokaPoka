@@ -14,7 +14,8 @@ const MyPageSidebar = () => {
       <Link 
         className={classNames("link", {"active": URI.includes('/mypage/userInfo')})}
         to="/mypage/userInfo">회원 정보</Link>
-      <Link className="link" to="/mypage/deliveryinfo">배송정보</Link>
+      <Link className={classNames("link", {"active": URI.includes('/mypage/deliveryinfo')})}
+        to="/mypage/deliveryinfo">배송정보</Link>
       {/* <Link className="link" to="/mypage/changeletterlist">교환글</Link> */}
       <section className="subtitle_section">관리자에게 요청하기</section>
       <Link 
@@ -23,7 +24,8 @@ const MyPageSidebar = () => {
       <Link
         className={classNames("link", {"active": URI.includes('/mypage/voucher')})}
         to="/mypage/voucher">포토카드 소유권</Link>
-      <Link className="link" to="#">포토카드 배송</Link>
+      <Link className={classNames("link", {"active": URI.includes('/mypage/shipping')})}
+        to="/mypage/shipping">포토카드 배송</Link>
     </SidebarTemplate>
   );
 };

@@ -1,0 +1,130 @@
+.ShippingRequestPage {
+    margin: 0 10%;
+    display: flex;
+    flex-direction: column;
+  
+    .title-label {
+      margin: 20px 0;
+      font-size: 36px;
+      text-align: center;
+    }
+  
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .card_section {
+      margin-top: 10px;
+      text-align: center;
+  
+      .VoucherCard {
+        &.active {
+          outline: none;
+          border: 1px solid rgb(206, 28, 73);
+          box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+          transition: all 0.25s;
+        }
+      }
+  
+      .ImageCard {
+        margin: 0 25px 50px 25px;
+        display: inline-block;
+  
+        p {
+          margin: 0;
+          padding: 0;
+          line-height: 40px;
+          font-size: 16px;
+        }
+  
+        &.active {
+          outline: none;
+          border: 1px solid rgb(206, 28, 73);
+          box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+          transition: all 0.25s;
+        }
+      }
+  
+      .remove_button {
+        margin: 0 0 15px 0;
+        width: 55px; height: 30px;
+        align-self: center;
+        border-radius: 50px;
+        font-size: 16px;
+        background-color: rgb(206, 28, 73);
+        color: white;
+  
+        &:hover {
+          background-color: rgb(163, 33, 66);
+        }
+      }
+    }
+    
+    .btn {
+      margin:0 0 0 0;
+      width: 80%; height: 50px;
+      margin-bottom: 100px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+
+    .delivery{
+      margin: 0px 80px; padding: 0;
+      display: flex;
+      justify-content: center;
+   
+      form{
+       
+          padding: 80px 140px;
+          width: 500px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          border: 1px solid grey;
+      
+          .none{
+            color: darkgrey;
+          }
+      }
+      
+    }
+
+    .add_modal {
+      width: 80%;
+      height: 70%;
+  
+      .MessageLabel {
+        margin: 0 0 20px 0;
+        box-sizing: border-box;
+      }
+  
+      .ModalBody {
+        height: 100%;
+        display: flex; flex-direction: column;
+        text-align: center;
+        overflow-y: scroll;
+  
+        .label {
+          line-height: 50px;
+        }
+  
+        .VoucherCard {
+          &.active {
+            outline: none;
+            border: 1px solid rgb(206, 28, 73);
+            box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+            transition: all 0.25s;
+          }
+          margin: 0 25px 50px 25px;
+          display: inline-block;
+          font-size: 16px;
+        }
+      }
+    }
+  }

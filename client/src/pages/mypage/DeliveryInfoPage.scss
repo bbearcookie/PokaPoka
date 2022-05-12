@@ -20,6 +20,10 @@
             align-items: center;
             border: 1px solid grey;
         
+            .none{
+              color: darkgrey;
+            }
+
             .btn {
               margin:100px 0 0 0;
               width: 80%; height: 50px;
@@ -41,7 +45,7 @@
         justify-content: center;
         .btn {
             margin:40px 0;
-            width: 40%; height: 50px;
+            width: 100%; height: 50px;
             margin-bottom: 20px;
             font-size: 16px;
             background-color: rgb(206, 28, 73);

@@ -1,0 +1,24 @@
+.Payment {
+    margin: 0 10%;
+    display: flex;
+    flex-direction: column;
+  
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .payment_button {
+        width: 50%; height: 35px;
+        margin-left: 10px;
+        margin-bottom: 100px;
+        border-radius: 50px;
+        font-size: 16px;
+        background-color: rgb(206, 28, 73);
+        color: white;
+  
+        &:hover {
+          background-color: rgb(163, 33, 66);
+        }
+      }
+  }

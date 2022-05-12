@@ -44,6 +44,7 @@ import ChangeLetterListPage from './pages/mypage/ChangeLetterListPage';
 import ChangeLetterWritePage from './pages/mypage/ChangeLetterWritePage';
 import ChangeLetterCorrectPage from './pages/mypage/ChangeLetterCorrectPage';
 import DeliveryInfoPage from './pages/mypage/DeliveryInfoPage';
+import DeliveryInfoWritePage from './pages/mypage/DeliveryInfoWritePage';
 import EditUserPage from './pages/mypage/EditUserPage';
 import UserInfoPage from './pages/mypage/UserInfoPage';
 import AskingPage from './pages/mypage/AskingPage';
@@ -58,6 +59,8 @@ import TemporalVoucherListPage from './pages/stoarage/TemporalVoucherListPage';
 import TradeListPage from './pages/trade/TradeListPage';
 import TradeFavoriteListPage from './pages/trade/TradeFavoriteListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
+import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
+import ShippingRequestListPage from './pages/mypage/ShippingRequestListPage';
 import TradeDetailPage from './pages/trade/TradeDetailPage';
 
 function App() {
@@ -140,10 +143,13 @@ function App() {
         <Route path="/mypage/changeletterwrite" element={<ChangeLetterWritePage />}/>
         <Route path="/mypage/changelettercorrect" element={<ChangeLetterCorrectPage />}/>
         <Route path="/mypage/deliveryinfo" element={<DeliveryInfoPage />}/>
-        <Route path="/mypage/editUserInfo" element={<EditUserPage />}/>
+        <Route path="/mypage/deliveryinfo/write" element={<DeliveryInfoWritePage />}/>
+        <Route path="/mypage/userInfo/edit" element={<EditUserPage />}/>
         <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
         <Route path="/mypage/asking" element={<AskingPage />}/>
-
+        <Route path="/mypage/shipping/request" element={<ShippingRequestPage />}/>
+        <Route path="/mypage/shipping" element={<ShippingRequestListPage />}/>
+        
         <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
         <Route path="/stoarage/temporal" element={<TemporalVoucherListPage />}/>
 
