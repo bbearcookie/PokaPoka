@@ -162,12 +162,13 @@ router.get('/login/kakao', async (req, res) => {
   if (!code) return res.redirect(process.env.LOGIN_PAGE_URL);
   
   try {
+    console.log(process.env.BACKEND_SERVER_URL);
     // 카카오에 액세스 토큰 생성 요청할때 담을 데이터
     let payload = {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_LOGIN_NATIVE_APP_KEY, // 백엔드 서버에서는 네이티브 앱 키로 요청해야함.
       client_secret: process.env.KAKAO_LOGIN_CLIENT_SECRET,
-      redirect_uri: 'http://localhost:5000/api/auth/login/kakao',
+      redirect_uri: process.env.BACKEND_SERVER_URL + '/api/auth/login/kakao',
       code: code, // 일회성 인증 코드 사용
     };
 

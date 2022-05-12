@@ -1,9 +1,19 @@
 .MainPage {
-  margin: 0 10%;
+  width: 100% !important;
+  padding: 15px 10% !important;
   text-align: center;
+  box-sizing: border-box;
 
   .LoadingSpinner {
     top: 40%; left: 50%;
+  }
+
+  .slider {
+    margin: 0 auto 50px auto;
+    box-sizing: border-box;
+    width: calc(50% - 100px);
+    position: relative;
+    left: -10px;
   }
 
   .title_area {
