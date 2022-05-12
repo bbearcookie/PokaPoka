@@ -162,7 +162,6 @@ router.get('/login/kakao', async (req, res) => {
   if (!code) return res.redirect(process.env.LOGIN_PAGE_URL);
   
   try {
-    console.log(process.env.BACKEND_SERVER_URL);
     // 카카오에 액세스 토큰 생성 요청할때 담을 데이터
     let payload = {
       grant_type: 'authorization_code',
