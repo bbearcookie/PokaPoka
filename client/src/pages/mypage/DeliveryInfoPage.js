@@ -104,7 +104,8 @@ const DeliveryInfoPage = () => {
                 </form>
             </section>
             <section className="delivery1">
-                <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >배송정보 추가하기</Button></ Link>
+                {visible ? <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >배송정보 수정하기</Button></ Link>
+                : <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >배송정보 추가하기</Button></ Link>}
             </section>
 
     </UserTemplate>

@@ -68,4 +68,33 @@
     }
   }
   
+  .search_area {
+    min-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .search {
+      display: flex;
+
+      .Select {
+        width: 200px; height: 40px;
+        margin-left: 5px;
+        align-self: center;
+      }
+
+      .Input {
+        height: 40px;
+        font-size: 16px;
+        margin-left: 5px;
+        align-self: center;
+      }
+    }
+  }
 }

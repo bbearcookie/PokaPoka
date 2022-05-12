@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import useRequest from '../../../utils/useRequest';
 import * as api from '../../../utils/api';
 import UserList from '../../../components/list/UserList';
@@ -8,33 +9,22 @@ import Button from '../../../components/form/Button';
 import Select from '../../../components/form/Select';
 import Input from '../../../components/form/Input';
 import AdminTemplate from '../../../templates/AdminTemplate';
+import { setSelect, setUsers } from '../../../modules/UserListPage';
 import produce from 'immer';
 import './UserListPage.scss';
 
-// 테스트용 더미 데이터 생성 (테스트용 함수임)
-const createDummyList = () => {
-  const list = [];
-
-  for (let i = 0; i < 202; i++) {
-    list.push({
-      id: i,
-      username: 'user',
-      name: 'testman',
-      phone: '1',
-      nickname: `${i}번째 게시글`,
-      favorite: 'BTS'
-    });
-  }
-
-
-  return list;
-}
-
 // 사용자 목록 조회 페이지
 const UserListPage = () => {
+  // 리덕스 스토어에 저장한 상태값. 페이지 이동시에도 상태를 보관해두기 위함.
+  const { select, users } = useSelector(state => ({
+    select: state.UserListPage.select,
+    users: state.UserListPage.users
+  }));
+  const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const request = useRequest();
-  const [user, setUser] = useState([]);
+  //const [user, setUser] = useState([]);
   const navigate = useNavigate();
+  const [message, setMessage] = useState('');
 
   //select에 들어갈 내용
   const [form, setForm] = useState({
@@ -42,18 +32,32 @@ const UserListPage = () => {
     username: ''
   });
 
-  // 화면 로드시 작동
+  //화면 로드시 작동
   const onLoad = async (e) => {
     try {
-      const res = await request.call(api.getUserList);
-      console.log(res.user);
-      setUser(res.user);
-      //setUser(createDummyList()); // 페이지네이션 기능 테스트를 위한 더미 데이터
+      // const res = await request.call(api.getUserList);
+      // console.log(res.users);
+      // dispatch(setUsers(res.users));
+      // console.log(res.users);
     } catch (err) {
       console.error(err);
     }
   };
   useEffect(() => { onLoad(); }, []);
+
+  // 화면에 보여줄 사용자 목록 업데이트
+  const onUpdateUsers = async () => {
+    try {
+      const res = await request.call(api.getUserListAll, {
+        username: select.username
+      });
+      dispatch(setUsers(res.users));
+      console.log(res.users);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  };
+  useEffect(() => { onUpdateUsers(); }, [select]);
 
   // input 값 변경시
   const onChangeInput = async (e) => {
@@ -69,9 +73,12 @@ const UserListPage = () => {
     }));
   }
 
-  // 검색 버튼 클릭시
-  const onClickSearch = async (e) => {
-    if(form.username) navigate(`/admin/user/search/${form.username}`);
+   // Select 선택 변경시 동작
+   const onChangeSelect = async (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    dispatch(setSelect({ ...select, [name]: value }));
   }
 
   return (
@@ -90,20 +97,20 @@ const UserListPage = () => {
           </Select>
         </article>
         <article className="search">
-          <p className="label">아이디 검색</p>
+          <p className="label">작성자</p>
           <Input
             type="text"
             name="username"
-            value={form.username}
+            value={select.username}
             autoComplete="off"
-            placeholder="아이디를 입력하세요"
-            onChange={onChange}
+            placeholder="전체"
+            onChange={onChangeSelect}
           />
         </article>
-        <Button className="search_button" onClick={onClickSearch}>검색</Button>
       </section>
+      
       <section>
-        <UserList users={user} perPage="10" />
+        <UserList users={users} perPage="10" />
       </section>
 
     </AdminTemplate>

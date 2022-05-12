@@ -62,6 +62,9 @@ import TradeWriterPage from './pages/trade/TradeWriterPage';
 import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
 import ShippingRequestListPage from './pages/mypage/ShippingRequestListPage';
 import TradeDetailPage from './pages/trade/TradeDetailPage';
+import ShippingRequestDetailPage from './pages/mypage/ShippingRequestDetailPage';
+import ShippingListPage from './pages/admin/shipping/ShippingListPage';
+import ShippingDetailPage from './pages/admin/shipping/ShippingDetailPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -127,6 +130,8 @@ function App() {
         <Route path="/admin/user/inactive" element={<InactiveUserListPage />}/>
         <Route path="/admin/user/detail/:username" element={<UserDetailPage />}/>
         <Route path="/admin/user/search/:username" element={<UserListSearchPage />}/>
+        <Route path="/admin/shipping" element={<ShippingListPage />}/>
+        <Route path="/admin/shipping/request/detail/:requestId" element={<ShippingDetailPage />}/>
 
         <Route path="/finding/password" element={<PasswordPage />} />
         <Route path="/finding/pwchange" element={<PwChangePage />}/>
@@ -149,7 +154,8 @@ function App() {
         <Route path="/mypage/asking" element={<AskingPage />}/>
         <Route path="/mypage/shipping/request" element={<ShippingRequestPage />}/>
         <Route path="/mypage/shipping" element={<ShippingRequestListPage />}/>
-        
+        <Route path="/mypage/shipping/detail/:requestId" element={<ShippingRequestDetailPage />}/>
+
         <Route path="/stoarage/permanent" element={<PermanentVoucherListPage />}/>
         <Route path="/stoarage/temporal" element={<TemporalVoucherListPage />}/>
 

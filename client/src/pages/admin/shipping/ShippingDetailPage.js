@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { BACKEND } from '../../utils/api';
-import useRequest from '../../utils/useRequest';
-import * as api from '../../utils/api';
-import { getFormattedDate } from '../../utils/common';
-import Button from '../../components/form/Button';
-import Textarea from '../../components/form/Textarea';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import MessageLabel from '../../components/MessageLabel';
-import UserTemplate from '../../templates/UserTemplate';
-import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
-import VoucherCard from '../../components/card/VoucherCard';
+import { BACKEND } from '../../../utils/api';
+import useRequest from '../../../utils/useRequest';
+import * as api from '../../../utils/api';
+import { getFormattedDate } from '../../../utils/common';
+import Button from '../../../components/form/Button';
+import Textarea from '../../../components/form/Textarea';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import MessageLabel from '../../../components/MessageLabel';
+import AdminTemplate from '../../../templates/AdminTemplate';
+import VoucherCard from '../../../components/card/VoucherCard';
 import produce from 'immer';
-import './ShippingRequestDetailPage.scss';
+import './ShippingDetailPage.scss';
 
 
 // 배송 요청 처리 상태에 따라 화면에 보여줄 텍스트
@@ -29,14 +28,17 @@ const PaymentState = {
 }
 
 // 문의사항 상세 조회 페이지
-const ShippingRequestDetailPage = () => {
+const ShippingDetailPage = () => {
   const { requestId } = useParams(); // URL에 포함된 suggestionId Params 정보
   const [requests, setRequests] = useState({ // 문의사항 상세 정보
     username: '', // 요청자
     state: '', // 처리 상태
     payment_price: '',  // 결제 금액
     payment_state: '',  //결제 상태
-    regist_time: '' // 요청 등록일
+    regist_time: '', // 요청 등록일
+    name: '',
+    address: '',
+    phone: ''
   });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -49,13 +51,16 @@ const ShippingRequestDetailPage = () => {
   const onLoad = async () => {
     try {
       // 배송 요청 정보 가져오기
-      let res = await request.call(api.getShippingDetail, requestId);
+      let res = await request.call(api.getShippingDetailAdmin, requestId);
       setRequests({
         username: res.requests.username,
         state: res.requests.state,
         payment_price: res.requests.payment_price,
         payment_state: res.requests.payment_state,
-        regist_time: res.requests.regist_time
+        regist_time: res.requests.regist_time,
+        name: res.users.name,
+        address: res.users.address,
+        phone: res.users.phone,
       });
       setVoucherRequest(res.vouchers);  // 배송 요청한 소유권 목록
       console.log("배송 요청한 소유권");
@@ -76,8 +81,16 @@ const ShippingRequestDetailPage = () => {
   };
   useEffect(() => { onLoad(); }, []);
 
+  const onClickState = async () => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  };
+
   return (
-    <UserTemplate className="ShippingRequestDetailPage" sidebar={<MyPageSidebar />}>
+    <AdminTemplate className="ShippingDetailPage">
 
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
       {request.loading ? <LoadingSpinner /> : null}
@@ -99,6 +112,18 @@ const ShippingRequestDetailPage = () => {
       <section className="label_area">
         <p className="label">결제 상태</p>
         <p>{PaymentState[requests.payment_state]}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">이름</p>
+        <p>{requests.name}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">배송 주소</p>
+        <p>{requests.address}</p>
+      </section>
+      <section className="label_area">
+        <p className="label">전화번호</p>
+        <p>{requests.phone}</p>
       </section>
       <section className="label_area">
         <p className="label">작성일</p>
@@ -125,9 +150,10 @@ const ShippingRequestDetailPage = () => {
       </section>
       <section className="submit_section">
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
+        <Button className="cancel_button" onClick={onClickState}>배송 요청 처리</Button>
       </section>
-    </UserTemplate>
+    </AdminTemplate>
   );
 };
 
-export default ShippingRequestDetailPage;
+export default ShippingDetailPage;

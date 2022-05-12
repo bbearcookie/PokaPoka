@@ -344,6 +344,12 @@ export const patchInactiveCancel = (state, username) => axios.patch(`${BACKEND}/
 );
 // 관리자 - 회원 탈퇴
 export const deleteUser = (username) => axios.delete(`${BACKEND}/api/admin/user/withdrawal/${username}`, options);
+// 모든 사용자 목록 조회 요청
+export const getUserListAll = (filter) => axios.get(
+  `${BACKEND}/api/user/list/all?` +
+  `username=${filter.username}` ,
+  options
+);
 
 // 사용자가 소유한 포토카드 소유권 목록 조회
 // permanent: (0이면 임시소유권, 1이면 정식소유권 조회)
@@ -405,15 +411,10 @@ export const putAddress = (form) => axios.put(`${BACKEND}/api/shipping/addressUp
   }, 
   options
 );
-// paymentCtrl
-// 백엔드 서버에 거래 데이터 생성 요청
-export const postPayment = (payment, vouchers) => axios.post(`${BACKEND}/api/payment/mypage/request`,
-  {
-    payment,
-    useVouchers: vouchers.useVouchers.map(element => element.voucher_id)
-  },
-  options
-);
+// 배송요청 상세 데이터 조회 요청
+export const getShippingDetail = (requestId) => axios.get(`${BACKEND}/api/shipping/detail/${requestId}`, options);
+// 관리자 -  배송요청 상세 데이터 조회 요청
+export const getShippingDetailAdmin = (requestId) => axios.get(`${BACKEND}/api/admin/shipping/detail/${requestId}`, options);
 //ShippingWant에 데이터 등록
 export const postShippingWant = (vouchers, merchant_uid) => axios.post(`${BACKEND}/api/shipping/mypage/voucher`,
   {
@@ -424,6 +425,17 @@ export const postShippingWant = (vouchers, merchant_uid) => axios.post(`${BACKEN
 );
 // 배송 요청 리스트
 export const getShippingRequestList = () => axios.get(`${BACKEND}/api/shipping/list`, options);
+
+// paymentCtrl
+// 백엔드 서버에 거래 데이터 생성 요청
+export const postPayment = (payment, vouchers) => axios.post(`${BACKEND}/api/payment/mypage/request`,
+  {
+    payment,
+    useVouchers: vouchers.useVouchers.map(element => element.voucher_id)
+  },
+  options
+);
+
 
 
 // 내가 찜한 교환글 목록 조회 요청
