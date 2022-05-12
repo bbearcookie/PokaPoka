@@ -67,6 +67,16 @@
       }
     }
 
+    .want_amount_section {
+      align-self: flex-start;
+
+      .Select {
+        width: 200px; height: 40px;
+        margin-left: 5px;
+        align-self: center;
+      }
+    }
+
     .submit_section {
       margin-top: 10px;
       align-self: flex-end;
