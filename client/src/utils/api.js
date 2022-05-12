@@ -185,6 +185,8 @@ export const postConfirmation = (cert_num) => axios.post(`${BACKEND}/api/sms/con
   },
   options
 );
+// 인증 번호 세션 초기화
+export const deleteSmsSession = () => axios.delete(`${BACKEND}/api/sms/session`, options);
 //비밀번호 변경
 export const postPassword = (password, password_check) => axios.post(`${BACKEND}/api/sms/password`,
   {
@@ -280,6 +282,10 @@ export const postVoucherProvisionByRequest = (requestId) => axios.post(`${BACKEN
   options
 );
 
+// 관리자가 포토카드 임시 소유권 발급 취소
+export const postVoucherRevert = (requestId) => axios.post(`${BACKEND}/api/voucher/revert/${requestId}`,
+{}, options);
+
 // 임시 소유권을 영구 소유권으로 전환
 export const putVoucherProvisionByRequest = (requestId) => axios.put(`${BACKEND}/api/voucher/provision/request`,
   {
@@ -363,12 +369,28 @@ export const postTradeNew = (form) => axios.post(`${BACKEND}/api/trade/new`,
   options
 );
 
+// 교환글 수정 요청
+export const putTrade = (form, tradeId) => axios.put(`${BACKEND}/api/trade/${tradeId}`,
+  {
+    permanent: form.permanent,
+    haveVoucherId: form.haveVoucherId,
+    wantPhotocards: form.wantPhotocards.map(element => element.photocard_id),
+    wantAmount: form.wantAmount
+  },
+  options
+);
+
+// 특정 교환글 삭제 요청
+export const deleteTrade = (tradeId) => axios.delete(`${BACKEND}/api/trade/${tradeId}`, options);
+
 // 모든 교환글 목록 조회 요청
 export const getTradeListAll = (filter) => axios.get(
   `${BACKEND}/api/trade/list/all?` +
   `groupId=${filter.groupId}&` +
   `memberId=${filter.memberId}&` +
   `albumId=${filter.albumId}&` +
+  `state=${filter.state}&` +
+  `username=${filter.username}` ,
   options
 );
 
@@ -387,6 +409,25 @@ export const putAddress = (form) => axios.put(`${BACKEND}/api/shipping/addressUp
 // paymentCtrl
 // 백엔드 서버에 거래 데이터 생성 요청
 
+// 내가 찜한 교환글 목록 조회 요청
+export const getTradeListFavorite = () => axios.get(`${BACKEND}/api/trade/list/favorite`, options);
+
+// 교환글 상세 조회 요청
+export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detail/${tradeId}`);
+
+// 해당 교환글에게 교환 신청
+export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/api/trade/transaction/${tradeId}`,
+  {
+    useVouchers: form.useVouchers.map(element => element.voucher_id)
+  },
+  options
+);
+
+// 해당 교환글에게 찜하기 요청
+export const postTradeFavorite = (tradeId) => axios.post(`${BACKEND}/api/trade/favorite/${tradeId}`, {}, options);
+
+// 해당 교환글이 원하는 포토카드 중에서 자신이 가지고 있는 소유권 목록 조회
+export const getTradeWantcardMine = (tradeId) => axios.get(`${BACKEND}/api/trade/wantcard/mine/${tradeId}`, options);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

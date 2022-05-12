@@ -39,6 +39,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
       }
     }
 
+    // 목록 조회
     let sql = `
     SELECT voucher_id, state, permanent, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, P.name, A.name AS album_name
     FROM Voucher as V
@@ -46,7 +47,6 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
     INNER JOIN AlbumData as A ON P.album_id = A.album_id
     ${getWhereClause(whereSqls)}
     ORDER BY P.group_id, voucher_id`;
-
     let [vouchers] = await con.query(sql);
 
     return res.status(200).json({ message: '포토카드 소유권 목록 조회에 성공했습니다.', vouchers });
@@ -69,9 +69,11 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
-    FROM VoucherRequest 
-    WHERE username='${user.username}'`;
+    let sql = `SELECT REQ.request_id, REQ.username, REQ.photocard_id, REQ.delivery, REQ.tracking_number, REQ.state, REQ.regist_time, P.name
+    FROM VoucherRequest as REQ
+    INNER JOIN Photocard as P ON P.photocard_id=REQ.Photocard_id
+    WHERE username='${user.username}'
+    ORDER BY regist_time DESC`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
@@ -93,8 +95,10 @@ router.get('/request/list/all', verifyLogin, async (req, res) => {
 
   const con = await db.getConnection();
   try {
-    let sql = `SELECT request_id, username, photocard_id, delivery, tracking_number, state, regist_time 
-    FROM VoucherRequest`;
+    let sql = `SELECT REQ.request_id, REQ.username, REQ.photocard_id, REQ.delivery, REQ.tracking_number, REQ.state, REQ.regist_time, P.name
+    FROM VoucherRequest as REQ
+    INNER JOIN Photocard as P ON P.photocard_id=REQ.Photocard_id
+    ORDER BY regist_time DESC`;
     let [requests] = await con.query(sql);
     return res.status(200).json({ message: '포토카드 소유권 요청 목록 조회에 성공했습니다.', requests });
   } catch (err) {
@@ -216,10 +220,10 @@ router.delete('/request/:requestId', verifyLogin, async (req, res) => {
     let sql = `SELECT request_id, username, state, image_name FROM VoucherRequest WHERE request_id=${requestId}`;
     let [[request]] = await con.query(sql);
     if (!request) return res.status(404).json({ message: '삭제하려는 소유권 요청이 없습니다.' });
+    if (request.state !== 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
 
     // 관리자이거나 해당 소유권을 등록한 것이 자신인 경우에만 삭제 가능
     if (isAdmin(accessToken) || request.username === user.username) {
-      // if (request.state != 'waiting') return res.status(400).json({ message: '발급 완료된 소유권 요청은 삭제할 수 없습니다.' });
 
       // DB에서 소유권 요청 삭제
       sql = `DELETE FROM VoucherRequest WHERE request_id=${requestId}`;
@@ -255,7 +259,8 @@ router.get('/provision/list/all', verifyLogin, async (req, res) => {
     SELECT provision_id, P.voucher_id, provider, recipient, provide_time, P.permanent, PHOTO.name
     FROM VoucherProvision as P
     INNER JOIN Voucher as V ON P.voucher_id = V.voucher_id
-    INNER JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id`;
+    INNER JOIN Photocard as PHOTO ON V.photocard_id = PHOTO.photocard_id
+    ORDER BY P.provide_time DESC`;
     let [provisions] = await con.query(sql);
 
     return res.status(200).json({ message: '포토카드 소유권 발급 목록을 조회했습니다.', provisions });
@@ -309,9 +314,9 @@ router.post('/provision/new', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });
   } catch (err) {
     console.error(err);
-    con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback();
     con.release();
   }
 
@@ -357,9 +362,9 @@ router.post('/provision/request', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '해당 사용자에게 포토카드 임시 소유권을 발급했습니다.' });
   } catch (err) {
     console.error(err);
-    con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback();
     con.release();
   }
 
@@ -373,6 +378,9 @@ router.put('/provision/request', verifyLogin, async (req, res) => {
 
   // 관리자 권한 확인
   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (!requestId) return res.status(403).json({ message: '포토카드 소유권 요청글을 선택해주세요' });
 
   const con = await db.getConnection();
   try {
@@ -411,12 +419,78 @@ router.put('/provision/request', verifyLogin, async (req, res) => {
     return res.status(200).json({ message: '해당 사용자에게 포토카드 소유권을 발급했습니다.' });
   } catch (err) {
     console.error(err);
-    con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
+    await con.rollback(); // 오류 발생하면 수행했던 DB 트랜잭션 롤백 (commit 한 이후에 rollback해도 수정된 내용 그대로 반영되어있는지 불확실함)
     con.release();
   }
   
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 발급했던 임시 소유권을 발급 취소함.
+router.post('/revert/:requestId', verifyLogin, async (req, res) => {
+  const { requestId } = req.params;
+  const { accessToken } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (!requestId) return res.status(400).json({ message: '포토카드 소유권 요청글을 선택해주세요.' });
+
+  const con = await db.getConnection();
+  try {
+    await con.beginTransaction();
+
+    // 소유권 정보 가져오기
+    let sql = `
+    SELECT V.voucher_id
+    FROM VoucherRequest as REQ
+    INNER JOIN Voucher as V ON V.voucher_id = REQ.voucher_id
+    WHERE request_id=${requestId}`;
+    let [[voucher]] = await con.query(sql);
+    if (!voucher) return res.status(404).json({ message: '해당 소유권을 찾을 수 없습니다.' });
+
+    // 해당 소유권으로 교환된 기록 조회
+    sql = `
+    SELECT B.provider, B.recipient, B.voucher_id
+    FROM TradeHistory as A
+    INNER JOIN TradeHistory as B ON B.trade_id=A.trade_id
+    WHERE A.voucher_id=${voucher.voucher_id}`;
+    let [histories] = await con.query(sql);
+
+    // 교환 기록을 순회하면서 해당 소유권의 주인을 원래의 provider 것으로 변경.
+    try {
+      await Promise.all(histories.map(async (history) => {
+        let sql = `
+        UPDATE Voucher
+        SET username='${history.provider}'
+        WHERE voucher_id=${history.voucher_id}`
+        await con.execute(sql);
+      }));
+    } catch (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    // 발급했던 임시 소유권 삭제
+    sql = `DELETE FROM Voucher WHERE voucher_id=${voucher.voucher_id}`;
+    await con.execute(sql);
+
+    // 해당 소유권 요청을 초기 상태로 수정
+    sql = `UPDATE VoucherRequest SET voucher_id=NULL, state='waiting' WHERE request_id=${requestId}`;
+    await con.execute(sql);
+
+    await con.commit();
+    return res.status(200).json({ message: '해당 임시 소유권을 발급 취소했습니다.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    await con.rollback();
+    con.release();
+  }
+
   return res.status(501).json({ message: 'end of line' });
 });
 

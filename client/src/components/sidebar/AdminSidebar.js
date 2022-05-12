@@ -22,7 +22,6 @@ const AdminSidebar = () => {
         className={classNames("link", {"active": URI.includes('/admin/suggestion')})}
         to="/admin/suggestion">문의사항</Link>
       <section className="subtitle_section">포토카드 교환 관리</section>
-      <Link className="link" to="#">교환글</Link>
       <Link
         className={classNames("link", {"active": URI.includes('/admin/voucher/request')})}
         to="/admin/voucher/request"

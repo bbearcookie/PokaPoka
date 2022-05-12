@@ -1,11 +1,10 @@
 const router = require('../config/express').router;
 const path = require('path');
 const fs = require('fs').promises;
-const fsAsync = require('fs');
 const { db } = require('../config/database');
 const { getTimestampFilename, groupImageUpload, IDOL_GROUP_IMAGE_DIR } = require('../config/multer');
 const { isAdmin, verifyLogin } = require('../utils/jwt');
-const { isNull } = require('../utils/common');
+const { isNull, convertToMysqlStr } = require('../utils/common');
 
 // 아이돌 그룹 목록 조회 처리
 router.get('/group/list', async (req, res) => {
@@ -49,7 +48,7 @@ router.get('/group/detail/:groupId', async (req, res) => {
 
 // 아이돌 그룹 등록 처리
 router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
-  const { name, description, gender } = req.body;
+  let { name, description, gender } = req.body;
   const { accessToken, file } = req;
 
   // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
@@ -82,6 +81,10 @@ router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req,
 
   const con = await db.getConnection();
   try {
+    // 쿼리에 사용할 수 있는 형태로 변환
+    name = convertToMysqlStr(name);
+    description = convertToMysqlStr(description);
+
     // 그룹 이름 중복 검사
     let sql = `SELECT name, image_name FROM GroupData WHERE name='${name}'`;
     let [[group]] = await con.query(sql);
@@ -91,8 +94,10 @@ router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req,
     }
 
     // DB에 저장
-    sql = `INSERT INTO GroupData (name, description, gender) VALUES (?, ?, ?)`;
-    let [result] = await con.execute(sql, [name, description, gender]);
+    sql = `
+    INSERT INTO GroupData (name, description, gender)
+    VALUES ('${name}', '${description}', '${gender}')`;
+    let [result] = await con.execute(sql);
 
     // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
     let filename = "";
@@ -119,7 +124,7 @@ router.post('/group', groupImageUpload.single('image'), verifyLogin, async (req,
 // 아이돌 그룹 수정 처리
 router.put('/group/:groupId', groupImageUpload.single('image'), verifyLogin, async (req, res) => {
   const { groupId } = req.params;
-  const { name, description, gender } = req.body;
+  let { name, description, gender } = req.body;
   const { accessToken, file } = req;
 
   // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
@@ -152,6 +157,10 @@ router.put('/group/:groupId', groupImageUpload.single('image'), verifyLogin, asy
 
   const con = await db.getConnection();
   try {
+    // 쿼리에 사용할 수 있는 형태로 변환
+    name = convertToMysqlStr(name);
+    description = convertToMysqlStr(description);
+
     // 수정하려는 그룹 존재 유무 확인
     let sql = `SELECT group_id, image_name FROM GroupData WHERE group_id=${groupId}`;
     let [[group]] = await con.query(sql);
@@ -164,8 +173,10 @@ router.put('/group/:groupId', groupImageUpload.single('image'), verifyLogin, asy
     let filename = "";
     if (file) {
       // 기존 이미지 삭제
-      try { fs.rm(path.join(file.destination, group.image_name)); }
-      catch (err) { console.error(err); }
+      if (group.image_name) {
+        try { fs.rm(path.join(IDOL_GROUP_IMAGE_DIR, group.image_name)); }
+        catch (err) { console.error(err); }
+      }
 
       // 이미지 이름 변경
       filename = getTimestampFilename(groupId, file.mimetype);
@@ -226,8 +237,10 @@ router.delete('/group/:groupId', verifyLogin, async (req, res) => {
     await con.execute(sql);
 
     // 이미지 파일 삭제
-    try { fs.rm(path.join(IDOL_GROUP_IMAGE_DIR, group.image_name)); }
-    catch (err) { console.error(err); }
+    if (group.image_name) {
+      try { fs.rm(path.join(IDOL_GROUP_IMAGE_DIR, group.image_name)); }
+      catch (err) { console.error(err); }
+    }
 
     return res.status(200).json({ message: '아이돌 그룹 정보를 삭제했습니다.' });
 

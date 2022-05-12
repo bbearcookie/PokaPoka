@@ -2,12 +2,20 @@ import React, { createContext, useState } from 'react';
 
 export const STORAGE_KEY_NAME = 'USER'; // 세션 스토리지에 저장할 키
 
+const initialUser = {
+  username: '',
+  role: '',
+  strategy: ''
+}
+
 // Context
-const AuthContext = createContext();
+const AuthContext = createContext({
+  user: initialUser
+});
 
 // Provider
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(undefined); // 사용자의 정보가 담겨 있는 상태 변수
+  const [user, setUser] = useState(initialUser);
 
   // 로그인 성공시 호출하여 사용자 정보를 기억해두는 함수
   const login = (res) => {
@@ -27,7 +35,7 @@ const AuthProvider = ({ children }) => {
 
   // 로그아웃시 호출하여 사용자 정보를 초기 상태로 초기화 하는 함수
   const logout = () => {
-    setUser(undefined); // 상태 값 초기화
+    setUser(initialUser); // 상태 값 초기화
     sessionStorage.removeItem(STORAGE_KEY_NAME); // 세션 스토리지 값 초기화
   }
 
