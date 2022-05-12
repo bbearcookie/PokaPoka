@@ -254,7 +254,7 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
     wantPhotocards.forEach(async (element) => {
       sql = `INSERT INTO WantCard (trade_id, photocard_id) VALUES (?, ?)`;
       await con.execute(sql, [result.insertId, element]);
-    });1
+    });
 
     await con.commit();
     return res.status(200).json({ message: '교환글을 등록했습니다.' });
