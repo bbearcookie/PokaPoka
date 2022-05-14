@@ -26,8 +26,14 @@ const TradeSidebar = () => {
         )}
         to="/trade/favorite"
       >찜한 교환글</Link>
+      <Link
+        className={classNames("link",
+        {"active": URI.includes('/trade/explore')},
+        {"active": backURI && backURI.includes('/trade/explore')}
+        )}
+        to="/trade/explore"
+      >교환 탐색</Link>
       <Link className="link" to="#">교환 내역</Link>
-      <Link className="link" to="#">교환 탐색</Link>
     </SidebarTemplate>
   );
 };

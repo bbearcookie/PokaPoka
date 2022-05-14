@@ -519,7 +519,7 @@ router.get('/trade/explore', async (req, res) => {
       if (traced_result.length > 0) return;
 
       // 요청자의 포토카드를 원하는 모든 교환글들의 정보를 가져옴
-      // 교환글 탐색 조건:
+      // [교환글 탐색 조건]
       // 교환글이 받으려는 포토카드가 하나여야 하고,
       // 진행중 상태인 교환글이어야하고,
       // 정식 소유권으로 등록한 교환글이어야 한다.
@@ -541,31 +541,22 @@ router.get('/trade/explore', async (req, res) => {
         if (!visited.includes(trade.trade_id)) {
           visited.push(trade.trade_id); // 현재 교환글을 방문했음을 기록
 
-          // 해당 교환글이 원하는 포토카드의 목록을 가져옴
-          let sql = `
-          SELECT photocard_id
-          FROM Wantcard
-          WHERE trade_id=${trade.trade_id}`;
-          let [wantcards] = await con.query(sql);
-
           // 해당 교환글이 가진 포토카드가 요청자가 최종적으로 받으려는 포토카드라면 조건에 알맞는 교환들을 찾은것임.
           if (trade.photocard_id === destPhotocardId) {
             traced_result = traced.concat({
               trade_id: trade.trade_id,
-              wantcard: havePhotocardId
-              // wantcards: wantcards.map(element => (element.photocard_id))
+              want_photocard_id: havePhotocardId
             });
             return; // 탐색 성공했으니 탈출
           }
 
-          // 해당 교환글의 have를 원하는 교환글 목록을 가져와야함. 재귀로 할지 어떨지 고민.
+          // 해당 교환글의 have를 원하는 교환글 목록을 가져오도록 재귀 호출.
           await explore(
             trade.photocard_id,
             destPhotocardId,
             traced.concat({
               trade_id: trade.trade_id,
-              wantcard: havePhotocardId
-              // wantcards: wantcards.map(element => (element.photocard_id))
+              want_photocard_id: havePhotocardId
             })
           );
 
@@ -584,8 +575,28 @@ router.get('/trade/explore', async (req, res) => {
     await explore(haveVoucher.photocard_id, parseInt(wantPhotocardId), []);
 
     // 탐색 성공시
+    let trades = [];
     if (traced_result.length > 0) {
 
+      // console.log(traced_result.findIndex((element) => element.trade_id === 19));
+
+      // 탐색 경로에 있는 교환글들의 상세 정보를 가져옴
+      for (let i in traced_result) {
+
+        // 교환글 상세 정보 가져옴
+        let sql = `
+        SELECT T.trade_id, T.username, T.regist_time,
+        P.image_name, P.name, A.name as album_name
+        FROM Trade as T
+        INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
+        INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
+        INNER JOIN AlbumData as A ON A.album_id = P.album_id
+        WHERE T.trade_id=${traced_result[i].trade_id}`;
+        let [[trade]] = await con.query(sql);
+
+        // 가져온 교환글 상세 정보를 탐색 경로에 추가
+        traced_result[i].trade = trade;
+      }
     }
 
     return res.status(200).json({ message: '교환 탐색 기능.', traced_result });

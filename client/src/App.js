@@ -61,6 +61,7 @@ import TradeWriterPage from './pages/trade/TradeWriterPage';
 import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
 import ShippingRequestListPage from './pages/mypage/ShippingRequestListPage';
 import TradeDetailPage from './pages/trade/TradeDetailPage';
+import TradeExplorePage from './pages/trade/TradeExplorePage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -156,6 +157,7 @@ function App() {
         <Route path="/trade/writer" element={<TradeWriterPage />}/>
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
         <Route path="/trade/detail/:tradeId" element={<TradeDetailPage />}/>
+        <Route path="/trade/explore" element={<TradeExplorePage />}/>
       </Routes>
     </div>
   );
