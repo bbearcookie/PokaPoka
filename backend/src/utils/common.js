@@ -25,6 +25,11 @@ function convertToMysqlStr(str) {
   return str.replace(/'/gi, "''");
 }
 
+// Javascript 배열 정보를 DB SQL문의 IN 에서 사용할만한 문자열로 변환함.
+function convertToMysqlArr(arr) {
+  return `${arr.join(',')}`;
+}
+
 // DB SQL문 사용시 필요한 조건이 담긴 배열을 WHERE절의 조건에 들어갈 부분의 문자열 형태로 반환함.
 function getWhereClause(queries) {
   if (isNull(queries)) return '';
@@ -41,4 +46,5 @@ function getWhereClause(queries) {
 module.exports.isNull = isNull;
 module.exports.convertToMysqlTime = convertToMysqlTime;
 module.exports.convertToMysqlStr = convertToMysqlStr;
+module.exports.convertToMysqlArr = convertToMysqlArr;
 module.exports.getWhereClause = getWhereClause;

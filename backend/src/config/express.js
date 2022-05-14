@@ -43,7 +43,6 @@ module.exports.config = () => {
       if (originList.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        console.log("Not allowed by CORS");
         callback(null, false);
       }
     },

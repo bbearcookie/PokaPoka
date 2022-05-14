@@ -1,6 +1,6 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
-const { isNull, getWhereClause, convertToMysqlTime, convertToMysqlStr } = require('../utils/common');
+const { isNull, getWhereClause, convertToMysqlTime, convertToMysqlStr, convertToMysqlArr } = require('../utils/common');
 const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
@@ -493,6 +493,109 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
     con.release();
   }
   
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 교환 탐색 기능
+router.get('/trade/explore', async (req, res) => {
+  const { haveVoucherId, wantPhotocardId } = req.query;
+
+  const con = await db.getConnection();
+  try {
+    let visited = []; // 같은 교환글 정보를 또 읽어오지 않도록 trade_id 방문 여부 기록.
+    let traced_result = []; // 탐색 성공시 수행해야할 교환과 연관된 교환글들 trade_id
+
+    // 요청자의 요청을 처리할 수 있는 교환글들을 찾아주는 함수.
+    // 찾았으면 traced_result에 교환글들의 id가 들어가고, 못찾았으면 빈 배열로 저장된다.
+    // havePhotocardId: 요청자가 가진 포토카드ID
+    // destPhotocardId: 요청자가 최종적으로 받으려는 포토카드ID
+    // traced: 재귀마다 방문했던 trade_id 순차적으로 기록
+    const explore = async (havePhotocardId, destPhotocardId, traced) => {
+      // console.log("-----------------------")
+      // console.log(`solution: ${havePhotocardId}번 포토카드를 원하는 글 탐색`);
+      // console.log(traced);
+
+      // 교환 조건에 맞는 글들을 이미 찾았으면 더이상 재귀하지 않고 종료
+      if (traced_result.length > 0) return;
+
+      // 요청자의 포토카드를 원하는 모든 교환글들의 정보를 가져옴
+      // 교환글 탐색 조건:
+      // 교환글이 받으려는 포토카드가 하나여야 하고,
+      // 진행중 상태인 교환글이어야하고,
+      // 정식 소유권으로 등록한 교환글이어야 한다.
+      sql = `
+      SELECT T.trade_id, T.username, V.voucher_id, V.photocard_id
+      FROM Trade as T
+      INNER JOIN Voucher as V ON V.voucher_id=T.voucher_id
+      WHERE T.trade_id IN (
+        SELECT T.trade_id
+        FROM Trade as T
+        INNER JOIN Wantcard as W ON W.trade_id=T.trade_id
+        WHERE T.state='finding' AND T.want_amount=1 AND V.permanent=1 AND W.photocard_id=${havePhotocardId}
+        ORDER BY T.trade_time ASC
+      )`;
+      let [trades] = await con.query(sql);
+
+      // 교환글마다 처음 방문하는 경우 반복
+      for (let trade of trades) {
+        if (!visited.includes(trade.trade_id)) {
+          visited.push(trade.trade_id); // 현재 교환글을 방문했음을 기록
+
+          // 해당 교환글이 원하는 포토카드의 목록을 가져옴
+          let sql = `
+          SELECT photocard_id
+          FROM Wantcard
+          WHERE trade_id=${trade.trade_id}`;
+          let [wantcards] = await con.query(sql);
+
+          // 해당 교환글이 가진 포토카드가 요청자가 최종적으로 받으려는 포토카드라면 조건에 알맞는 교환들을 찾은것임.
+          if (trade.photocard_id === destPhotocardId) {
+            traced_result = traced.concat({
+              trade_id: trade.trade_id,
+              wantcard: havePhotocardId
+              // wantcards: wantcards.map(element => (element.photocard_id))
+            });
+            return; // 탐색 성공했으니 탈출
+          }
+
+          // 해당 교환글의 have를 원하는 교환글 목록을 가져와야함. 재귀로 할지 어떨지 고민.
+          await explore(
+            trade.photocard_id,
+            destPhotocardId,
+            traced.concat({
+              trade_id: trade.trade_id,
+              wantcard: havePhotocardId
+              // wantcards: wantcards.map(element => (element.photocard_id))
+            })
+          );
+
+        }
+      }
+
+      return;
+    };
+    
+    // 요청자의 소유권 정보를 가져옴
+    let sql = `SELECT photocard_id FROM Voucher WHERE voucher_id=${haveVoucherId}`;
+    let [[haveVoucher]] = await con.query(sql);
+    console.log(haveVoucher);
+
+    // 요청자의 요청을 처리할 수 있는 교환글들 탐색 (결과는 traced_result에 들어감)
+    await explore(haveVoucher.photocard_id, parseInt(wantPhotocardId), []);
+
+    // 탐색 성공시
+    if (traced_result.length > 0) {
+
+    }
+
+    return res.status(200).json({ message: '교환 탐색 기능.', traced_result });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
   return res.status(501).json({ message: 'end of line' });
 });
 
