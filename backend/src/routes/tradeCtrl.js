@@ -662,7 +662,6 @@ router.post('/trade/explore', verifyLogin, async (req, res) => {
     FROM Voucher as V
     WHERE V.voucher_id=${haveVoucher.voucher_id}`;
     let [[voucher]] = await con.query(sql);
-    console.log(voucher);
 
     // 요청자의 소유권 검사
     if (!voucher) {
@@ -803,6 +802,13 @@ router.post('/trade/explore', verifyLogin, async (req, res) => {
     UPDATE Voucher
     SET username='${user.username}', state='traded'
     WHERE voucher_id=${finalTrade.voucher_id}`;
+    await con.execute(sql);
+
+    // 요청자의 소유권으로 등록된 교환글이 있다면 완료 처리
+    sql = `
+    UPDATE Trade
+    SET state='finished'
+    WHERE voucher_id=${voucher.voucher_id}`;
     await con.execute(sql);
 
     // trades[마지막] 교환글 완료 처리
