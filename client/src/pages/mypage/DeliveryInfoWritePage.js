@@ -31,16 +31,18 @@ const DeliveryInfoWritePage = () => {
       const request = useRequest();
       const navigate = useNavigate();
     
-      // 페이지 로드시 동작
-      // const onLoad = async () => {
-      //   try {
-      //     const res = await request.call(api.getGroupList);
-      //     setGroups(res.groups);
-      //   } catch (err) {
-      //     setMessage(err.response.data.message);
-      //   }
-      // }
-      // useEffect(() => { onLoad(); }, []);
+      //페이지 로드시 동작
+      const onLoad = async () => {
+        try {
+          const res = await request.call(api.getAddress);
+          setForm(produce(draft => {
+            draft.address = res.user.address;
+          }));
+        } catch (err) {
+          setMessage(err.response.data.message);
+        }
+      }
+      useEffect(() => { onLoad(); }, []);
   
       //모달 창 열기 / 닫기
       const openModal = () => setShowModal(true);
@@ -55,6 +57,7 @@ const DeliveryInfoWritePage = () => {
       const onSubmit = async (e) => {
         e.preventDefault();
         try {
+          if(!form.address_detail) form.address_detail=' ';
           const res = await request.call(api.putAddress, form);
           setMessage(res.message);
           setTimeout(() => {  return navigate('/mypage/deliveryinfo'); }, 1000);

@@ -43,6 +43,7 @@ const EditUserPage = () => {
           draft.name = res.user.name;
           draft.nickname = res.user.nickname;
           draft.phone = res.user.phone;
+          draft.favorite = res.user.favorite;
         }));
           res = await request.call(api.getGroupList);
           setGroups(res.groups);

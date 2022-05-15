@@ -42,7 +42,7 @@ const ShippingRequestDetailPage = () => {
   const navigate = useNavigate();
   const request = useRequest();
   const [VoucherRequest, setVoucherRequest] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
-  const [vouchers, setVouchers] = useState({}); // 정식 소유권 목록
+  const [vouchers, setVouchers] = useState([]); // 정식 소유권 목록
   const [groups, setGroups] = useState([]);
 
   // 페이지 로드시 동작
@@ -65,11 +65,14 @@ const ShippingRequestDetailPage = () => {
         permanent: 1
       });
       setVouchers(res.vouchers);  // 정식 소유권 목록
+
+      console.log(res.vouchers);
+
       res = await request.call(api.getGroupList);
       setGroups(res.groups);
 
-      //배송 요청한 소유권 목록 콘솔 출력
-      console.log(VoucherRequest);
+      console.log(res.groups);
+
     } catch (err) {
       console.error(err);
     }
@@ -106,12 +109,10 @@ const ShippingRequestDetailPage = () => {
       </section>
       <p className="label">배송 요청한 소유권</p>
       <section className='voucher_section'>
-        {groups ?
-        groups.map(group =>
-            <section className="card_section" key={group.group_id}>
-            {vouchers.find(v => v.group_id === group.group_id) &&
-            <p className="label">{group.name}</p>}
-            {vouchers.filter(v => v.group_id === group.group_id).map(v =>
+        {VoucherRequest ?
+        VoucherRequest.map(element =>
+            <section className="card_section" key={element.voucher_id}>
+            {vouchers.filter(v => v.voucher_id === element.voucher_id).map(v =>
                 <VoucherCard
                 key={v.voucher_id}
                 value={v.voucher_id}

@@ -73,7 +73,6 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
 
     // 받으려는 포토카드 목록에 해당 포토카드 정보 추가
     setForm(produce(draft => {
-      //draft.useVouchers = draft.useVouchers.concat(vouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)));
       draft.useVouchers = draft.useVouchers.concat(vouchers.find(element => element.voucher_id === parseInt(form.selectVoucher)));
       draft.selectVoucher = '';
     }));
@@ -143,32 +142,9 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
 
       <h1 className="title-label">배송 요청</h1>
 
-      {/* <p className="label">보유한 정식 소유권</p>
-      <section className='voucher_section'>
-        {groups ?
-        groups.map(group =>
-            <section className="card_section" key={group.group_id}>
-            {vouchers.find(v => v.group_id === group.group_id) &&
-            <p className="label">{group.name}</p>}
-            {vouchers.filter(v => v.group_id === group.group_id).map(v =>
-                <VoucherCard
-                className={classNames({"active": v.voucher_id === parseInt(form.voucherId) })}
-                key={v.voucher_id}
-                value={v.voucher_id}
-                name={v.name}
-                albumName={v.album_name}
-                src={`${BACKEND}/image/photocard/${v.image_name}`}
-                onClick={onClickVoucher}
-                />
-            )}
-            </section>
-        ) : null}
-      </section> */}
-
-      {/* -----------------------------------------------------------수정중 시작-----------------------------------------------------------*/}
       <div className="label_area">
           <p className="label">소유권 선택</p>
-          <Button className="add_button" onClick={openAddModal}>추가</Button>
+          <Button className="add_btn" onClick={openAddModal}>추가</Button>
         </div>
 
         <section className="card_section">
@@ -184,7 +160,6 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
               </VoucherCard>
             ) : null}
         </section>
-      {/* -----------------------------------------------------------수정중 끝-----------------------------------------------------------*/}
 
       <p className="label">배송 정보</p>
       <section className="delivery">
@@ -201,7 +176,12 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
             <h1>결제 금액: 10원(테스트 금액)</h1>
         </form>
       </section>
-      <Payment users={users} vouchers={form} />
+      <section className='payment'>
+        {form.useVouchers.length ? <Payment users={users} vouchers={form} />: <p className='message'>배송할 소유권을 선택하세요</p>}
+      </section>
+      <section className="submit_section">
+        <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
+      </section>
     </UserTemplate>
   );
 };

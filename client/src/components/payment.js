@@ -30,7 +30,7 @@ const Payment = ({users, vouchers}) => {
         name: '테스트 결제',
         buyer_name: users.name,
         buyer_tel: users.phone,
-        buyer_email: 'willykim@naver.com',
+        buyer_email: '',
         buyer_addr: users.address,
         buyer_postcode: '06018',
       };
@@ -98,7 +98,6 @@ const Payment = ({users, vouchers}) => {
       <h1 className='label'>결제 테스트</h1>
       {payResult ? <b>결제 성공!</b> : null}
       <p>{payResult}</p>
-      {/* <p style={{"color": "red"}}>{message}</p> */}
       {vouchers ? <button className='payment_button' type="button" onClick={onClickButton}>결제하기</button>: <p>배송할 소유권을 선택해주세요</p>}
     </div>
   );

@@ -121,4 +121,25 @@
     }
   }
 
+  .reply_area{
+    margin: 0px 80px; padding: 0;
+    display: flex;
+    justify-content: center;
+ 
+    p{
+     
+        padding: 80px 140px;
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid grey;
+    
+        .none{
+          color: darkgrey;
+        }
+
+    }
+    
+  }
 }

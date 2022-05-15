@@ -62,7 +62,7 @@ router.post('/mypage/complete', async (req, res) => {
   
       // 아임포트 서버에서 실제로 결제된 금액과 DB에 저장된 결제해야할 금액이 일치하는지 체크함.
       // 금액이 일치하면 DB에도 status 값을 결제가 완료되었음을 뜻하는 paid로 변경함.
-      if (iamportPayment.payment_price === dbPayment.payment_price) {
+      if (iamportPayment.amount === dbPayment.payment_price) {
         switch (iamportPayment.status) {
           case "paid":
             let sql = `UPDATE ShippingRequest SET payment_state='paid' WHERE payment_uid='${merchant_uid}'`;

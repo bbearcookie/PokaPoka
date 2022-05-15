@@ -10,6 +10,10 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
 import AdminTemplate from '../../../templates/AdminTemplate';
 import VoucherCard from '../../../components/card/VoucherCard';
+import Modal from '../../../components/modal/Modal';
+import ModalHeader from '../../../components/modal/ModalHeader';
+import ModalBody from '../../../components/modal/ModalBody';
+import ModalFooter from '../../../components/modal/ModalFooter';
 import produce from 'immer';
 import './ShippingDetailPage.scss';
 
@@ -44,8 +48,16 @@ const ShippingDetailPage = () => {
   const navigate = useNavigate();
   const request = useRequest();
   const [VoucherRequest, setVoucherRequest] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
-  const [vouchers, setVouchers] = useState({}); // 정식 소유권 목록
+  const [vouchers, setVouchers] = useState([]); // 정식 소유권 목록
   const [groups, setGroups] = useState([]);
+
+  //모달 창 열기 / 닫기
+  const openModal = () => setShowModal(true);
+  const closeModal = () => {
+    setShowModal(false);
+    navigate(0);
+  }
+  const [showModal, setShowModal] = useState(false); // 모달 창 화면에 띄우기 on/off
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -65,16 +77,16 @@ const ShippingDetailPage = () => {
       setVoucherRequest(res.vouchers);  // 배송 요청한 소유권 목록
       console.log("배송 요청한 소유권");
       console.log(res.vouchers);
+      
+      console.log(res.requests.username);
 
-      res = await request.call(api.getVoucherListMine, {
-        permanent: 1
+      const res2 = await request.call(api.getShippingVoucherListMine, {
+        permanent: 1,
+        username: res.requests.username
       });
-      setVouchers(res.vouchers);  // 정식 소유권 목록
-      res = await request.call(api.getGroupList);
-      setGroups(res.groups);
+      setVouchers(res2.vouchers);  // 정식 소유권 목록
 
-      //배송 요청한 소유권 목록 콘솔 출력
-      console.log(VoucherRequest);
+      console.log(res2.vouchers);
     } catch (err) {
       console.error(err);
     }
@@ -83,7 +95,10 @@ const ShippingDetailPage = () => {
 
   const onClickState = async () => {
     try {
-      
+      const res = await request.call(api.postSetState, requestId);
+      setMessage(res.message);
+      console.log(res);
+      openModal();
     } catch (error) {
       
     }
@@ -94,6 +109,20 @@ const ShippingDetailPage = () => {
 
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
       {request.loading ? <LoadingSpinner /> : null}
+
+      {/* 모달 창 */}
+      {showModal ?
+      <Modal onClose={closeModal}>
+        <ModalHeader onClose={closeModal}>
+          <h1>배송요청 처리</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>{message ? <MessageLabel>{message}</MessageLabel> : null}</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="submit_button" onClick={closeModal}>확인</Button>
+        </ModalFooter>
+      </Modal> : null}
 
       <h1 className="title-label">배송 요청 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
@@ -131,12 +160,10 @@ const ShippingDetailPage = () => {
       </section>
       <p className="label">배송 요청한 소유권</p>
       <section className='voucher_section'>
-        {groups ?
-        groups.map(group =>
-            <section className="card_section" key={group.group_id}>
-            {vouchers.find(v => v.group_id === group.group_id) &&
-            <p className="label">{group.name}</p>}
-            {vouchers.filter(v => v.group_id === group.group_id).map(v =>
+      {VoucherRequest ?
+        VoucherRequest.map(element =>
+            <section className="card_section" key={element.voucher_id}>
+            {vouchers.filter(v => v.voucher_id === element.voucher_id).map(v =>
                 <VoucherCard
                 key={v.voucher_id}
                 value={v.voucher_id}
@@ -149,8 +176,9 @@ const ShippingDetailPage = () => {
         ) : null}
       </section>
       <section className="submit_section">
-        <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
-        <Button className="cancel_button" onClick={onClickState}>배송 요청 처리</Button>
+        <Link to="/admin/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
+        {requests.state==='waiting' ? <Button className="add_button" onClick={onClickState}>배송 요청 처리</Button>: 
+        <Button className="add_button" onClick={onClickState}>배송 요청 처리 취소</Button>}
       </section>
     </AdminTemplate>
   );

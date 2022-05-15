@@ -65,6 +65,7 @@ import TradeDetailPage from './pages/trade/TradeDetailPage';
 import ShippingRequestDetailPage from './pages/mypage/ShippingRequestDetailPage';
 import ShippingListPage from './pages/admin/shipping/ShippingListPage';
 import ShippingDetailPage from './pages/admin/shipping/ShippingDetailPage';
+import ShippingProvisionListPage from './pages/admin/shipping/ShippingProvisionListPage';
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
@@ -131,6 +132,7 @@ function App() {
         <Route path="/admin/user/detail/:username" element={<UserDetailPage />}/>
         <Route path="/admin/user/search/:username" element={<UserListSearchPage />}/>
         <Route path="/admin/shipping" element={<ShippingListPage />}/>
+        <Route path="/admin/shipping/provision" element={<ShippingProvisionListPage />}/>
         <Route path="/admin/shipping/request/detail/:requestId" element={<ShippingDetailPage />}/>
 
         <Route path="/finding/password" element={<PasswordPage />} />

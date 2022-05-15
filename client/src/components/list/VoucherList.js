@@ -40,7 +40,7 @@ const VoucherList = ({ className, notices, perPage }) => {
         </thead>
         <tbody>
         {notices ?
-          notices.filter(notice => isInCurrentPage(++count)).map(notice => 
+          notices.filter((notice, idx) => isInCurrentPage(idx + 1)).map((notice, idx) => 
             <tr key={count} notice_id={notice.notice_id} onClick={onClickDetailView}>
                 <td>{notice.notice_id}</td>
                 <td>{notice.title}</td>

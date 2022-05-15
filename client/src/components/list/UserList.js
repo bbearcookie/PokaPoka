@@ -43,8 +43,8 @@ const UserList = ({ className, users, perPage }) => {
         </thead>
         <tbody>
         {users ?
-          users.filter(user => isInCurrentPage(++count)).map(user => 
-            <tr key={count} username={user.username} onClick={onClickDetailView}>
+          users.filter((user, idx) => isInCurrentPage(idx + 1)).map((user, idx) => 
+            <tr key={idx} username={user.username} onClick={onClickDetailView}>
                 <td>{user.username}</td>
                 <td>{user.name}</td>
                 <td>{user.phone}</td>

@@ -425,7 +425,20 @@ export const postShippingWant = (vouchers, merchant_uid) => axios.post(`${BACKEN
 );
 // 배송 요청 리스트
 export const getShippingRequestList = () => axios.get(`${BACKEND}/api/shipping/list`, options);
-
+// 관리자 -  배송요청 소유권
+export const getShippingVoucherListMine = (filter) => axios.get(
+  `${BACKEND}/api/shipping/voucher/mine?` +
+  `permanent=${filter.permanent}&` +
+  `state=${filter.state}&` + 
+  `groupId=${filter.groupId}&` +
+  `memberId=${filter.memberId}&`+
+  `username=${filter.username}`,
+  options
+);
+// 관리자 배송 요청 처리
+export const postSetState = (requestId) => axios.post(`${BACKEND}/api/shipping/state/${requestId}`, {}, options);
+// 관리자-모든 포토카드 배송 내역 조회
+export const getShippingProvisionListAll = () => axios.get(`${BACKEND}/api/shipping/provision`, options);
 // paymentCtrl
 // 백엔드 서버에 거래 데이터 생성 요청
 export const postPayment = (payment, vouchers) => axios.post(`${BACKEND}/api/payment/mypage/request`,

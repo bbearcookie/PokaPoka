@@ -27,8 +27,8 @@ const ShippingListPage = () => {
     <AdminTemplate className="ShippingRequestListPage">
       <section className="title_area">
         <h1 className="title-label">포토카드 배송 요청</h1>
-        <Link to="/mypage/shipping/request">
-          <Button className="add_button">추가</Button>
+        <Link to="/admin/shipping/provision">
+          <Button className="add_button">배송 내역</Button>
         </Link>
       </section>
 

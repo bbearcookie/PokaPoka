@@ -74,6 +74,18 @@
       }
     }
 
+    .add_btn {
+      margin:0 0 0 0;
+      width: 50px; height: 50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+
     .delivery{
       margin: 0px 80px; padding: 0;
       display: flex;
@@ -91,6 +103,23 @@
           .none{
             color: darkgrey;
           }
+      }
+      
+    }
+
+    .payment{
+      //margin: 0px 80px; padding: 0;
+      display: flex;
+      //justify-content: center;
+   
+      .message{
+        width: 100%;
+        padding: 10px 0;
+        text-align: center;
+        color: #842029;
+        background-color: #f8d7da;
+        border: 1px solid #f5c2c7;
+        border-radius: 5px;
       }
       
     }
@@ -125,6 +154,15 @@
           display: inline-block;
           font-size: 16px;
         }
+      }
+    }
+
+    .submit_section {
+      align-self: flex-end;
+  
+      .cancel_button {
+        width: 100px; height: 50px;
+        margin: 15px 0 0 15px;
       }
     }
   }
