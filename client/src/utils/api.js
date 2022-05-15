@@ -426,6 +426,16 @@ export const postShippingWant = (vouchers, merchant_uid) => axios.post(`${BACKEN
 );
 // 배송 요청 리스트
 export const getShippingRequestList = () => axios.get(`${BACKEND}/api/shipping/list`, options);
+// 사용자 -  배송요청 소유권
+export const getShippingRequestVoucher = (filter) => axios.get(
+  `${BACKEND}/api/shipping/request/voucher/mine?` +
+  `permanent=${filter.permanent}&` +
+  `state=${filter.state}&` + 
+  `groupId=${filter.groupId}&` +
+  `memberId=${filter.memberId}&`+
+  `username=${filter.username}`,
+  options
+);
 // 관리자 -  배송요청 소유권
 export const getShippingVoucherListMine = (filter) => axios.get(
   `${BACKEND}/api/shipping/voucher/mine?` +

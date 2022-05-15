@@ -133,7 +133,7 @@ router.get('/admin/user/list', verifyLogin, async (req, res) => {
     let sql = `SELECT username, name, phone, nickname, favorite, regist_time FROM User WHERE role='user'`;
     let [users] = await con.query(sql);
 
-    return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', users });
+    return res.status(200).json({ message: '사용자 목록 조회에 성공했습니다.', users });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -144,9 +144,14 @@ router.get('/admin/user/list', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 모든 사용자 목록 조회 요청
-router.get('/user/list/all', async (req, res) => {
+// 관리자 - 모든 사용자 목록 조회 요청
+router.get('/user/list/all', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
   let { username } = req.query;
+  let { user } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
   const con = await db.getConnection();
   try {
@@ -156,6 +161,9 @@ router.get('/user/list/all', async (req, res) => {
     let whereSqls = [];
     // 조회 조건에 username 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(username)) whereSqls.push(`T.username LIKE '%${username}%'`);
+
+    //관리자 정보 제외
+    whereSqls.push(`T.role='user'`);
 
     let sql = `
     SELECT T.username, T.name, T.phone, T.nickname, T.favorite, T.regist_time

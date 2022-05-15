@@ -41,7 +41,7 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getVoucherListMine, {
+      const res = await request.call(api.getShippingRequestVoucher, {
         permanent: 1
       });
       setVouchers(res.vouchers);

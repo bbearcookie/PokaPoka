@@ -10,7 +10,6 @@ const UserList = ({ className, users, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(users.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
   
   // 상세 보기시 작동
   const onClickDetailView = (e) => {

@@ -97,7 +97,7 @@ const UserListPage = () => {
           </Select>
         </article>
         <article className="search">
-          <p className="label">작성자</p>
+          <p className="label">사용자</p>
           <Input
             type="text"
             name="username"
