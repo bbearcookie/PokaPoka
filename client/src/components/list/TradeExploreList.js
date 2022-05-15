@@ -7,7 +7,7 @@ const TradeExploreList = ({ className, trades, haveVoucher }) => {
   return (
     <div className={classNames("TradeExploreList", className)}>
       {/* 요청자 자신이 받고 보내는 내용을 보여줌 */}
-      {trades && 
+      {trades.length > 0 && 
         <>
           <TradeExploreCard key={trades.length} fromTrade={trades[trades.length - 1]} toTrade={haveVoucher} />
           <TradeExploreCard key={trades.length + 1} fromTrade={haveVoucher} toTrade={trades[0]} />
@@ -15,7 +15,7 @@ const TradeExploreList = ({ className, trades, haveVoucher }) => {
       }
 
       {/* 그 외 교환글들끼리 연결되는 내용을 보여줌  */}
-      {trades &&
+      {trades.length > 0 &&
       trades.map((_, idx) => {
         if (idx < trades.length - 1) {
           return (<TradeExploreCard key={trades[idx].trade_id} fromTrade={trades[idx]} toTrade={trades[idx + 1]} />);
@@ -29,7 +29,7 @@ const TradeExploreList = ({ className, trades, haveVoucher }) => {
 };
 
 TradeExploreList.defaultProps = {
-  trades: () => {},
+  trades: [],
   haveVoucher: {}
 };
 

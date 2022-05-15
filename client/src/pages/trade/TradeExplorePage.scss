@@ -19,6 +19,23 @@
     margin: 15px 0 15px 0;
   }
 
+  .submit_button {
+    color: white;
+    background-color: rgb(206, 28, 73);
+
+    &:hover {
+      background-color: rgb(163, 33, 66);
+    }
+  }
+
+  .cancel_button {
+    background-color: #ececec;
+
+    &:hover {
+      background: gainsboro;
+    }
+  }
+
   .label_area {
     margin: 20px 0;
     display: flex;

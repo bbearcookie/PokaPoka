@@ -622,6 +622,38 @@ router.get('/trade/explore', async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 탐색한 교환 경로를 가지고 처리 요청
+router.post('/trade/explore', verifyLogin, async (req, res) => {
+  const { haveVoucher, trades } = req.body;
+  const { user } = req;
+
+  console.log(haveVoucher);
+  console.log(trades);
+
+  // 로그인 상태 확인
+  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+
+  // 유효성 검사
+  if (!haveVoucher) return res.status(400).json({ message: '사용할 소유권을 선택해주세요.' });
+  if (!trades) return res.status(400).json({ message: '매칭 가능한 교환이 있는지 먼저 탐색해주세요.' });
+  if (trades.length === 0) return res.status(400).json({ message: '매칭되는 정보를 찾지 못했습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    await con.beginTransaction();
+
+    await con.rollback();
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    await con.rollback();
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 해당 교환글에 찜하기 처리
 router.post('/trade/favorite/:tradeId', verifyLogin, async (req, res) => {
   const { tradeId } = req.params;

@@ -441,8 +441,18 @@ export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/ap
   options
 );
 
+// 매칭 가능한 교환글이 있는지 탐색 요청
 export const getTradeExplore = (haveVoucherId, wantPhotocardId) => axios.get(
   `${BACKEND}/api/trade/explore?haveVoucherId=${haveVoucherId}&wantPhotocardId=${wantPhotocardId}`,
+  options
+);
+
+// 탐색 했던 정보를 가지고 교환 요청
+export const postTradeExplore = (haveVoucher, trades) => axios.post(`${BACKEND}/api/trade/explore`, 
+  {
+    haveVoucher: haveVoucher,
+    trades: trades
+  },
   options
 );
 

@@ -40,7 +40,9 @@ const TradeExplorePage = () => {
     exploreMessage: state.tradeExplorePage.exploreMessage
   }));
   const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
-  const [message, setMessage] = useState('');
+  const [showTradeModal, setShowTradeModal] = useState(false); // 교환 요청 확인 모달
+  const [message, setMessage] = useState(''); // 교환 탐색과 관련한 오류 메시지
+  const [tradeMessage, setTradeMessage] = useState(''); // 교환 요청과 관련한 오류 메시지
   const request = useRequest();
   const navigate = useNavigate();
 
@@ -54,6 +56,10 @@ const TradeExplorePage = () => {
     }
   }
   useEffect(() => { onLoad(); }, []);
+
+  // 교환 요청 확인 모달 열기 / 닫기
+  const openTradeModal = () => setShowTradeModal(true);
+  const closeTradeModal = () => setShowTradeModal(false);
 
   // 화면에 보여줄 소유권 목록 업데이트
   const onUpdateVouchers = async () => {
@@ -149,19 +155,29 @@ const TradeExplorePage = () => {
   // 탐색 버튼 클릭시
   const onClickExploreButton = async (e) => {
     e.preventDefault();
+    setMessage('');
     try {
        const res = await request.call(api.getTradeExplore, voucherId, photocardId);
        dispatch(setTrades(res.trades));
        dispatch(setHaveVoucher(res.haveVoucher));
-       console.log(res);
        if (res.trades.length > 0) {
-        dispatch(setExploreMessage(`${res.trades.length}개의 교환글을 거쳐서 매칭되는 교환글을 찾았습니다!`));
+        dispatch(setExploreMessage(`${res.trades.length}개의 교환글을 거쳐서 매칭되는 정보를 찾았습니다!`));
        } else {
         dispatch(setExploreMessage("매칭 되는 교환글이 없습니다."));
        }
     } catch (err) {
       setMessage(err.response.data.message);
       dispatch(setExploreMessage(''));
+    }
+  }
+
+  // 교환 요청 확인 버튼 클릭시
+  const onClickTrade = async () => {
+    try {
+      const res = await request.call(api.postTradeExplore, haveVoucher, trades);
+      console.log(res);
+    } catch (err) {
+      setTradeMessage(err.response.data.message);
     }
   }
 
@@ -173,6 +189,23 @@ const TradeExplorePage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       <h1 className="title-label">포토카드 교환 탐색</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
+
+      {/* 교환 요청 버튼 누르면 보여줄 확인 모달 */}
+      {showTradeModal ?
+      <Modal className="remove_modal" onClose={closeTradeModal}>
+        <ModalHeader onClose={closeTradeModal}>
+          <h1>교환 요청</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>{haveVoucher.name} 카드를 {trades[0].username} 에게 주고</p>
+          <p>{trades[trades.length - 1].username} (으)로부터 {trades[trades.length - 1].name} 을(를) 받게 됩니다.</p>
+          <p>정말로 교환하시겠습니까?</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeTradeModal}>취소</Button>
+          <Button className="submit_button" onClick={onClickTrade}>확인</Button>
+        </ModalFooter>
+      </Modal> : null}
 
       <p className="label">사용하려는 소유권</p>
       <section className="search_area">
@@ -263,7 +296,13 @@ const TradeExplorePage = () => {
       <>
         <h1 className="title-label">탐색 결과</h1>
         <p className="label">{exploreMessage}</p>
+        {trades.length > 0 &&
+        <>
         <TradeExploreList trades={trades} haveVoucher={haveVoucher} />
+        {tradeMessage ? <MessageLabel>{tradeMessage}</MessageLabel> : null}
+        <Button className="explore_button" onClick={openTradeModal}>교환 요청</Button>
+        </>
+        }
       </>}
     </UserTemplate>
   );
