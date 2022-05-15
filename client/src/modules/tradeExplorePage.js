@@ -18,6 +18,8 @@ const initialState = {
   vouchers: [], // 화면에 보여줄 소유권 목록
   photocards: [], // 화면에 보여줄 포토카드 목록
   trades: [], // 화면에 보여줄 교환글 목록
+  haveVoucher: {}, // 교환 탐색 결과에 보여줄 사용할 소유권 정보,
+  exploreMessage: ''
 }
 
 // 액션 타입 정의
@@ -32,6 +34,8 @@ const SET_MEMBERS = 'photocardListPage/SET_MEMBERS';
 const SET_VOUCHERS = 'photocardListPage/SET_VOUCHERS';
 const SET_PHOTOCARDS = 'photocardListPage/SET_PHOTOCARDS';
 const SET_TRADES = 'photocardListPage/SET_TRADES';
+const SET_HAVE_VOUCHER = 'photocardListPage/SET_HAVE_VOUCHER';
+const SET_EXPORE_MESSAGE = 'photocardListPage/SET_EXPORE_MESSAGE';
 
 // 액션 생성 함수 생성 (state 값 변경하는 함수)
 export const setHaveGroupId = createAction(SET_HAVE_GROUPID, groupId => groupId);
@@ -45,6 +49,8 @@ export const setMembers = createAction(SET_MEMBERS, members => members);
 export const setVouchers = createAction(SET_VOUCHERS, vouchers => vouchers);
 export const setPhotocards = createAction(SET_PHOTOCARDS, photocards => photocards);
 export const setTrades = createAction(SET_TRADES, trades => trades);
+export const setHaveVoucher = createAction(SET_HAVE_VOUCHER, haveVoucher => haveVoucher);
+export const setExploreMessage = createAction(SET_EXPORE_MESSAGE, message => message);
 
 // 각 액션에 대한 업데이트 함수 정의
 export default handleActions({
@@ -70,5 +76,7 @@ export default handleActions({
   [SET_MEMBERS]: (state, { payload: members }) => ({ ...state, members }),
   [SET_VOUCHERS]: (state, { payload: vouchers }) => ({ ...state, vouchers }),
   [SET_PHOTOCARDS]: (state, { payload: photocards }) => ({ ...state, photocards }),
-  [SET_TRADES]: (state, { payload: trades }) => ({ ...state, trades })
+  [SET_TRADES]: (state, { payload: trades }) => ({ ...state, trades }),
+  [SET_HAVE_VOUCHER]: (state, { payload: haveVoucher }) => ({ ...state, haveVoucher }),
+  [SET_EXPORE_MESSAGE]: (state, { payload: message }) => ({ ...state, exploreMessage: message })
 }, initialState);

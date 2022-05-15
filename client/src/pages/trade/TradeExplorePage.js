@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setHaveGroupId, setHaveMemberId, setWantGroupId, setWantMemberId, 
-  setVoucherId, setPhotocardId, setGroups, setMembers, setTrades, setVouchers, setPhotocards } from '../../modules/tradeExplorePage';
+  setVoucherId, setPhotocardId, setGroups, setMembers, setTrades, setHaveVoucher,
+  setVouchers, setPhotocards, setExploreMessage } from '../../modules/tradeExplorePage';
 import produce from 'immer';
 import classNames from 'classnames';
 import useRequest from '../../utils/useRequest';
@@ -14,7 +15,7 @@ import Select from '../../components/form/Select';
 import Input from '../../components/form/Input';
 import MessageLabel from '../../components/MessageLabel';
 import VoucherCard from '../../components/card/VoucherCard';
-import TradeList from '../../components/list/TradeList';
+import TradeExploreList from '../../components/list/TradeExploreList';
 import Modal from '../../components/modal/Modal';
 import ModalHeader from '../../components/modal/ModalHeader';
 import ModalBody from '../../components/modal/ModalBody';
@@ -25,7 +26,7 @@ import './TradeExplorePage.scss';
 
 const TradeExplorePage = () => {
   // 리덕스 스토어에 저장한 상태값. 페이지 이동시에도 상태를 보관해두기 위함.
-  const { have, want, voucherId, photocardId, groups, members, vouchers, photocards, trades } = useSelector(state => ({
+  const { have, want, voucherId, photocardId, groups, members, vouchers, photocards, trades, haveVoucher, exploreMessage } = useSelector(state => ({
     have: state.tradeExplorePage.have,
     want: state.tradeExplorePage.want,
     voucherId: state.tradeExplorePage.voucherId,
@@ -34,7 +35,9 @@ const TradeExplorePage = () => {
     members: state.tradeExplorePage.members,
     vouchers: state.tradeExplorePage.vouchers,
     photocards: state.tradeExplorePage.photocards,
-    trades: state.tradeExplorePage.trades
+    trades: state.tradeExplorePage.trades,
+    haveVoucher: state.tradeExplorePage.haveVoucher,
+    exploreMessage: state.tradeExplorePage.exploreMessage
   }));
   const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [message, setMessage] = useState('');
@@ -146,8 +149,20 @@ const TradeExplorePage = () => {
   // 탐색 버튼 클릭시
   const onClickExploreButton = async (e) => {
     e.preventDefault();
-    console.log(`voucherId: ${voucherId}`);
-    console.log(`photocardId: ${photocardId}`);
+    try {
+       const res = await request.call(api.getTradeExplore, voucherId, photocardId);
+       dispatch(setTrades(res.trades));
+       dispatch(setHaveVoucher(res.haveVoucher));
+       console.log(res);
+       if (res.trades.length > 0) {
+        dispatch(setExploreMessage(`${res.trades.length}개의 교환글을 거쳐서 매칭되는 교환글을 찾았습니다!`));
+       } else {
+        dispatch(setExploreMessage("매칭 되는 교환글이 없습니다."));
+       }
+    } catch (err) {
+      setMessage(err.response.data.message);
+      dispatch(setExploreMessage(''));
+    }
   }
 
   return (
@@ -156,8 +171,8 @@ const TradeExplorePage = () => {
       sidebar={<TradeSideBar />}
     >
       {request.loading ? <LoadingSpinner /> : null}
-      {message ? <MessageLabel>{message}</MessageLabel> : null}
       <h1 className="title-label">포토카드 교환 탐색</h1>
+      {message ? <MessageLabel>{message}</MessageLabel> : null}
 
       <p className="label">사용하려는 소유권</p>
       <section className="search_area">
@@ -200,6 +215,7 @@ const TradeExplorePage = () => {
             />
           ) : null}
       </section>
+
       <p className="label">받으려는 포토카드</p>
       <section className="search_area">
         <article className="search">
@@ -213,7 +229,6 @@ const TradeExplorePage = () => {
               ) : null}
           </Select>
         </article>
-
         <article className="search">
           <p className="label">멤버</p>
           <Select name="want" value={want.memberId} onChange={onChangeMemberSelect}>
@@ -226,6 +241,7 @@ const TradeExplorePage = () => {
           </Select>
         </article>
       </section>
+
       <section className="card_section">
         {photocards ?
           photocards.map(v =>
@@ -240,8 +256,15 @@ const TradeExplorePage = () => {
             />
           ) : null}
       </section>
+
       <Button className="explore_button" onClick={onClickExploreButton}>매칭 가능한 교환이 있는지 탐색하기</Button>
 
+      {exploreMessage &&
+      <>
+        <h1 className="title-label">탐색 결과</h1>
+        <p className="label">{exploreMessage}</p>
+        <TradeExploreList trades={trades} haveVoucher={haveVoucher} />
+      </>}
     </UserTemplate>
   );
 };

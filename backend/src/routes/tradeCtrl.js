@@ -498,7 +498,13 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
 
 // 교환 탐색 기능
 router.get('/trade/explore', async (req, res) => {
-  const { haveVoucherId, wantPhotocardId } = req.query;
+  let { haveVoucherId, wantPhotocardId } = req.query;
+  haveVoucherId = parseInt(haveVoucherId);
+  wantPhotocardId = parseInt(wantPhotocardId);
+
+  // 유효성 검사
+  if (!haveVoucherId) return res.status(400).json({ message: '사용하려는 소유권을 선택해주세요.' });
+  if (!wantPhotocardId) return res.status(400).json({ message: '받으려는 포토카드를 선택해주세요.' });
 
   const con = await db.getConnection();
   try {
@@ -567,18 +573,23 @@ router.get('/trade/explore', async (req, res) => {
     };
     
     // 요청자의 소유권 정보를 가져옴
-    let sql = `SELECT photocard_id FROM Voucher WHERE voucher_id=${haveVoucherId}`;
+    let sql = `
+    SELECT V.photocard_id, V.username, P.name, P.image_name, A.name as album_name
+    FROM Voucher as V
+    INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
+    INNER JOIN AlbumData as A ON A.album_id = P.album_id
+    WHERE V.voucher_id=${haveVoucherId}`;
     let [[haveVoucher]] = await con.query(sql);
-    console.log(haveVoucher);
+
+    // 소유권 검사
+    if (!haveVoucher) return res.status(400).json({ message: '해당 소유권이 존재하지 않습니다.' });
+    if (haveVoucher.photocard_id === wantPhotocardId) return res.status(400).json({ message: '같은 종류의 포토카드로 탐색할 수 없습니다.' });
 
     // 요청자의 요청을 처리할 수 있는 교환글들 탐색 (결과는 traced_result에 들어감)
-    await explore(haveVoucher.photocard_id, parseInt(wantPhotocardId), []);
+    await explore(haveVoucher.photocard_id, wantPhotocardId, []);
 
     // 탐색 성공시
-    let trades = [];
     if (traced_result.length > 0) {
-
-      // console.log(traced_result.findIndex((element) => element.trade_id === 19));
 
       // 탐색 경로에 있는 교환글들의 상세 정보를 가져옴
       for (let i in traced_result) {
@@ -586,7 +597,7 @@ router.get('/trade/explore', async (req, res) => {
         // 교환글 상세 정보 가져옴
         let sql = `
         SELECT T.trade_id, T.username, T.regist_time,
-        P.image_name, P.name, A.name as album_name
+        P.photocard_id, P.image_name, P.name, A.name as album_name
         FROM Trade as T
         INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
         INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
@@ -595,11 +606,12 @@ router.get('/trade/explore', async (req, res) => {
         let [[trade]] = await con.query(sql);
 
         // 가져온 교환글 상세 정보를 탐색 경로에 추가
-        traced_result[i].trade = trade;
+        // traced_result[i].detail = trade;
+        traced_result[i] = { ...traced_result[i], ...trade }
       }
     }
 
-    return res.status(200).json({ message: '교환 탐색 기능.', traced_result });
+    return res.status(200).json({ message: '교환 탐색 기능.', trades: traced_result, haveVoucher });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });

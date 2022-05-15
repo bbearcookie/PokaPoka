@@ -441,6 +441,11 @@ export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/ap
   options
 );
 
+export const getTradeExplore = (haveVoucherId, wantPhotocardId) => axios.get(
+  `${BACKEND}/api/trade/explore?haveVoucherId=${haveVoucherId}&wantPhotocardId=${wantPhotocardId}`,
+  options
+);
+
 // 해당 교환글에게 찜하기 요청
 export const postTradeFavorite = (tradeId) => axios.post(`${BACKEND}/api/trade/favorite/${tradeId}`, {}, options);
 
