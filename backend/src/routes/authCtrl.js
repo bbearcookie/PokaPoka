@@ -167,7 +167,7 @@ router.get('/login/kakao', async (req, res) => {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_LOGIN_NATIVE_APP_KEY, // 백엔드 서버에서는 네이티브 앱 키로 요청해야함.
       client_secret: process.env.KAKAO_LOGIN_CLIENT_SECRET,
-      redirect_uri: process.env.BACKEND_SERVER_URL + '/api/auth/login/kakao',
+      redirect_uri: process.env.BACKEND_SERVER_URL + '/auth/login/kakao',
       code: code, // 일회성 인증 코드 사용
     };
 

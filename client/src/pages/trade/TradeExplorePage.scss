@@ -1,0 +1,150 @@
+.TradeExplorePage {
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .MessageLabel {
+    margin: 0 0 20px 0;
+    white-space: pre-line;
+  }
+
+  .label {
+    align-self: flex-start;
+    font-size: 20px;
+    margin: 15px 0 15px 0;
+  }
+
+  .submit_button {
+    color: white;
+    background-color: rgb(206, 28, 73);
+
+    &:hover {
+      background-color: rgb(163, 33, 66);
+    }
+  }
+
+  .cancel_button {
+    background-color: #ececec;
+
+    &:hover {
+      background: gainsboro;
+    }
+  }
+
+  .label_area {
+    margin: 20px 0;
+    display: flex;
+
+    .add_button {
+      width: 50px; height: 35px;
+      align-self: center;
+      margin-left: 10px;
+      border-radius: 50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  }
+
+  .search_area {
+    min-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+
+    .label {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .search {
+      display: flex;
+
+      .Select {
+        width: 200px; height: 40px;
+        margin-left: 5px;
+        align-self: center;
+      }
+
+      .Input {
+        height: 40px;
+        font-size: 16px;
+        margin-left: 5px;
+        align-self: center;
+      }
+    }
+  }
+
+  .card_section {
+    margin-top: 10px;
+    text-align: center;
+
+    .VoucherCard {
+      margin: 0 25px 50px 25px;
+      display: inline-block;
+
+      &.active {
+        outline: none;
+        border: 1px solid rgb(206, 28, 73);
+        box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+        transition: all 0.25s;
+      }
+    }
+
+    .ImageCard {
+      margin: 0 25px 50px 25px;
+      display: inline-block;
+
+      p {
+        margin: 0;
+        padding: 0;
+        line-height: 40px;
+        font-size: 16px;
+      }
+
+      &.active {
+        outline: none;
+        border: 1px solid rgb(206, 28, 73);
+        box-shadow: 0px 0px 1px 1px rgb(206, 28, 73);
+        transition: all 0.25s;
+      }
+    }
+
+    .remove_button {
+      margin: 0 0 15px 0;
+      width: 55px; height: 30px;
+      align-self: center;
+      border-radius: 50px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
+  }
+
+  .explore_button {
+    width: 500px; height: 50px;
+    align-self: center;
+    font-size: 16px;
+    color: white;
+    background-color: rgb(206, 28, 73);
+
+    &:hover {
+      background-color: rgb(163, 33, 66);
+    }
+  }
+}

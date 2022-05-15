@@ -40,6 +40,13 @@ const EditUserPage = () => {
         try {
           const res = await request.call(api.getGroupList);
           setGroups(res.groups);
+          const res2 = await request.call(api.getUserInfo);
+          setForm(produce(draft => {
+            draft.name = res2.user.name;
+            draft.nickname = res2.user.nickname;
+            draft.phone = res2.user.phone;
+            draft.favorite = res2.user.favorite;
+          }));
         } catch (err) {
           setMessage(err.response.data.message);
         }

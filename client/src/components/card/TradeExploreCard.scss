@@ -1,0 +1,33 @@
+.TradeExploreCard {
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  .arrow_section {
+    padding: 25px;
+  }
+
+  .card_section {
+    width: 300px;
+    padding: 25px;
+    color: black;
+    background-color: beige;
+    border: 1px solid gainsboro;
+    box-shadow: 0px 5px 11px 1px #C0C0C0;
+    border-radius: 10px;
+    user-select: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.1s;
+
+    &:hover {
+      background-color: rgb(235, 235, 212);
+    }
+
+    .VoucherCard {
+      background-color: white;
+      margin: 0 0 15px !important;
+    }
+  }
+}

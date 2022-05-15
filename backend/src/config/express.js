@@ -30,9 +30,22 @@ module.exports.config = () => {
     store: new MySQLStore(dbOptions)
   }));
 
+
   // 클라이언트 서버로부터 들어오는 요청 허가
+  const originList = [];
+  if (process.env.CLIENT_SERVER_URL)
+    originList.push(process.env.CLIENT_SERVER_URL);
+  if (process.env.CLIENT_SERVER_URL_WITH_WWW)
+    originList.push(process.env.CLIENT_SERVER_URL_WITH_WWW);
+
   const corsOptions = {
-    origin: process.env.CLIENT_SERVER_URL,
+    origin: (origin, callback) => {
+      if (originList.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true
   }
   app.use(cors(corsOptions));
