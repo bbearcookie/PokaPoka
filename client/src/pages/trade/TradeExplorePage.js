@@ -176,6 +176,7 @@ const TradeExplorePage = () => {
     try {
       const res = await request.call(api.postTradeExplore, haveVoucher, trades);
       console.log(res);
+      return navigate('/stoarage/permanent');
     } catch (err) {
       setTradeMessage(err.response.data.message);
     }
@@ -298,6 +299,7 @@ const TradeExplorePage = () => {
         <p className="label">{exploreMessage}</p>
         {trades.length > 0 &&
         <>
+        <div className="label">아래의 교환을 통해서 <b>{haveVoucher.name}</b> 카드를 주고 <b>{trades[trades.length - 1].name}</b> 카드를 받을 수 있습니다. </div>
         <TradeExploreList trades={trades} haveVoucher={haveVoucher} />
         {tradeMessage ? <MessageLabel>{tradeMessage}</MessageLabel> : null}
         <Button className="explore_button" onClick={openTradeModal}>교환 요청</Button>

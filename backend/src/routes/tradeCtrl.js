@@ -443,11 +443,12 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
       return res.status(400).json({ message: err.message });
     }
 
-    // TODO: 교환글에 포함된 voucher_id의 사용자를 요청자의 것으로 교체하고 state를 traded로 변경
+    // <교환 과정>
+    // 1) 교환글에 포함된 voucher_id의 사용자를 요청자의 것으로 교체하고 state를 traded로 변경
     //       - TradeHistory 테이블에 provider가 recipient에게 voucher_id를 준다고 기록
-    // TODO: useVouchers에 들어있는 소유권들을 교환글 작성자의 것으로 교체하고 state를 traded로 변경
+    // 2) useVouchers에 들어있는 소유권들을 교환글 작성자의 것으로 교체하고 state를 traded로 변경
     //       - TradeHistory 테이블에 provider가 recipient에게 voucher_id를 준다고 기록
-    // TODO: 교환글의 state 필드를 finished로 변경하고 trade_time을 현재 시간으로 업데이트.
+    // 3) 교환글의 state 필드를 finished로 변경하고 trade_time을 현재 시간으로 업데이트.
 
     // 교환글에 포함된 voucher_id의 사용자를 요청자의 것으로 교체하고 state를 traded로 변경
     sql = `
@@ -574,7 +575,7 @@ router.get('/trade/explore', async (req, res) => {
     
     // 요청자의 소유권 정보를 가져옴
     let sql = `
-    SELECT V.photocard_id, V.username, P.name, P.image_name, A.name as album_name
+    SELECT V.voucher_id, V.photocard_id, V.username, P.name, P.image_name, A.name as album_name
     FROM Voucher as V
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id = P.album_id
@@ -596,7 +597,7 @@ router.get('/trade/explore', async (req, res) => {
 
         // 교환글 상세 정보 가져옴
         let sql = `
-        SELECT T.trade_id, T.username, T.regist_time,
+        SELECT T.trade_id, V.voucher_id, T.username, T.regist_time,
         P.photocard_id, P.image_name, P.name, A.name as album_name
         FROM Trade as T
         INNER JOIN Voucher as V ON V.voucher_id = T.voucher_id
@@ -627,9 +628,6 @@ router.post('/trade/explore', verifyLogin, async (req, res) => {
   const { haveVoucher, trades } = req.body;
   const { user } = req;
 
-  console.log(haveVoucher);
-  console.log(trades);
-
   // 로그인 상태 확인
   if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
 
@@ -642,12 +640,195 @@ router.post('/trade/explore', verifyLogin, async (req, res) => {
   try {
     await con.beginTransaction();
 
-    await con.rollback();
+    // TODO:: <교환 과정>
+    // 2) 요청자의 소유권을 trades[0] 작성자에게 주고, trades[마지막] 작성자의 소유권을 요청자에게 준다. Voucher 테이블에서 username을 바꾸고 state를 traded로 변경한다.
+    //        (조건: trades[마지막]의 state가 'finding'인지를 체크한다.)
+    //        (조건: 요청자의 소유권의 permanent와 trades[i]에 등록된 voucher의 permanent가 1인지를 체크한다.)
+    //        (조건: trades[마지막]의 Wantcard 목록에 요청자의 소유권의 photocard_id를 포함하고 있는지를 체크한다.)
+    //        - TradeHistory 테이블에 user.username -> trades[0].username 에게 voucher.voucher_id를 지급한다고 기록.
+    //        - TradeHistory 테이블에 trades[마지막].username -> user.username 에게 trades[마지막].voucher_id를 지급한다고 기록.
+    //        - 요청자의 소유권과 trades[마지막]의 소유권으로 등록된 교환글을 조회하여 state를 'finished'로 한다.
+    // 1) trades를 0부터 trades.length - 1까지 순회하면서 반복한다.
+    //        (조건: trades[i]의 state가 'finding'인지를 체크한다.)
+    //        (조건: trades[i]에 등록된 voucher의 permanent가 1인지를 체크한다.)
+    //        (조건: trades[i+1]의 Wantcard 목록에 trades[i].voucher_id 소유권의 photocard_id를 포함하고 있는지를 체크한다.)
+    //        - trades[i].voucher_id 소유권을 trades[i+1].username에게 주고 state를 traded로 변경한다.
+    //        - TradeHistory 테이블에 trades[i].username -> trades[i+1].username 에게 trades[i].voucher_id 를 지급한다고 기록.
+    //        - trades[i].voucher_id 소유권으로 등록된 교환글을 조회하여 state를 'finished'로 한다.
+
+    // 요청자의 소유권 정보 가져오기
+    let sql = `
+    SELECT V.voucher_id, V.photocard_id, V.username, V.permanent
+    FROM Voucher as V
+    WHERE V.voucher_id=${haveVoucher.voucher_id}`;
+    let [[voucher]] = await con.query(sql);
+    console.log(voucher);
+
+    // 요청자의 소유권 검사
+    if (!voucher) {
+      await con.rollback();
+      return res.status(400).json({ message: '해당 소유권의 정보를 가져오지 못했습니다.' });
+    }
+    if (voucher.username !== user.username) {
+      await con.rollback();
+      return res.status(400).json({ message: '당신의 소유권이 아닙니다.' });
+    }
+    if (voucher.permanent !== 1) {
+      await con.rollback();
+      return res.status(400).json({ message: '임시 소유권으로는 교환 탐색 기능으로 교환이 불가능합니다.' });
+    }
+    
+    // trades[마지막]의 교환글 정보 가져오기
+    sql = `
+    SELECT T.trade_id, V.voucher_id, T.username, T.want_amount, T.state, V.permanent, V.photocard_id
+    FROM Trade as T
+    INNER JOIN Voucher as V ON V.voucher_id=T.voucher_id
+    WHERE T.trade_id=${trades[trades.length - 1].trade_id}`;
+    let [[finalTrade]] = await con.query(sql);
+    
+    if (!finalTrade) {
+      await con.rollback();
+      return res.status(400).json({ message: '교환글을 찾지 못했습니다.' });
+    }
+    if (finalTrade.state !== 'finding') {
+      await con.rollback();
+      return res.status(400).json({ message: '이미 교환이 완료된 교환글은 매칭 불가능합니다.' });
+    }
+    if (finalTrade.want_amount > 1) {
+      await con.rollback();
+      return res.status(400).json({ message: '받고자 하는 포토카드가 1개인 교환글만 매칭 가능합니다.' });
+    }
+    if (finalTrade.permanent != 1) {
+      await con.rollback();
+      return res.status(400).json({ message: '임시 소유권으로 등록한 교환글은 매칭 불가능합니다.' });
+    }
+
+    // 1) trades마다 다음 교환글로 교환 처리 ===========================================================
+    // ===============================================================================================
+    // ===============================================================================================
+    for (let i = 0; i < trades.length - 1; i++) {
+
+      // 현재 순회중인 교환글
+      let sql = `
+      SELECT T.trade_id, V.voucher_id, T.username, T.want_amount, T.state, V.permanent, V.photocard_id
+      FROM Trade as T
+      INNER JOIN Voucher as V ON V.voucher_id=T.voucher_id
+      WHERE T.trade_id=${trades[i].trade_id}`;
+      let [[trade]] = await con.query(sql);
+
+      // 현재 순회중인 교환글의 바로 다음 교환글
+      sql = `
+      SELECT T.trade_id, V.voucher_id, T.username, T.want_amount, T.state, V.permanent, V.photocard_id
+      FROM Trade as T
+      INNER JOIN Voucher as V ON V.voucher_id=T.voucher_id
+      WHERE T.trade_id=${trades[i+1].trade_id}`;
+      let [[nextTrade]] = await con.query(sql);
+
+      // 유효성 검사
+      if (!trade || !nextTrade) {
+        await con.rollback();
+        return res.status(400).json({ message: '교환글을 찾지 못했습니다.' });
+      }
+      if (trade.state !== 'finding' || nextTrade.state !== 'finding') {
+        await con.rollback();
+        return res.status(400).json({ message: '이미 완료된 교환글이 있어서 교환 불가능합니다.' });
+      }
+      if (trade.want_amount > 1 || nextTrade.want_amount > 1) {
+        await con.rollback();
+        return res.status(400).json({ message: '받고자 하는 포토카드가 1개인 교환글만 매칭 가능합니다.' });
+      }
+      if (trade.permanent != 1 || nextTrade.permanent != 1) {
+        await con.rollback();
+        return res.status(400).json({ message: '임시 소유권으로 등록한 교환글은 매칭 불가능합니다.' });
+      }
+
+      // 바로 다음 교환글이 원하는 포토카드 목록에 trade의 포토카드가 들어있는지 확인
+      sql = `
+      SELECT photocard_id
+      FROM Wantcard
+      WHERE trade_id=${nextTrade.trade_id}`;
+      let [wantcards] = await con.query(sql);
+      nextTrade.wantcards = wantcards.map((element) => (element.photocard_id)); // photocard_id만 추출해서 배열로 만듬
+      if (!nextTrade.wantcards.includes(trade.photocard_id)) {
+        await con.rollback();
+        return res.status(400).json({ message: '서버 문제로 원하지 않는 포토카드로 매칭된 교환글이 있어서 처리 불가능합니다.' });
+      }
+
+      // trade[i]의 소유권을 trades[i+1] 작성자에게 준다.
+      sql = `
+      UPDATE Voucher
+      SET username='${nextTrade.username}', state='traded'
+      WHERE voucher_id=${trade.voucher_id}`;
+      await con.execute(sql);
+
+      // 교환글 완료 처리
+      sql = `
+      UPDATE Trade
+      SET state='finished'
+      WHERE voucher_id=${trade.voucher_id}`;
+      await con.execute(sql);
+
+      // 교환 내역 기록 (trade[i] 작성자 -> trades[i+1] 작성자)
+      sql = `INSERT INTO TradeHistory (provider, recipient, voucher_id)
+      VALUES ('${trade.username}', '${nextTrade.username}', ${trade.voucher_id})`;
+      await con.execute(sql);
+    }
+
+    // 2) 요청자의 소유권 ==> trades[0] 작성자,
+    //    trades[마지막] 작성자의 소유권 ==> 요청자
+    //    교환 처리
+    // ===============================================================================================
+    // ===============================================================================================
+    // trades[0]의 교환글이 원하는 포토카드 목록에 요청자의 포토카드가 들어있는지 확인
+    sql = `
+    SELECT photocard_id
+    FROM Wantcard
+    WHERE trade_id=${trades[0].trade_id}`;
+    let [wantcards] = await con.query(sql);
+    wantcards = wantcards.map((element) => (element.photocard_id)); // photocard_id만 추출해서 배열로 만듬
+    if (!wantcards.includes(voucher.photocard_id)) {
+      await con.rollback();
+      return res.status(400).json({ message: '당신의 포토카드를 원하지 않는 교환글 매칭되어서 처리 불가능합니다.' });
+    }
+
+    // 요청자의 소유권을 trades[0] 작성자에게 준다.
+    sql = `
+    UPDATE Voucher
+    SET username='${trades[0].username}', state='traded'
+    WHERE voucher_id=${voucher.voucher_id}`;
+    await con.execute(sql);
+
+    // trades[마지막] 작성자의 소유권을 요청자에게 준다.
+    sql = `
+    UPDATE Voucher
+    SET username='${user.username}', state='traded'
+    WHERE voucher_id=${finalTrade.voucher_id}`;
+    await con.execute(sql);
+
+    // trades[마지막] 교환글 완료 처리
+    sql = `
+    UPDATE Trade
+    SET state='finished'
+    WHERE voucher_id=${finalTrade.voucher_id}`;
+    await con.execute(sql);
+
+    // 교환 내역 기록 (요청자 -> trades[0] 작성자)
+    sql = `INSERT INTO TradeHistory (provider, recipient, voucher_id)
+    VALUES ('${user.username}', '${trades[0].username}', ${voucher.voucher_id})`;
+    await con.execute(sql);
+
+    // 교환 내역 기록 (trades[마지막] 작성자 -> 요청자)
+    sql = `INSERT INTO TradeHistory (provider, recipient, voucher_id)
+    VALUES ('${finalTrade.username}', '${user.username}', ${finalTrade.voucher_id})`;
+    await con.execute(sql);
+
+    await con.commit();
+    return res.status(200).json({ message: '매칭된 교환 처리에 성공했습니다.' });
   } catch (err) {
     console.error(err);
+    await con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
-    await con.rollback();
     con.release();
   }
 
@@ -693,7 +874,6 @@ router.post('/trade/favorite/:tradeId', verifyLogin, async (req, res) => {
   } finally {
     con.release();
   }
-
 
   return res.status(501).json({ message: 'end of line' });
 });
