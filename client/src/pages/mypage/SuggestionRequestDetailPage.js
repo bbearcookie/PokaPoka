@@ -113,13 +113,10 @@ const SuggestionRequestDetailPage = () => {
         <Link to="/mypage/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
       </section>
       <section className="label_area">
-        <h1 className="label">답변</h1>
-        <Textarea
-          name="reply"
-          value={reply.reply}
-          placeholder="답변 대기중"
-          onChange={onChangeInput}
-        />
+        <p className="label">답변</p>
+      </section>
+      <section className="reply_area">
+        {reply.reply ? <p>{reply.reply}</p>: <p>답변 대기중</p>}
       </section>
     </UserTemplate>
   );

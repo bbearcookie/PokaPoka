@@ -1,7 +1,7 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
-const { isNull } = require('../utils/common');
+const { isNull, getWhereClause, convertToMysqlTime, convertToMysqlStr } = require('../utils/common');
 
 // 사용자 정보 - 일반 사용자: 아이디, 이름, 전화번호, 닉네임, 최애그룹
 router.get('/user/mypage', verifyLogin, async (req, res) => {
@@ -131,9 +131,9 @@ router.get('/admin/user/list', verifyLogin, async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `SELECT username, name, phone, nickname, favorite, regist_time FROM User WHERE role='user'`;
-    let [user] = await con.query(sql);
+    let [users] = await con.query(sql);
 
-    return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', user });
+    return res.status(200).json({ message: '사용자 목록 조회에 성공했습니다.', users });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -141,6 +141,45 @@ router.get('/admin/user/list', verifyLogin, async (req, res) => {
     con.release();
   }
 
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 관리자 - 모든 사용자 목록 조회 요청
+router.get('/user/list/all', verifyLogin, async (req, res) => {
+  const { accessToken } = req;
+  let { username } = req.query;
+  let { user } = req;
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  const con = await db.getConnection();
+  try {
+    // 쿼리에 사용할 수 있는 형태로 변환
+    username = convertToMysqlStr(username);
+
+    let whereSqls = [];
+    // 조회 조건에 username 필드에 대한 조건이 있으면 WHERE 조건에 추가
+    if (!isNull(username)) whereSqls.push(`T.username LIKE '%${username}%'`);
+
+    //관리자 정보 제외
+    whereSqls.push(`T.role='user'`);
+
+    let sql = `
+    SELECT T.username, T.name, T.phone, T.nickname, T.favorite, T.regist_time
+    FROM User as T
+    ${getWhereClause(whereSqls)}
+    ORDER BY T.regist_time DESC`;
+    let [users] = await con.query(sql);
+
+    return res.status(200).json({ message: '사용자 목록을 조회했습니다.', users });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+  
   return res.status(501).json({ message: 'end of line' });
 });
 

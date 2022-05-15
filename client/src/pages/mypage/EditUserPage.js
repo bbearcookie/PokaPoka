@@ -38,7 +38,14 @@ const EditUserPage = () => {
       // 페이지 로드시 동작
       const onLoad = async () => {
         try {
-          const res = await request.call(api.getGroupList);
+          let res = await request.call(api.getUserInfo);
+        setForm(produce(draft => {
+          draft.name = res.user.name;
+          draft.nickname = res.user.nickname;
+          draft.phone = res.user.phone;
+          draft.favorite = res.user.favorite;
+        }));
+          res = await request.call(api.getGroupList);
           setGroups(res.groups);
           const res2 = await request.call(api.getUserInfo);
           setForm(produce(draft => {

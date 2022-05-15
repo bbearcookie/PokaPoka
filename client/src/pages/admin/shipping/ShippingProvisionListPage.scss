@@ -1,13 +1,9 @@
-.ShippingRequestListPage {
+.ShippingProvisionListPage {
   margin: 0 10%;
-  display: flex;
-  flex-direction: column;
   text-align: center;
 
-  .title-label {
-    margin: 20px 0;
-    font-size: 36px;
-    text-align: center;
+  .LoadingSpinner {
+    top: 40%; left: 50%;
   }
 
   .title_area {
@@ -33,4 +29,5 @@
       }
     }
   }
+  
 }

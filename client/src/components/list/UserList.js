@@ -10,7 +10,6 @@ const UserList = ({ className, users, perPage }) => {
   const [currentPage, setCurrentPage] = useState(1); // 화면에 보여줄 현재 페이지 번호
   const numPages = Math.ceil(users.length / perPage); // 총 페이지 갯수
   const navigate = useNavigate();
-  let count = 0;
   
   // 상세 보기시 작동
   const onClickDetailView = (e) => {
@@ -43,8 +42,8 @@ const UserList = ({ className, users, perPage }) => {
         </thead>
         <tbody>
         {users ?
-          users.filter(user => isInCurrentPage(++count)).map(user => 
-            <tr key={count} username={user.username} onClick={onClickDetailView}>
+          users.filter((user, idx) => isInCurrentPage(idx + 1)).map((user, idx) => 
+            <tr key={idx} username={user.username} onClick={onClickDetailView}>
                 <td>{user.username}</td>
                 <td>{user.name}</td>
                 <td>{user.phone}</td>

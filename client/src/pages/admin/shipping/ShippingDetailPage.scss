@@ -1,4 +1,4 @@
-.SuggestionRequestDetailPage {
+.ShippingDetailPage {
   margin: 0 10%;
   display: flex;
   flex-direction: column;
@@ -67,6 +67,19 @@
       width: 100px; height: 50px;
       margin: 15px 0 0 15px;
     }
+
+    .add_button {
+      width: 150px; height: 50px;
+      margin: 15px 0 0 15px;
+      margin-left: 10px;
+      font-size: 16px;
+      background-color: rgb(206, 28, 73);
+      color: white;
+  
+      &:hover {
+        background-color: rgb(163, 33, 66);
+      }
+    }
   }
 
   .remove_button {
@@ -106,40 +119,32 @@
     }
   }
 
-  .card_section {
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .label {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .voucher_section{
     margin-top: 10px;
     text-align: center;
+    display: inline-block;
 
-    .MemberCard {
-      margin: 0 50px 50px 0;
+    .card_section {
+      margin-top: 10px;
+      text-align: center;
       display: inline-block;
-    }
-
-    .AlbumCard {
-      margin: 0 50px 50px 0;
-      display: inline-block;
+  
+      .VoucherCard {
+        margin: 0 25px 50px 25px;
+        display: inline-block;
+      }
     }
   }
-
-  .reply_area{
-    margin: 0px 80px; padding: 0;
-    display: flex;
-    justify-content: center;
- 
-    p{
-     
-        padding: 80px 140px;
-        width: 500px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 1px solid grey;
-    
-        .none{
-          color: darkgrey;
-        }
-
-    }
-    
-  }
+  
 }

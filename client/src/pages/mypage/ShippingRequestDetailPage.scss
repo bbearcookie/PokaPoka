@@ -1,4 +1,4 @@
-.SuggestionRequestDetailPage {
+.ShippingRequestDetailPage {
   margin: 0 10%;
   display: flex;
   flex-direction: column;
@@ -106,40 +106,32 @@
     }
   }
 
-  .card_section {
+  .title-label {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .label {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .voucher_section{
     margin-top: 10px;
     text-align: center;
+    display: inline-block;
 
-    .MemberCard {
-      margin: 0 50px 50px 0;
+    .card_section {
+      margin-top: 10px;
+      text-align: center;
       display: inline-block;
-    }
-
-    .AlbumCard {
-      margin: 0 50px 50px 0;
-      display: inline-block;
+  
+      .VoucherCard {
+        margin: 0 25px 50px 25px;
+        display: inline-block;
+      }
     }
   }
-
-  .reply_area{
-    margin: 0px 80px; padding: 0;
-    display: flex;
-    justify-content: center;
- 
-    p{
-     
-        padding: 80px 140px;
-        width: 500px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 1px solid grey;
-    
-        .none{
-          color: darkgrey;
-        }
-
-    }
-    
-  }
+  
 }
