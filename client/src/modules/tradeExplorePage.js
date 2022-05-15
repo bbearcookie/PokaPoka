@@ -23,19 +23,19 @@ const initialState = {
 }
 
 // 액션 타입 정의
-const SET_HAVE_GROUPID = 'photocardListPage/SET_HAVE_GROUPID';
-const SET_HAVE_MEMBERID = 'photocardListPage/SET_HAVE_MEMBERID';
-const SET_WANT_GROUPID = 'photocardListPage/SET_WANT_GROUPID';
-const SET_WANT_MEMBERID = 'photocardListPage/SET_WANT_MEMBERID';
-const SET_VOUCHER_ID = 'photocardListPage/SET_VOUCHER_ID';
-const SET_PHOTOCARD_ID = 'photocardListPage/SET_PHOTOCARD_ID';
-const SET_GROUPS = 'photocardListPage/SET_GROUPS';
-const SET_MEMBERS = 'photocardListPage/SET_MEMBERS';
-const SET_VOUCHERS = 'photocardListPage/SET_VOUCHERS';
-const SET_PHOTOCARDS = 'photocardListPage/SET_PHOTOCARDS';
-const SET_TRADES = 'photocardListPage/SET_TRADES';
-const SET_HAVE_VOUCHER = 'photocardListPage/SET_HAVE_VOUCHER';
-const SET_EXPORE_MESSAGE = 'photocardListPage/SET_EXPORE_MESSAGE';
+const SET_HAVE_GROUPID = 'tradeExplorePage/SET_HAVE_GROUPID';
+const SET_HAVE_MEMBERID = 'tradeExplorePage/SET_HAVE_MEMBERID';
+const SET_WANT_GROUPID = 'tradeExplorePage/SET_WANT_GROUPID';
+const SET_WANT_MEMBERID = 'tradeExplorePage/SET_WANT_MEMBERID';
+const SET_VOUCHER_ID = 'tradeExplorePage/SET_VOUCHER_ID';
+const SET_PHOTOCARD_ID = 'tradeExplorePage/SET_PHOTOCARD_ID';
+const SET_GROUPS = 'tradeExplorePage/SET_GROUPS';
+const SET_MEMBERS = 'tradeExplorePage/SET_MEMBERS';
+const SET_VOUCHERS = 'tradeExplorePage/SET_VOUCHERS';
+const SET_PHOTOCARDS = 'tradeExplorePage/SET_PHOTOCARDS';
+const SET_TRADES = 'tradeExplorePage/SET_TRADES';
+const SET_HAVE_VOUCHER = 'tradeExplorePage/SET_HAVE_VOUCHER';
+const SET_EXPORE_MESSAGE = 'tradeExplorePage/SET_EXPORE_MESSAGE';
 
 // 액션 생성 함수 생성 (state 값 변경하는 함수)
 export const setHaveGroupId = createAction(SET_HAVE_GROUPID, groupId => groupId);
