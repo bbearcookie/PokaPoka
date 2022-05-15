@@ -45,13 +45,14 @@ const TradeFavoriteListPage = () => {
 
     try {
       const res = await request.call(api.postTradeFavorite, tradeId);
-      setTrades(
-        trades.map(trade =>
-          trade.trade_id === parseInt(tradeId) ?
-          { ...trade, favorites: res.favorites } :
-          { ...trade }
-        )
-      );
+      setTrades(trades.filter(trade => trade.trade_id !== parseInt(tradeId)));
+      // setTrades(
+      //   trades.map(trade =>
+      //     trade.trade_id === parseInt(tradeId) ?
+      //     { ...trade, favorites: res.favorites } :
+      //     { ...trade }
+      //   )
+      // );
     } catch (err) {
       setMessage(err.response.data.message);
     }

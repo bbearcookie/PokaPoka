@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-export const BACKEND = 'http://localhost:5000'; // 백엔드 서버 주소
+// export const BACKEND = 'http://localhost:5000'; // 백엔드 서버 주소
+export const BACKEND = process.env.REACT_APP_BACKEND_URI;
 const options = { withCredentials: true }; // 여러 API 요청들이 공통적으로 사용할만한 옵션
 
 // 로컬 로그인 요청
@@ -461,6 +462,21 @@ export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detai
 export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/api/trade/transaction/${tradeId}`,
   {
     useVouchers: form.useVouchers.map(element => element.voucher_id)
+  },
+  options
+);
+
+// 매칭 가능한 교환글이 있는지 탐색 요청
+export const getTradeExplore = (haveVoucherId, wantPhotocardId) => axios.get(
+  `${BACKEND}/api/trade/explore?haveVoucherId=${haveVoucherId}&wantPhotocardId=${wantPhotocardId}`,
+  options
+);
+
+// 탐색 했던 정보를 가지고 교환 요청
+export const postTradeExplore = (haveVoucher, trades) => axios.post(`${BACKEND}/api/trade/explore`, 
+  {
+    haveVoucher: haveVoucher,
+    trades: trades
   },
   options
 );

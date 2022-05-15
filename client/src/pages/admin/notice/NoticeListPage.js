@@ -5,8 +5,8 @@ import * as api from '../../../utils/api';
 import AdminTemplate from '../../../templates/AdminTemplate';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import Button from '../../../components/form/Button';
-import './NoticeListPage.scss';
 import NoticeList from '../../../components/list/NoticeList';
+import './NoticeListPage.scss';
 
 // 공지사항 목록 조회 페이지
 const NoticeListPage = () => {
@@ -24,7 +24,7 @@ const NoticeListPage = () => {
     }
   };
   useEffect(() => { onLoad(); }, []);
-  console.log(notice);
+
   return (
     <AdminTemplate className="NoticeListPage">
       {request.loading ? <LoadingSpinner /> : null}

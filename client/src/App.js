@@ -4,7 +4,6 @@ import AuthContext from './contexts/Auth';
 import { STORAGE_KEY_NAME } from './contexts/Auth';
 import IndexPage from './pages/IndexPage';
 import TestPage from './pages/TestPage';
-import SocialLoginTestPage from './pages/SocialLoginTestPage';
 import LoginPage from './pages/LoginPage';
 import LoginSuccessPage from './pages/LoginSuccessPage';
 import AdminMainPage from './pages/admin/MainPage';
@@ -59,9 +58,10 @@ import TemporalVoucherListPage from './pages/stoarage/TemporalVoucherListPage';
 import TradeListPage from './pages/trade/TradeListPage';
 import TradeFavoriteListPage from './pages/trade/TradeFavoriteListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
+import TradeDetailPage from './pages/trade/TradeDetailPage';
+import TradeExplorePage from './pages/trade/TradeExplorePage';
 import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
 import ShippingRequestListPage from './pages/mypage/ShippingRequestListPage';
-import TradeDetailPage from './pages/trade/TradeDetailPage';
 import ShippingRequestDetailPage from './pages/mypage/ShippingRequestDetailPage';
 import ShippingListPage from './pages/admin/shipping/ShippingListPage';
 import ShippingDetailPage from './pages/admin/shipping/ShippingDetailPage';
@@ -91,7 +91,6 @@ function App() {
         <Route path="/main/notice/detail/:noticeId" element={<NoticeDetailUserPage />}/>
 
         <Route path="/test" element={<TestPage />} />
-        <Route path="/social" element={<SocialLoginTestPage />} />
 
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/login/success" element={<LoginSuccessPage />} />
@@ -166,6 +165,7 @@ function App() {
         <Route path="/trade/writer" element={<TradeWriterPage />}/>
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
         <Route path="/trade/detail/:tradeId" element={<TradeDetailPage />}/>
+        <Route path="/trade/explore" element={<TradeExplorePage />}/>
       </Routes>
     </div>
   );
