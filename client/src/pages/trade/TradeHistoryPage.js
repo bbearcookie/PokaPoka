@@ -43,10 +43,10 @@ const TradeHistoryPage = () => {
     {message ? <MessageLabel>{message}</MessageLabel> : null}
     <h1 className="title-label">교환 내역</h1>
     <p className="label">내가 줬던 기록</p>
-    <TradeHistoryList contents={provisionHistories} perPage="10" />
+    <TradeHistoryList contents={provisionHistories} perPage="4" />
 
     <p className="label">내가 받았던 기록</p>
-    <TradeHistoryList contents={reciptHistories} perPage="10" />
+    <TradeHistoryList contents={reciptHistories} perPage="4" />
 
     </UserTemplate>
   );

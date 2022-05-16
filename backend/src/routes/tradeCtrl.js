@@ -894,13 +894,14 @@ router.get('/trade/history/provision', verifyLogin, async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `
-    SELECT H.history_id, H.provider, H.recipient, H.trade_time,
+    SELECT H.history_id, H.recipient, H.trade_time,
     V.voucher_id, P.name, P.image_name, A.name as album_name
     FROM TradeHistory as H
     INNER JOIN Voucher as V ON V.voucher_id=H.voucher_id
     INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id=P.album_id
-    WHERE H.provider='${user.username}'`
+    WHERE H.provider='${user.username}'
+    ORDER BY H.trade_time DESC`
     let [histories] = await con.query(sql);
     
     return res.status(200).json({ message: '당신이 보냈던 포토카드 교환 내역 조회를 성공했습니다.', histories });
@@ -924,13 +925,14 @@ router.get('/trade/history/receipt', verifyLogin, async (req, res) => {
   const con = await db.getConnection();
   try {
     let sql = `
-    SELECT H.history_id, H.provider, H.recipient, H.trade_time,
+    SELECT H.history_id, H.provider, H.trade_time,
     V.voucher_id, P.name, P.image_name, A.name as album_name
     FROM TradeHistory as H
     INNER JOIN Voucher as V ON V.voucher_id=H.voucher_id
     INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id=P.album_id
-    WHERE H.recipient='${user.username}'`
+    WHERE H.recipient='${user.username}'
+    ORDER BY H.trade_time DESC`
     let [histories] = await con.query(sql);
     
     return res.status(200).json({ message: '당신이 받았던 포토카드 교환 내역 조회를 성공했습니다.', histories });

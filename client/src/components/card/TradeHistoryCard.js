@@ -14,9 +14,10 @@ const TradeHistoryCard = ({ className, historyId, provider, recipient, name, alb
           albumName={albumName}
           src={`${BACKEND}/image/photocard/${imageName}`}
         />
-        <p className="label"><b>보낸사람</b> {provider}</p>
-        <p className="label"><b>받은사람</b> {recipient}</p>
-        <p className="label"><b>교환일시</b> {getFormattedDate(tradeTime)}</p>
+        {provider && <p className="label"><b>보낸사람</b> {provider}</p>}
+        {recipient && <p className="label"><b>받은사람</b> {recipient}</p>}
+        <p className="label"><b>교환일시</b></p>
+        <p className="label">{getFormattedDate(tradeTime)}</p>
         <p className="label">{getFormattedTime(tradeTime)}</p>
       </section>
     </article>
@@ -25,8 +26,8 @@ const TradeHistoryCard = ({ className, historyId, provider, recipient, name, alb
 
 TradeHistoryCard.defaultProps = {
   historyId: 0,
-  provider: '보낸사람',
-  recipient: '받은사람',
+  provider: '',
+  recipient: '',
   name: '포토카드명',
   albumName: '앨범명'
 }
