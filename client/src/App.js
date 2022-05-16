@@ -60,6 +60,7 @@ import TradeFavoriteListPage from './pages/trade/TradeFavoriteListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
 import TradeDetailPage from './pages/trade/TradeDetailPage';
 import TradeExplorePage from './pages/trade/TradeExplorePage';
+import TradeHistoryPage from './pages/trade/TradeHistoryPage';
 import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
 import ShippingRequestListPage from './pages/mypage/ShippingRequestListPage';
 import ShippingRequestDetailPage from './pages/mypage/ShippingRequestDetailPage';
@@ -166,6 +167,7 @@ function App() {
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
         <Route path="/trade/detail/:tradeId" element={<TradeDetailPage />}/>
         <Route path="/trade/explore" element={<TradeExplorePage />}/>
+        <Route path="/trade/history" element={<TradeHistoryPage />}/>
       </Routes>
     </div>
   );
