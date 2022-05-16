@@ -401,6 +401,47 @@ export const getTradeListAll = (filter) => axios.get(
   options
 );
 
+// 내가 찜한 교환글 목록 조회 요청
+export const getTradeListFavorite = () => axios.get(`${BACKEND}/api/trade/list/favorite`, options);
+
+// 교환글 상세 조회 요청
+export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detail/${tradeId}`);
+
+// 해당 교환글에게 교환 신청
+export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/api/trade/transaction/${tradeId}`,
+  {
+    useVouchers: form.useVouchers.map(element => element.voucher_id)
+  },
+  options
+);
+
+// 매칭 가능한 교환글이 있는지 탐색 요청
+export const getTradeExplore = (haveVoucherId, wantPhotocardId) => axios.get(
+  `${BACKEND}/api/trade/explore?haveVoucherId=${haveVoucherId}&wantPhotocardId=${wantPhotocardId}`,
+  options
+);
+
+// 탐색 했던 정보를 가지고 교환 요청
+export const postTradeExplore = (haveVoucher, trades) => axios.post(`${BACKEND}/api/trade/explore`, 
+  {
+    haveVoucher: haveVoucher,
+    trades: trades
+  },
+  options
+);
+
+// 해당 교환글에게 찜하기 요청
+export const postTradeFavorite = (tradeId) => axios.post(`${BACKEND}/api/trade/favorite/${tradeId}`, {}, options);
+
+// 해당 교환글이 원하는 포토카드 중에서 자신이 가지고 있는 소유권 목록 조회
+export const getTradeWantcardMine = (tradeId) => axios.get(`${BACKEND}/api/trade/wantcard/mine/${tradeId}`, options);
+
+// 사용자가 보냈던 포토카드 교환 내역 조회
+export const getTradeHistoryProvision = () => axios.get(`${BACKEND}/api/trade/history/provision`, options);
+
+// 사용자가 받았던 포토카드 교환 내역 조회
+export const getTradeHistoryReceipt = () => axios.get(`${BACKEND}/api/trade/history/receipt`, options);
+
 // shippingCtrl
 // 마이페이지 배송 정보 조회
 export const getAddress = () => axios.get(`${BACKEND}/api/shipping/deliveryInfo`, options);
@@ -459,43 +500,6 @@ export const postPayment = (payment, vouchers) => axios.post(`${BACKEND}/api/pay
   },
   options
 );
-
-
-
-// 내가 찜한 교환글 목록 조회 요청
-export const getTradeListFavorite = () => axios.get(`${BACKEND}/api/trade/list/favorite`, options);
-
-// 교환글 상세 조회 요청
-export const getTradeDetail = (tradeId) => axios.get(`${BACKEND}/api/trade/detail/${tradeId}`);
-
-// 해당 교환글에게 교환 신청
-export const postTradeTransaction = (form, tradeId) => axios.post(`${BACKEND}/api/trade/transaction/${tradeId}`,
-  {
-    useVouchers: form.useVouchers.map(element => element.voucher_id)
-  },
-  options
-);
-
-// 매칭 가능한 교환글이 있는지 탐색 요청
-export const getTradeExplore = (haveVoucherId, wantPhotocardId) => axios.get(
-  `${BACKEND}/api/trade/explore?haveVoucherId=${haveVoucherId}&wantPhotocardId=${wantPhotocardId}`,
-  options
-);
-
-// 탐색 했던 정보를 가지고 교환 요청
-export const postTradeExplore = (haveVoucher, trades) => axios.post(`${BACKEND}/api/trade/explore`, 
-  {
-    haveVoucher: haveVoucher,
-    trades: trades
-  },
-  options
-);
-
-// 해당 교환글에게 찜하기 요청
-export const postTradeFavorite = (tradeId) => axios.post(`${BACKEND}/api/trade/favorite/${tradeId}`, {}, options);
-
-// 해당 교환글이 원하는 포토카드 중에서 자신이 가지고 있는 소유권 목록 조회
-export const getTradeWantcardMine = (tradeId) => axios.get(`${BACKEND}/api/trade/wantcard/mine/${tradeId}`, options);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

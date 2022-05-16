@@ -10,14 +10,29 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import Select from '../../components/form/Select';
 import Input from '../../components/form/Input';
 import MessageLabel from '../../components/MessageLabel';
-import TradeList from '../../components/list/TradeList';
+import TradeHistoryList from '../../components/list/TradeHistoryList';
 import TradeSideBar from '../../components/sidebar/TradeSideBar';
 import UserTemplate from '../../templates/UserTemplate';
 import './TradeHistoryPage.scss';
 
 const TradeHistoryPage = () => {
+  const [provisionHistories, setProvisionHistories] = useState([]);
+  const [reciptHistories, setReciptHistories] = useState([]);
   const [message, setMessage] = useState('');
   const request = useRequest();
+
+  // 페이지 로드시 동작
+  const onLoad = async () => {
+    try {
+      const res = await request.call(api.getTradeHistoryProvision);
+      const res2 = await request.call(api.getTradeHistoryReceipt);
+      setProvisionHistories(res.histories);
+      setReciptHistories(res2.histories);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+  useEffect(() => { onLoad(); }, []);
 
   return (
     <UserTemplate
@@ -27,8 +42,11 @@ const TradeHistoryPage = () => {
     {request.loading ? <LoadingSpinner /> : null}
     {message ? <MessageLabel>{message}</MessageLabel> : null}
     <h1 className="title-label">교환 내역</h1>
-    <p className="label">보낸 포토카드 기록</p>
-    <p className="label">받은 포토카드 기록</p>
+    <p className="label">내가 줬던 기록</p>
+    <TradeHistoryList contents={provisionHistories} perPage="10" />
+
+    <p className="label">내가 받았던 기록</p>
+    <TradeHistoryList contents={reciptHistories} perPage="10" />
 
     </UserTemplate>
   );
