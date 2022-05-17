@@ -45,13 +45,6 @@ const SuggestionRequestDetailPage = () => {
   const navigate = useNavigate();
   const request = useRequest();
 
-  // input 값 변경시
-  const onChangeInput = (e) => {
-    setReply(produce(draft => {
-      draft[e.target.name] = e.target.value;
-    }));
-  }
-
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
@@ -113,10 +106,12 @@ const SuggestionRequestDetailPage = () => {
         <Link to="/mypage/suggestion"><Button className="cancel_button">뒤로 가기</Button></Link>
       </section>
       <section className="label_area">
-        <p className="label">답변</p>
-      </section>
-      <section className="reply_area">
-        {reply.reply ? <p>{reply.reply}</p>: <p>답변 대기중</p>}
+        <h1 className="label">답변</h1>
+        <Textarea
+          name="reply"
+          value={reply.reply}
+          placeholder="답변을 입력하세요"
+        />
       </section>
     </UserTemplate>
   );

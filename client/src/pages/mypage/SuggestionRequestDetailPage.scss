@@ -36,6 +36,12 @@
   .Textarea {
     width: 100%;
     min-height: 200px;
+
+    &:focus {
+      border: 1px solid hsl(222, 9%, 78%);
+      box-shadow: none;
+      transition: none;
+    }
   }
 
   .label_area {

@@ -158,7 +158,7 @@ const UserDetailPage = () => {
       {request.loading ? <LoadingSpinner /> : null}
       {message ? <MessageLabel>{message}</MessageLabel> : null}
 
-      <h1 className="title-label">회원정보</h1>
+      <h1 className="title-label">사용자 정보</h1>
       <section className="InfoManage_sec">
         <form>
           <Table>

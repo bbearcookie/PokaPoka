@@ -62,7 +62,7 @@ const PermanentVoucherListPage = () => {
       {groups ?
       groups.map(group =>
         <section className="card_section" key={group.group_id}>
-          {vouchers.find(v => v.group_id === group.group_id) &&
+          {vouchers.find(v => v.group_id === group.group_id && v.shipping === 1) &&
           <p className="label">{group.name}</p>}
           {vouchers.filter(v => v.group_id === group.group_id && v.shipping === 1).map(v =>
             <VoucherCard
