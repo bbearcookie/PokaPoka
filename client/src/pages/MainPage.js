@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useRequest from '../utils/useRequest';
 import * as api from '../utils/api';
 import UserTemplate from '../templates/UserTemplate';
-import PhotoStoarageSidebar from '../components/sidebar/PhotoStoarageSidebar';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NoticeList from '../components/list/NoticeList';
 import TradeList from '../components/list/TradeList';
@@ -15,6 +15,7 @@ const MainPage = () => {
   const request = useRequest();
   const [notices, setNotices] = useState([]);
   const [trades, setTrades] = useState([]);
+  const navigate = useNavigate();
 
   // 화면 로드시 작동
   const onLoad = async (e) => {
@@ -22,7 +23,8 @@ const MainPage = () => {
       const res = await request.call(api.getNoticeList);
       setNotices(res.notice);
       const res2 = await request.call(api.getTradeListAll, {
-        state: 'finding'
+        state: 'finding',
+        limit: 5
       });
       setTrades(res2.trades);
     } catch (err) {
@@ -30,6 +32,32 @@ const MainPage = () => {
     }
   };
   useEffect(() => { onLoad(); }, []);
+
+  // 교환글 상세 보기시 작동
+  const onClickDetailView = (e) => {
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    return navigate(`/trade/detail/${tradeId}?backURI=/main`);
+  }
+
+  // 찜하기 버튼 클릭시 작동
+  const onClickFavorite = async (e) => {
+    e.stopPropagation();
+    const tradeId = e.currentTarget.getAttribute('trade_id');
+
+    try {
+      const res = await request.call(api.postTradeFavorite, tradeId);
+      setTrades(
+        trades.map(trade =>
+          trade.trade_id === parseInt(tradeId) ?
+          { ...trade, favorites: res.favorites } :
+          { ...trade }
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <UserTemplate className="MainPage">
@@ -66,7 +94,7 @@ const MainPage = () => {
       <section className="title_area">
         <h1 className="title-label">최근 진행중인 포토카드 교환글</h1>
       </section>
-      <TradeList contents={trades} perPage="5" />
+      <TradeList contents={trades} perPage="5" onDetailView={onClickDetailView} onFavorite={onClickFavorite} />
 
     </UserTemplate>
   );

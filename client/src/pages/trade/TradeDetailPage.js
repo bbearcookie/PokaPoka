@@ -56,7 +56,7 @@ const TradeDetailPage = () => {
       const res2 = await request.call(api.getTradeWantcardMine, tradeId);
       setVouchers(res2.vouchers);
     } catch (err) {
-      setMessage(err.response.data.message);
+      // setMessage(err.response.data.message);
     }
   }
   useEffect(() => { onLoad(); }, []);

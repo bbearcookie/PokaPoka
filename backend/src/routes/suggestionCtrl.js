@@ -14,7 +14,7 @@ router.post('/new', verifyLogin, async (req, res) => {
     let { user } = req;
 
     //로그인 상태 검사
-    if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+    if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
     
     const con = await db.getConnection();
     try {
@@ -61,7 +61,7 @@ router.get('/list', verifyLogin, async (req, res) => {
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
       else{
-        return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+        return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
       }
     } catch (err) {
       console.error(err);

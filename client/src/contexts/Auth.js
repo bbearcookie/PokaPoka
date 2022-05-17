@@ -1,4 +1,6 @@
 import React, { createContext, useState } from 'react';
+import axios from 'axios';
+import * as api from '../utils/api';
 
 export const STORAGE_KEY_NAME = 'USER'; // 세션 스토리지에 저장할 키
 
@@ -28,15 +30,15 @@ const AuthProvider = ({ children }) => {
     };
     setUser(user);
 
-    // 상태 값은 새로고침시 초기화되기 때문에 브라우저의 세션 스토리지에도 정보를 저장해둔다.
+    // 상태 값은 새로고침시 초기화되기 때문에 브라우저의 로컬 스토리지에도 정보를 저장해둔다.
     // 페이지 새로고침시 세션 스토리지에 저장된 정보를 가지고 상태 값에 그대로 저장하게 된다.
-    sessionStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(user));
   }
 
   // 로그아웃시 호출하여 사용자 정보를 초기 상태로 초기화 하는 함수
   const logout = () => {
     setUser(initialUser); // 상태 값 초기화
-    sessionStorage.removeItem(STORAGE_KEY_NAME); // 세션 스토리지 값 초기화
+    localStorage.removeItem(STORAGE_KEY_NAME); // 로컬 스토리지 값 초기화
   }
 
   // 외부에 반환할 값

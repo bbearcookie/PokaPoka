@@ -36,7 +36,7 @@ const TemporalVoucherListPage = () => {
       const res3 = await request.call(api.getGroupList);
       setGroups(res3.groups);
     } catch (err) {
-      console.error(err);
+      setMessage(err.response.data.message);
     }
   };
   useEffect(() => { onLoad(); }, []);

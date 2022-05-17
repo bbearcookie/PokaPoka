@@ -1,0 +1,28 @@
+.TradeHistoryCard {
+  width: fit-content;
+  margin: 0 25px 50px 25px;
+  padding: 25px;
+  display: inline-block;
+  background-color: beige;
+  border: 1px solid gainsboro;
+  box-shadow: 0px 5px 11px 1px #C0C0C0;
+  border-radius: 10px;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.1s;
+
+  .card_section {
+    text-align: center;
+
+    .VoucherCard {
+      background-color: white;
+      margin-bottom: 25px;
+    }
+
+    .label {
+      margin: 0.5em 0;
+      font-size: 16px;
+    }
+
+  }
+}

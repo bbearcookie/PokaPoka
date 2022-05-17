@@ -33,7 +33,12 @@ const TradeSidebar = () => {
         )}
         to="/trade/explore"
       >교환 탐색</Link>
-      <Link className="link" to="#">교환 내역</Link>
+      <Link
+        className={classNames("link",
+        {"active": URI.includes('/trade/history')}
+        )}
+        to="/trade/history"
+      >교환 내역</Link>
     </SidebarTemplate>
   );
 };

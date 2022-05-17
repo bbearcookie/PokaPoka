@@ -29,7 +29,7 @@ const PermanentVoucherListPage = () => {
       const res2 = await request.call(api.getGroupList);
       setGroups(res2.groups);
     } catch (err) {
-      console.error(err);
+      setMessage(err.response.data.message);
     }
   };
   useEffect(() => { onLoad(); }, []);

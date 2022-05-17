@@ -1,5 +1,7 @@
 import { useEffect, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import useRequest from './utils/useRequest';
+import * as api from './utils/api';
 import AuthContext from './contexts/Auth';
 import { STORAGE_KEY_NAME } from './contexts/Auth';
 import IndexPage from './pages/IndexPage';
@@ -60,6 +62,7 @@ import TradeFavoriteListPage from './pages/trade/TradeFavoriteListPage';
 import TradeWriterPage from './pages/trade/TradeWriterPage';
 import TradeDetailPage from './pages/trade/TradeDetailPage';
 import TradeExplorePage from './pages/trade/TradeExplorePage';
+import TradeHistoryPage from './pages/trade/TradeHistoryPage';
 import ShippingRequestPage from './pages/mypage/ShippingRequestPage';
 import ShippingRequestListPage from './pages/mypage/ShippingRequestListPage';
 import ShippingRequestDetailPage from './pages/mypage/ShippingRequestDetailPage';
@@ -69,16 +72,22 @@ import ShippingProvisionListPage from './pages/admin/shipping/ShippingProvisionL
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
+  const request = useRequest();
 
   // 페이지 로드시 동작. 새로고침이나 직접 URL 입력해서 접근한 경우 상태 값이 지워지는데,
-  // 세션 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 상태를 업데이트함.
+  // 로컬 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 API 서버에 검증을 요청한 뒤 상태를 업데이트함.
   const onLoad = async () => {
+    let user = localStorage.getItem(STORAGE_KEY_NAME);
+    if (!user) return; // 로그인 정보가 없으면 중지
+
+    // API 서버에 로그인 정보 검증 요청
     try {
-      if (!authState.user.username) {
-        const user = sessionStorage.getItem(STORAGE_KEY_NAME);
-        if (user) authActions.login(JSON.parse(user));
-      }
-    } catch (err) {}
+      const res = await request.call(api.postTokenTest);
+      authActions.login(res);
+    // 검증 실패시 세션과 상태 초기화
+    } catch (err) {
+      authActions.logout();
+    }
   }
   useEffect(() => { onLoad(); }, []);
 
@@ -166,6 +175,7 @@ function App() {
         <Route path="/trade/writer/:tradeId" element={<TradeWriterPage />}/>
         <Route path="/trade/detail/:tradeId" element={<TradeDetailPage />}/>
         <Route path="/trade/explore" element={<TradeExplorePage />}/>
+        <Route path="/trade/history" element={<TradeHistoryPage />}/>
       </Routes>
     </div>
   );
