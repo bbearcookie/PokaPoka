@@ -176,7 +176,21 @@ const TradeExplorePage = () => {
     try {
       const res = await request.call(api.postTradeExplore, haveVoucher, trades);
       console.log(res);
-      return navigate('/stoarage/permanent');
+      // 교환 성공시 상태 초기화하고 교환 내역 페이지로 이동
+      dispatch(setHaveGroupId(''));
+      dispatch(setHaveMemberId(''));
+      dispatch(setWantGroupId(''));
+      dispatch(setWantMemberId(''));
+      dispatch(setVoucherId(''));
+      dispatch(setPhotocardId(''));
+      dispatch(setGroups([]));
+      dispatch(setMembers([]));
+      dispatch(setVouchers([]));
+      dispatch(setPhotocards([]));
+      dispatch(setTrades([]));
+      dispatch(setHaveVoucher({}));
+      dispatch(setExploreMessage(''));
+      return navigate('/trade/history');
     } catch (err) {
       setTradeMessage(err.response.data.message);
     }
@@ -198,9 +212,13 @@ const TradeExplorePage = () => {
           <h1>교환 요청</h1>
         </ModalHeader>
         <ModalBody>
+          {trades.length > 0 &&
+          <>
           <p>{haveVoucher.name} 카드를 {trades[0].username} 에게 주고</p>
           <p>{trades[trades.length - 1].username} (으)로부터 {trades[trades.length - 1].name} 을(를) 받게 됩니다.</p>
           <p>정말로 교환하시겠습니까?</p>
+          </>
+          }
         </ModalBody>
         <ModalFooter>
           <Button className="cancel_button" onClick={closeTradeModal}>취소</Button>
