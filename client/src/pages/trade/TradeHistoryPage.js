@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { setSelect, setGroups, setMembers, setAlbums, setTrades } from '../../modules/tradeListPage';
 import produce from 'immer';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';

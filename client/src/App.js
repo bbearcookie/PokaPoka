@@ -1,5 +1,7 @@
 import { useEffect, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import useRequest from './utils/useRequest';
+import * as api from './utils/api';
 import AuthContext from './contexts/Auth';
 import { STORAGE_KEY_NAME } from './contexts/Auth';
 import IndexPage from './pages/IndexPage';
@@ -70,14 +72,24 @@ import ShippingProvisionListPage from './pages/admin/shipping/ShippingProvisionL
 
 function App() {
   const { state: authState, actions: authActions } = useContext(AuthContext);
+  const request = useRequest();
 
   // 페이지 로드시 동작. 새로고침이나 직접 URL 입력해서 접근한 경우 상태 값이 지워지는데,
   // 세션 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 상태를 업데이트함.
   const onLoad = async () => {
     try {
       if (!authState.user.username) {
-        const user = sessionStorage.getItem(STORAGE_KEY_NAME);
-        if (user) authActions.login(JSON.parse(user));
+        let user = sessionStorage.getItem(STORAGE_KEY_NAME);
+
+        // 세션 스토리지에 저장된 사용자 정보가 있는 경우
+        if (user) {
+          authActions.login(JSON.parse(user));
+        // 세션 스토리지에 저장된 사용자 정보가 없어서 토큰을 가지고 사용자 정보를 API 서버에 요청하는 경우
+        } else {
+          const res = await request.call(api.postTokenTest);
+          authActions.login(res);
+          console.log(res);
+        }
       }
     } catch (err) {}
   }
