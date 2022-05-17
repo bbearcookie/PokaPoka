@@ -8,7 +8,7 @@ router.get('/shipping/deliveryInfo', verifyLogin, async (req, res) => {
     let { user } = req;
   
     // 로그인 상태 확인
-    if (!user) return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+    if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
   
     const con = await db.getConnection();
     try {
@@ -35,7 +35,7 @@ router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
     if(address) address = address + ' ' + address_detail;
   
     // 로그인 상태 확인
-    if (!user) return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+    if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
   
     const con = await db.getConnection();
     try {
@@ -70,7 +70,7 @@ router.get('/shipping/request/voucher/mine', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
@@ -174,7 +174,7 @@ router.get('/shipping/list', verifyLogin, async (req, res) => {
       return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request });
     }
     else{
-      return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+      return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
     }
   } catch (err) {
     console.error(err);

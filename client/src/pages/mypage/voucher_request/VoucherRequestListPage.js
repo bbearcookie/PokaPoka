@@ -10,8 +10,8 @@ import MyPageSidebar from '../../../components/sidebar/MyPageSidebar';
 import './VoucherRequestListPage.scss';
 
 const VoucherRequestListPage = () => {
-  const request = useRequest();
   const [requests, setRequests] = useState([]);
+  const request = useRequest();
 
   // 화면 로드시 작동
   const onLoad = async (e) => {

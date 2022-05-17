@@ -12,7 +12,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
@@ -65,7 +65,7 @@ router.get('/request/list/mine', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
@@ -159,7 +159,7 @@ router.post('/request', voucherImageUpload.single('image'), verifyLogin, async (
   // 로그인 상태 검사
   if (!user) {
     removeTempFile();
-    return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+    return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
   }
 
   // 유효성 검사
@@ -212,7 +212,7 @@ router.delete('/request/:requestId', verifyLogin, async (req, res) => {
   const { user, accessToken } = req;
 
   // 로그인 상태 검사
-  if (!user) return res.status(403).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {

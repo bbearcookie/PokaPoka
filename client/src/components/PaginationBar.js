@@ -37,18 +37,22 @@ const PaginationBar = ({ className, numPages, currentPage, setCurrentPage }) => 
   }
 
   return (
-    <article className={classNames("PaginationBar", className)}>
-      <span className="page_button" onClick={onClickPrevPageButton}>&lt;</span>
+    <>
+      {getNumOfPageButton() > 1 &&
+      <article className={classNames("PaginationBar", className)}>
+        <span className="page_button" onClick={onClickPrevPageButton}>&lt;</span>
 
-      {Array(getNumOfPageButton()).fill().map((_, i) => 
-        <span
-          key={i + 1}
-          className={classNames("page_button", {"active": currentPage === firstPage + i})}
-          onClick={onClickPageButton}
-      >{firstPage + i}</span>)}
+        {Array(getNumOfPageButton()).fill().map((_, i) => 
+          <span
+            key={i + 1}
+            className={classNames("page_button", {"active": currentPage === firstPage + i})}
+            onClick={onClickPageButton}
+        >{firstPage + i}</span>)}
 
-      <span className="page_button" onClick={onClickNextPageButton}>&gt;</span>
-    </article>
+        <span className="page_button" onClick={onClickNextPageButton}>&gt;</span>
+      </article>
+      }
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
 router.get('/trade/list/all', async (req, res) => {
-  const { groupId, memberId, albumId, state } = req.query;
+  const { groupId, memberId, albumId, state, limit } = req.query;
   let { username } = req.query;
 
   const con = await db.getConnection();
@@ -14,6 +14,7 @@ router.get('/trade/list/all', async (req, res) => {
     username = convertToMysqlStr(username);
 
     let whereSqls = [];
+    let limitStr = '';
     // 조회 조건에 groupId 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(groupId) && groupId !== 'all') whereSqls.push(`P.group_id=${groupId}`);
     // 조회 조건에 memberId 필드에 대한 조건이 있으면 WHERE 조건에 추가
@@ -25,6 +26,9 @@ router.get('/trade/list/all', async (req, res) => {
     // 조회 조건에 username 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(username)) whereSqls.push(`T.username LIKE '%${username}%'`);
 
+    // 조회 조건에 교환글 개수 제한 있으면 LIMIT 조건에 추가
+    if (!isNull(limit)) limitStr = `LIMIT ${limit}`;
+
     let sql = `
     SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,
     permanent, P.image_name, P.name, A.name as album_name
@@ -33,7 +37,8 @@ router.get('/trade/list/all', async (req, res) => {
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id = P.album_id
     ${getWhereClause(whereSqls)}
-    ORDER BY T.regist_time DESC`;
+    ORDER BY T.regist_time DESC
+    ${limitStr}`;
 
     // 조회한 게시글마다 반복
     let [trades] = await con.query(sql);
@@ -69,7 +74,7 @@ router.get('/trade/list/favorite', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
@@ -165,7 +170,7 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '조회할 교환글을 선택해주세요.' });
@@ -220,7 +225,7 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!haveVoucherId) return res.status(400).json({ message: '사용하려는 소유권을 선택해주세요.' });
@@ -279,7 +284,7 @@ router.put('/trade/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '수정하려는 교환글을 선택해주세요.' });
@@ -349,7 +354,7 @@ router.delete('/trade/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
@@ -393,7 +398,7 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
@@ -629,7 +634,7 @@ router.post('/trade/explore', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!haveVoucher) return res.status(400).json({ message: '사용할 소유권을 선택해주세요.' });
@@ -847,7 +852,7 @@ router.post('/trade/favorite/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '찜하기 할 교환글을 선택해주세요.' });
@@ -874,6 +879,68 @@ router.post('/trade/favorite/:tradeId', verifyLogin, async (req, res) => {
     let [favorites] = await con.query(sql);
 
     return res.status(200).json({ message: '해당 교환글을 찜하기 처리 했습니다.', favorites });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 사용자가 보냈던 포토카드 교환 내역 조회
+router.get('/trade/history/provision', verifyLogin, async (req, res) => {
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
+
+  const con = await db.getConnection();
+  try {
+    let sql = `
+    SELECT H.history_id, H.recipient, H.trade_time,
+    V.voucher_id, P.name, P.image_name, A.name as album_name
+    FROM TradeHistory as H
+    INNER JOIN Voucher as V ON V.voucher_id=H.voucher_id
+    INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
+    INNER JOIN AlbumData as A ON A.album_id=P.album_id
+    WHERE H.provider='${user.username}'
+    ORDER BY H.trade_time DESC`
+    let [histories] = await con.query(sql);
+    
+    return res.status(200).json({ message: '당신이 보냈던 포토카드 교환 내역 조회를 성공했습니다.', histories });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
+// 사용자가 받았던 포토카드 교환 내역 조회
+router.get('/trade/history/receipt', verifyLogin, async (req, res) => {
+  const { user } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
+
+  const con = await db.getConnection();
+  try {
+    let sql = `
+    SELECT H.history_id, H.provider, H.trade_time,
+    V.voucher_id, P.name, P.image_name, A.name as album_name
+    FROM TradeHistory as H
+    INNER JOIN Voucher as V ON V.voucher_id=H.voucher_id
+    INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
+    INNER JOIN AlbumData as A ON A.album_id=P.album_id
+    WHERE H.recipient='${user.username}'
+    ORDER BY H.trade_time DESC`
+    let [histories] = await con.query(sql);
+    
+    return res.status(200).json({ message: '당신이 받았던 포토카드 교환 내역 조회를 성공했습니다.', histories });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
