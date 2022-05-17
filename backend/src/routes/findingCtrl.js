@@ -5,7 +5,7 @@ const { makeSalt, encryptText } = require('../utils/encrypt');
 
 //아이디 찾기
 // DB SELECT
-router.get('/username', async (req, res) => {
+router.get('/findId', async (req, res) => {
   const con = await db.getConnection(); // DB에 접근 가능한 커넥션 반환받음.
   const { name, phone } = req.query;
 
@@ -16,9 +16,9 @@ router.get('/username', async (req, res) => {
   //else if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' })
   try {
     let sql = `SELECT username FROM user WHERE name='${name}' AND phone='${phone}'`; // SQL 정의
-    let [list] = await con.query(sql) // SQL 실행
-    if (list.length){
-      return res.status(200).json({ message: 'DB를 조회했습니다.', list });
+    let [[username]] = await con.query(sql) // SQL 실행
+    if (username){
+      return res.status(200).json({ message: '아이디 찾기에 성공했습니다.', username });
     }
     else  return res.status(200).json({ message: '이름 혹은 전화번호가 틀립니다.'});
   } catch (err) {
