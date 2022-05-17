@@ -41,7 +41,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
 
     // 목록 조회
     let sql = `
-    SELECT voucher_id, state, permanent, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, P.name, A.name AS album_name
+    SELECT voucher_id, state, permanent, shipping, P.photocard_id, P.group_id, P.member_id, P.album_id, P.image_name, P.name, A.name AS album_name
     FROM Voucher as V
     INNER JOIN Photocard as P ON V.photocard_id = P.photocard_id
     INNER JOIN AlbumData as A ON P.album_id = A.album_id

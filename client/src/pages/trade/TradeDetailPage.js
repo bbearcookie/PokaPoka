@@ -178,7 +178,7 @@ const TradeDetailPage = () => {
 
           <section className="card_section">
             {vouchers ?
-              vouchers.map(voucher =>
+              vouchers.filter(voucher => voucher.shipping === 0).map(voucher =>
                 <VoucherCard
                   className={classNames({"active": voucher.voucher_id === parseInt(form.selectVoucher) })}
                   key={voucher.voucher_id}

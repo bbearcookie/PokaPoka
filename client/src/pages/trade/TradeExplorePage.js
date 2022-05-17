@@ -255,7 +255,7 @@ const TradeExplorePage = () => {
 
       <section className="card_section">
         {vouchers ?
-          vouchers.map(v =>
+          vouchers.filter(v => v.shipping === 0).map(v =>
             <VoucherCard
               className={classNames({"active": v.voucher_id === parseInt(voucherId) })}
               key={v.voucher_id}

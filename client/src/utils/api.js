@@ -161,7 +161,7 @@ export const putPhotocard = (form, photocardId) => {
 }
 
 //아이디 찾기
-export const getUsername = (name, phone) => axios.get(`${BACKEND}/api/finding/username?name=${name}&phone=${phone}`, options);
+export const getUsername = (name, phone) => axios.get(`${BACKEND}/api/finding/findId?name=${name}&phone=${phone}`, options);
 
 //비밀 번호 변경시 아이디가 맞는지 확인
 export const postIdCheck = (username, name, phone) => axios.post(`${BACKEND}/api/finding/id_check`,

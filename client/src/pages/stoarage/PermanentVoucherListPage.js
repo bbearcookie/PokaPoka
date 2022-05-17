@@ -46,9 +46,25 @@ const PermanentVoucherListPage = () => {
       {groups ?
       groups.map(group =>
         <section className="card_section" key={group.group_id}>
+          {vouchers.find(v => v.group_id === group.group_id && v.shipping === 0) &&
+          <p className="label">{group.name}</p>}
+          {vouchers.filter(v => v.group_id === group.group_id && v.shipping === 0).map(v =>
+            <VoucherCard
+              key={v.voucher_id}
+              name={v.name}
+              albumName={v.album_name}
+              src={`${BACKEND}/image/photocard/${v.image_name}`}
+            />
+          )}
+        </section>
+      ) : null}
+      <h1 className="title-label">배송 요청한 정식 소유권</h1>
+      {groups ?
+      groups.map(group =>
+        <section className="card_section" key={group.group_id}>
           {vouchers.find(v => v.group_id === group.group_id) &&
           <p className="label">{group.name}</p>}
-          {vouchers.filter(v => v.group_id === group.group_id).map(v =>
+          {vouchers.filter(v => v.group_id === group.group_id && v.shipping === 1).map(v =>
             <VoucherCard
               key={v.voucher_id}
               name={v.name}

@@ -199,7 +199,7 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
 
     // 해당 교환글과 관련된 자신의 사용 가능한 모든 소유권 목록 조회
     sql = `
-    SELECT V.voucher_id, V.photocard_id, P.image_name, P.name, A.name as album_name
+    SELECT V.voucher_id, V.photocard_id, V.shipping, P.image_name, P.name, A.name as album_name
     FROM Voucher as V
     INNER JOIN Wantcard as W ON W.photocard_id = V.photocard_id
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
