@@ -16,10 +16,10 @@ const Navbar = () => {
     try {
       request.call(api.postLogout);
       authActions.logout();
-      // return navigate('/auth/login');
-
-      // 로그아웃할 때 리덕스 스토어에 저장된 상태 모두 초기화하기 위해 navigate 기능을 사용하지 않았다.
+      // 로그아웃할 때 리덕스 스토어에 저장된 상태를 모두 초기화하기 위해 navigate 기능을 사용하지 않았다.
       window.location.href = '/auth/login';
+
+      // return navigate('/auth/login');
     } catch (err) {}
   }
 

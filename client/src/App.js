@@ -75,23 +75,19 @@ function App() {
   const request = useRequest();
 
   // 페이지 로드시 동작. 새로고침이나 직접 URL 입력해서 접근한 경우 상태 값이 지워지는데,
-  // 세션 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 상태를 업데이트함.
+  // 로컬 스토리지에 기억된 사용자의 로그인 정보가 있다면 그 값으로 API 서버에 검증을 요청한 뒤 상태를 업데이트함.
   const onLoad = async () => {
-    try {
-      if (!authState.user.username) {
-        let user = sessionStorage.getItem(STORAGE_KEY_NAME);
+    let user = localStorage.getItem(STORAGE_KEY_NAME);
+    if (!user) return; // 로그인 정보가 없으면 중지
 
-        // 세션 스토리지에 저장된 사용자 정보가 있는 경우
-        if (user) {
-          authActions.login(JSON.parse(user));
-        // 세션 스토리지에 저장된 사용자 정보가 없어서 토큰을 가지고 사용자 정보를 API 서버에 요청하는 경우
-        } else {
-          const res = await request.call(api.postTokenTest);
-          authActions.login(res);
-          console.log(res);
-        }
-      }
-    } catch (err) {}
+    // API 서버에 로그인 정보 검증 요청
+    try {
+      const res = await request.call(api.postTokenTest);
+      authActions.login(res);
+    // 검증 실패시 세션과 상태 초기화
+    } catch (err) {
+      authActions.logout();
+    }
   }
   useEffect(() => { onLoad(); }, []);
 

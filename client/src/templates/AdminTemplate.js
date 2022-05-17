@@ -11,7 +11,7 @@ const AdminTemplate = ({ className, children }) => {
 
   // 관리자가 아니면 페이지 접근 불가능하도록 함.
   useEffect(() => {
-    let user = sessionStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
+    let user = localStorage.getItem(STORAGE_KEY_NAME); // 로컬 스토리지의 사용자 정보 가져옴
     if (!user) return navigate('/auth/login'); // 로그인 안된 상태면 접근 불가
     user = JSON.parse(user);
     if (user.role !== 'admin') return navigate('/auth/login'); // 관리자 아닌 상태면 접근 불가
