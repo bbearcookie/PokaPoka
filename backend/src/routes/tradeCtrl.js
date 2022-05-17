@@ -5,7 +5,7 @@ const { verifyLogin } = require('../utils/jwt');
 
 // 모든 교환글 목록 조회 요청
 router.get('/trade/list/all', async (req, res) => {
-  const { groupId, memberId, albumId, state } = req.query;
+  const { groupId, memberId, albumId, state, limit } = req.query;
   let { username } = req.query;
 
   const con = await db.getConnection();
@@ -14,6 +14,7 @@ router.get('/trade/list/all', async (req, res) => {
     username = convertToMysqlStr(username);
 
     let whereSqls = [];
+    let limitStr = '';
     // 조회 조건에 groupId 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(groupId) && groupId !== 'all') whereSqls.push(`P.group_id=${groupId}`);
     // 조회 조건에 memberId 필드에 대한 조건이 있으면 WHERE 조건에 추가
@@ -25,6 +26,9 @@ router.get('/trade/list/all', async (req, res) => {
     // 조회 조건에 username 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(username)) whereSqls.push(`T.username LIKE '%${username}%'`);
 
+    // 조회 조건에 교환글 개수 제한 있으면 LIMIT 조건에 추가
+    if (!isNull(limit)) limitStr = `LIMIT ${limit}`;
+
     let sql = `
     SELECT T.trade_id, T.username, T.voucher_id, T.want_amount, T.state, T.regist_time,
     permanent, P.image_name, P.name, A.name as album_name
@@ -33,7 +37,8 @@ router.get('/trade/list/all', async (req, res) => {
     INNER JOIN Photocard as P ON P.photocard_id = V.photocard_id
     INNER JOIN AlbumData as A ON A.album_id = P.album_id
     ${getWhereClause(whereSqls)}
-    ORDER BY T.regist_time DESC`;
+    ORDER BY T.regist_time DESC
+    ${limitStr}`;
 
     // 조회한 게시글마다 반복
     let [trades] = await con.query(sql);
