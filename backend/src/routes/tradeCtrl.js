@@ -74,7 +74,7 @@ router.get('/trade/list/favorite', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
@@ -170,7 +170,7 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '조회할 교환글을 선택해주세요.' });
@@ -225,7 +225,7 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!haveVoucherId) return res.status(400).json({ message: '사용하려는 소유권을 선택해주세요.' });
@@ -284,7 +284,7 @@ router.put('/trade/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '수정하려는 교환글을 선택해주세요.' });
@@ -354,7 +354,7 @@ router.delete('/trade/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
@@ -398,7 +398,7 @@ router.post('/trade/transaction/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '교환 신청할 교환글을 선택해주세요.' });
@@ -634,7 +634,7 @@ router.post('/trade/explore', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!haveVoucher) return res.status(400).json({ message: '사용할 소유권을 선택해주세요.' });
@@ -852,7 +852,7 @@ router.post('/trade/favorite/:tradeId', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (!tradeId) return res.status(400).json({ message: '찜하기 할 교환글을 선택해주세요.' });
@@ -894,7 +894,7 @@ router.get('/trade/history/provision', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
@@ -925,7 +925,7 @@ router.get('/trade/history/receipt', verifyLogin, async (req, res) => {
   const { user } = req;
 
   // 로그인 상태 확인
-  if (!user) return res.status(400).json({ message: '로그인 상태가 아닙니다.' });
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
