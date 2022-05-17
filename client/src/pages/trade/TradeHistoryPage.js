@@ -38,8 +38,9 @@ const TradeHistoryPage = () => {
       sidebar={<TradeSideBar />}
     >
     {request.loading ? <LoadingSpinner /> : null}
-    {message ? <MessageLabel>{message}</MessageLabel> : null}
     <h1 className="title-label">교환 내역</h1>
+    {message ? <MessageLabel>{message}</MessageLabel> : null}
+    
     <p className="label">내가 줬던 기록</p>
     <TradeHistoryList contents={provisionHistories} perPage="4" />
 

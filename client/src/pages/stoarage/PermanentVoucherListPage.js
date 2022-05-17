@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
@@ -9,10 +9,12 @@ import MessageLabel from '../../components/MessageLabel';
 import Select from '../../components/form/Select';
 import VoucherCard from '../../components/card/VoucherCard';
 import PhotoStoarageSidebar from '../../components/sidebar/PhotoStoarageSidebar';
+import AuthContext from '../../contexts/Auth';
 import UserTemplate from '../../templates/UserTemplate';
 import './PermanentVoucherListPage.scss';
 
 const PermanentVoucherListPage = () => {
+  const { state: authState, actions: authActions } = useContext(AuthContext);
   const [vouchers, setVouchers] = useState({});
   const [groups, setGroups] = useState([]);
   const [members, setMembers] = useState([]);
@@ -29,7 +31,8 @@ const PermanentVoucherListPage = () => {
       const res2 = await request.call(api.getGroupList);
       setGroups(res2.groups);
     } catch (err) {
-      console.error(err);
+      setMessage(err.response.data.message);
+      authActions.verify();
     }
   };
   useEffect(() => { onLoad(); }, []);

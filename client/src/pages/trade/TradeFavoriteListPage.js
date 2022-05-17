@@ -64,9 +64,10 @@ const TradeFavoriteListPage = () => {
       sidebar={<TradeSideBar />}
     >
       {request.loading ? <LoadingSpinner /> : null}
-      {message ? <MessageLabel>{message}</MessageLabel> : null}
 
       <h1 className="title-label">찜한 교환글 목록</h1>
+      {message ? <MessageLabel>{message}</MessageLabel> : null}
+      
       <TradeList contents={trades} perPage="10" onDetailView={onClickDetailView} onFavorite={onClickFavorite} />
     </UserTemplate>
   );

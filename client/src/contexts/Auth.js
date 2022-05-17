@@ -1,4 +1,6 @@
 import React, { createContext, useState } from 'react';
+import axios from 'axios';
+import * as api from '../utils/api';
 
 export const STORAGE_KEY_NAME = 'USER'; // 세션 스토리지에 저장할 키
 
@@ -39,10 +41,19 @@ const AuthProvider = ({ children }) => {
     sessionStorage.removeItem(STORAGE_KEY_NAME); // 세션 스토리지 값 초기화
   }
 
+  // 사용자의 로그인 상태를 검증하고 로그인 상태가 아니면 사용자 정보를 초기 상태로 초기화하는 함수
+  const verify = async () => {
+    try {
+      await api.postTokenTest();
+    } catch (err) {
+      logout();
+    }
+  }
+
   // 외부에 반환할 값
   const value = {
     state: { user }, // 상태 변수
-    actions: { login, logout } // 외부에서 호출 가능한 함수
+    actions: { login, logout, verify } // 외부에서 호출 가능한 함수
   };
 
   return (<AuthContext.Provider value={value}>{children}</AuthContext.Provider>);
