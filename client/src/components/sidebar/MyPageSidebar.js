@@ -13,7 +13,7 @@ const MyPageSidebar = () => {
       <section className="subtitle_section">개인정보 설정</section>
       <Link 
         className={classNames("link", {"active": URI.includes('/mypage/userInfo')})}
-        to="/mypage/userInfo">회원 정보</Link>
+        to="/mypage/userInfo">사용자 정보</Link>
       <Link className={classNames("link", {"active": URI.includes('/mypage/deliveryinfo')})}
         to="/mypage/deliveryinfo">배송정보</Link>
       {/* <Link className="link" to="/mypage/changeletterlist">교환글</Link> */}

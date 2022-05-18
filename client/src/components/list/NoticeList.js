@@ -16,7 +16,7 @@ const NoticeList = ({ className, notices, perPage }) => {
   const onClickDetailView = (e) => {
     const noticeId = e.currentTarget.getAttribute('notice_id');
     //사용자 역할을 확인하여 관리자일 경우 관리자 페이지로 일반 사용자일 경우 사용자페이지로 이동
-    let user = sessionStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
+    let user = localStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
     user = JSON.parse(user);
     if (user.role == 'admin') return navigate(`/admin/notice/detail/${noticeId}`);
     else return navigate(`/main/notice/detail/${noticeId}`);

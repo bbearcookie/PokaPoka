@@ -161,7 +161,7 @@ const EditUserPage = () => {
 
           <form onSubmit={onSubmit}>
             <section className="form_section">
-              <h1 className="title-label">회원 정보 수정</h1>
+              <h1 className="title-label">사용자 정보 수정</h1>
               {message ? <MessageLabel>{message}</MessageLabel> : null}
 
               <section className="input_section">

@@ -169,7 +169,8 @@ const SuggestionDetailPage = () => {
           placeholder="답변을 입력하세요"
           onChange={onChangeInput}
         />
-        <Button className="write_button" onClick={onClickReply}>작성</Button>
+        {reply.reply ? <Button className="write_button" onClick={onClickReply}>수정</Button>:
+        <Button className="write_button" onClick={onClickReply}>작성</Button>}
       </section>
     </AdminTemplate>
   );
