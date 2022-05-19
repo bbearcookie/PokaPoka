@@ -446,50 +446,56 @@ router.get('/shipping/voucher/mine', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
-// 관리자 - 베송 요청 처리
+// *** NEW: 관리자 - 배송 처리
 router.post('/shipping/state/:requestId', verifyLogin, async (req, res) => {
-  const { requestId } = req.params; // WHERE 필터링 조건으로 사용될 값들
-  const { accessToken } = req;
-  let { user } = req; // 관리자 정보
+  const { requestId } = req.params;
+  const { user, accessToken } = req;
 
-   // 관리자 권한 확인
-   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+  // 유효성 검사
+  if (isNull(requestId)) return res.status(400).json({ message: '배송 처리 하려는 배송 요청 글을 선택해주세요.' });
+
+  // 관리자 권한 확인
+  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
   const con = await db.getConnection();
   try {
-    // 배송 요청 처리
-    //처리 상태와 요청자 아이디 검색
-    let sql = `SELECT state, username FROM ShippingRequest WHERE request_id=${requestId} `;
-    let [[state]] = await con.query(sql);
+    await con.beginTransaction();
 
-    //처리 상태 업데이트
-    if(state.state === 'waiting'){
-      //배송 요청 처리 완료
-      sql = `UPDATE ShippingRequest SET state='finished' WHERE request_id=${requestId} `;
-      await con.execute(sql);
-
-      //발급 내역 테이블에 데이터 등록
-      sql = `INSERT INTO
-      ShippingProvision (provider, recipient, request_id)
-      VALUES (?, ?, ?)`;
-      await con.execute(sql, [user.username, state.username, requestId]);
-
-      return res.status(200).json({ message: '배송 요청 처리에 성공했습니다.' });
+    // 배송 요청글 가져오기
+    let sql = `SELECT request_id, state, username, payment_state FROM ShippingRequest WHERE request_id=${requestId}`;
+    let [[request]] = await con.query(sql);
+    if (!request) {
+      await con.rollback();
+      return res.status(400).json({ message: '해당 배송 요청글이 없습니다.' });
     }
-    else{
-      //배송 요청 처리 취소
-      sql = `UPDATE ShippingRequest SET state='waiting' WHERE request_id=${requestId} `;
-      await con.execute(sql);
-
-      //발급 내역 테이블에 데이터 삭제
-      sql = `DELETE FROM ShippingProvision WHERE request_id=${requestId}`;
-      await con.execute(sql);
-
-      return res.status(200).json({ message: '배송 요청 처리 취소에 성공했습니다.' });
+    if (request.payment_state !== 'paid') {
+      await con.rollback();
+      return res.status(400).json({ message: '해당 배송 요청의 배송비가 아직 결제되지 않았습니다.' });
     }
-    
+
+    // 배송 요청 처리 완료
+    sql = `UPDATE ShippingRequest SET state='finished' WHERE request_id=${requestId} `;
+    await con.execute(sql);
+
+    // 소유권 배송 완료 상태로 변경
+    sql = `
+    UPDATE Voucher as V
+    INNER JOIN ShippingWant as W ON W.voucher_id=V.voucher_id
+    SET state='shipped'
+    WHERE W.request_id=${requestId}`;
+    await con.execute(sql);
+
+    // 발급 내역 테이블에 데이터 등록
+    sql = `INSERT INTO
+    ShippingProvision (provider, recipient, request_id)
+    VALUES (?, ?, ?)`;
+    await con.execute(sql, [user.username, request.username, requestId]);
+
+    await con.commit();
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } catch (err) {
     console.error(err);
+    await con.rollback();
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
     con.release();
