@@ -121,6 +121,56 @@ router.get('/shipping/request/voucher/mine', verifyLogin, async (req, res) => {
   return res.status(501).json({ message: 'end of line' });
 });
 
+// *** NEW: 배송 요청에 등록된 결제 정보 가져오기
+router.get('/shipping/payment/:requestId', async (req, res) => {
+  const { requestId } = req.params;
+  
+  // 유효성 검사
+  if (!requestId) return res.status(400).json({ message: '요청 번호를 입력해주세요' });
+
+  const con = await db.getConnection();
+  try {
+    // 배송 요청 정보 가져오기
+    let sql = `
+    SELECT username, payment_uid, payment_price, payment_state, payment_time
+    FROM ShippingRequest
+    WHERE request_id=${requestId}`;
+    let [[request]] = await con.query(sql);
+    if (!request) return res.status(400).json({ message: '해당 배송 요청글이 존재하지 않습니다.' });
+
+    // 작성자 정보 가져오기
+    sql = `SELECT name, phone, address FROM User WHERE username='${request.username}'`;
+    let [[user]] = await con.query(sql);
+    if (!user) return res.status(400).json({ message: '해당 작성자가 존재하지 않습니다.' });
+
+    // 결제 정보 생성
+    const payment = {
+      pg: 'inicis',
+      pay_method: 'card',
+      amount: request.payment_price,
+      name: '배송비',
+      buyer_name: user.name,
+      buyer_tel: user.phone,
+      buyer_email: '',
+      buyer_addr: user.address,
+      buyer_postcode: '',
+    }
+
+    return res.status(200).json({
+      message: '결제 정보를 조회했습니다.',
+      payment,
+      impcode: process.env.IMPORT_IMPCODE
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // *** NEW: 사용자 - 배송 요청 등록
 router.post('/shipping/request', verifyLogin, async (req, res) => {
   const { user } = req;
@@ -278,7 +328,10 @@ router.get('/shipping/detail/:requestId', verifyLogin, async (req, res) => {
     if (!request) return res.status(404).json({ message: '조회하려는 배송 요청이 DB에 없습니다.' });
 
     //배송 요청 상세
-    sql = `SELECT username, state, payment_price, payment_state, regist_time FROM ShippingRequest WHERE request_id=${requestId}`;
+    sql = `
+    SELECT username, state, payment_uid, payment_price, payment_state, regist_time
+    FROM ShippingRequest
+    WHERE request_id=${requestId}`;
     let [[requests]] = await con.query(sql);
 
     //배송 요청 소유권 내용

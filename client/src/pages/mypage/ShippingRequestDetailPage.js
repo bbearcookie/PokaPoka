@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { BACKEND } from '../../utils/api';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { getFormattedDate } from '../../utils/common';
+import AuthContext from '../../contexts/Auth';
 import Button from '../../components/form/Button';
 import Textarea from '../../components/form/Textarea';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -34,6 +35,7 @@ const PaymentState = {
 
 // 문의사항 상세 조회 페이지
 const ShippingRequestDetailPage = () => {
+  const { state: authState, actions: authActions } = useContext(AuthContext);
   const { requestId } = useParams(); // URL에 포함된 suggestionId Params 정보
   const [requests, setRequests] = useState({ // 문의사항 상세 정보
     username: '', // 요청자
@@ -63,20 +65,16 @@ const ShippingRequestDetailPage = () => {
         regist_time: res.requests.regist_time
       });
       setVoucherRequest(res.vouchers);  // 배송 요청한 소유권 목록
-      console.log("배송 요청한 소유권");
-      console.log(res.vouchers);
 
+      // 배송 요청한 소유권 목록 가져오기
       res = await request.call(api.getVoucherListMine, {
         permanent: 1
       });
       setVouchers(res.vouchers);  // 정식 소유권 목록
 
-      console.log(res.vouchers);
-
+      // 그룹 목록 가져오기
       res = await request.call(api.getGroupList);
       setGroups(res.groups);
-
-      console.log(res.groups);
 
     } catch (err) {
       console.error(err);
@@ -86,6 +84,31 @@ const ShippingRequestDetailPage = () => {
 
   const openRemoveModal = () => setShowRemoveModal(true);
   const closeRemoveModal = () => setShowRemoveModal(false);
+
+  // 결제하기 버튼 클릭시
+  const onClickPayment = async (e) => {
+    try {
+      const res = await request.call(api.getShippingPayment, requestId);
+      console.log(res);
+
+      // 아임포트 서버에 거래 요청
+      const { IMP } = window;
+      IMP.init(res.impcode);
+      IMP.request_pay(res.payment, async (response) => {
+        const { success, imp_uid, merchant_uid, error_msg } = response;
+        console.log(response);
+
+        if (success) {
+          console.log("결제 성공");
+        } else {
+          console.log("결제 실패: " + error_msg);
+        }
+      });
+
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
 
   // 배송 요청 취소
   const onClickRemove = async (e) => {
@@ -163,6 +186,7 @@ const ShippingRequestDetailPage = () => {
         ) : null}
       </section>
       <section className="submit_section">
+        {authState.user.username === requests.username && <Button className="edit_button" onClick={onClickPayment}>결제하기</Button>}
         <Button className="remove_button" onClick={openRemoveModal}>요청 취소</Button>
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
       </section>
