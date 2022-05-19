@@ -122,7 +122,7 @@ router.get('/shipping/request/voucher/mine', verifyLogin, async (req, res) => {
 });
 
 // *** NEW: 배송 요청에 등록된 결제 정보 가져오기
-router.get('/shipping/payment/:requestId', async (req, res) => {
+router.get('/shipping/payment/detail/:requestId', async (req, res) => {
   const { requestId } = req.params;
   
   // 유효성 검사
@@ -147,6 +147,7 @@ router.get('/shipping/payment/:requestId', async (req, res) => {
     const payment = {
       pg: 'inicis',
       pay_method: 'card',
+      merchant_uid: request.payment_uid,
       amount: request.payment_price,
       name: '배송비',
       buyer_name: user.name,
@@ -213,7 +214,7 @@ router.post('/shipping/request', verifyLogin, async (req, res) => {
     // 배송 요청 데이터 등록
     let sql = `
     INSERT INTO ShippingRequest (username, payment_uid, payment_price)
-    VALUES ('${user.username}', 'mid_${crypto.randomBytes(16).toString('hex')}', 10)`;
+    VALUES ('${user.username}', 'mid_${crypto.randomBytes(8).toString('hex')}', 10)`;
     let [result] = await con.execute(sql);
 
     // 소유권 정보 업데이트

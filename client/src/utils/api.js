@@ -509,7 +509,16 @@ export const deleteShippingRequest = (requestId) => axios.delete(`${BACKEND}/api
 export const postPaymentRequest = () => axios.post(`${BACKEND}/api/payment/mypage/request`, {}, options);
 
 // 배송 요청에서 필요한 결제 정보 가져오기
-export const getShippingPayment = (requestId) => axios.get(`${BACKEND}/api/shipping/payment/${requestId}`, options);
+export const getShippingPayment = (requestId) => axios.get(`${BACKEND}/api/shipping/payment/detail/${requestId}`, options);
+
+// 결제 검증
+export const postPaymentConfirmation = (impUid, merchantUid) => axios.post(`${BACKEND}/api/payment/confirmation`, 
+  {
+    impUid: impUid,
+    merchantUid: merchantUid
+  },
+  options
+);
 
 // 백엔드 서버에 DB에 데이터 추가하는 요청 테스트 기능
 export const postTestDB = (text, author) => axios.post(`${BACKEND}/test/db`,

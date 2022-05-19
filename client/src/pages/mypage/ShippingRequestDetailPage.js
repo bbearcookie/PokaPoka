@@ -50,7 +50,6 @@ const ShippingRequestDetailPage = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [VoucherRequest, setVoucherRequest] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [vouchers, setVouchers] = useState([]); // 정식 소유권 목록
-  const [groups, setGroups] = useState([]);
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -71,10 +70,6 @@ const ShippingRequestDetailPage = () => {
         permanent: 1
       });
       setVouchers(res.vouchers);  // 정식 소유권 목록
-
-      // 그룹 목록 가져오기
-      res = await request.call(api.getGroupList);
-      setGroups(res.groups);
 
     } catch (err) {
       console.error(err);
@@ -100,6 +95,10 @@ const ShippingRequestDetailPage = () => {
 
         if (success) {
           console.log("결제 성공");
+
+          const res = await request.call(api.postPaymentConfirmation, imp_uid, merchant_uid);
+          console.log(res);
+          
         } else {
           console.log("결제 실패: " + error_msg);
         }
