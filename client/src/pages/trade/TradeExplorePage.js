@@ -6,6 +6,7 @@ import { setHaveGroupId, setHaveMemberId, setWantGroupId, setWantMemberId,
   setVouchers, setPhotocards, setExploreMessage } from '../../modules/tradeExplorePage';
 import produce from 'immer';
 import classNames from 'classnames';
+import ReCAPTCHA from 'react-google-recaptcha';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
@@ -39,9 +40,13 @@ const TradeExplorePage = () => {
     haveVoucher: state.tradeExplorePage.haveVoucher,
     exploreMessage: state.tradeExplorePage.exploreMessage
   }));
+  const [form, setForm] = useState({
+    chaptcha: '' // 캡차 인증
+  });
   const dispatch = useDispatch(); // 리듀서 액션 함수를 작동시키는 함수
   const [showTradeModal, setShowTradeModal] = useState(false); // 교환 요청 확인 모달
   const [message, setMessage] = useState(''); // 교환 탐색과 관련한 오류 메시지
+  const [chaptchaMessage, setChaptchaMessage] = useState(''); // 캡차 관련 오류 메시지
   const [tradeMessage, setTradeMessage] = useState(''); // 교환 요청과 관련한 오류 메시지
   const request = useRequest();
   const navigate = useNavigate();
@@ -60,6 +65,11 @@ const TradeExplorePage = () => {
   // 교환 요청 확인 모달 열기 / 닫기
   const openTradeModal = () => setShowTradeModal(true);
   const closeTradeModal = () => setShowTradeModal(false);
+
+  // 캡차 인증 변경시
+  const onChangeCaptcha = (value) => {
+    setForm({ ...form, chaptcha: value });
+  }
 
   // 화면에 보여줄 소유권 목록 업데이트
   const onUpdateVouchers = async () => {
@@ -173,6 +183,8 @@ const TradeExplorePage = () => {
 
   // 교환 요청 확인 버튼 클릭시
   const onClickTrade = async () => {
+    if (!form.chaptcha) return setChaptchaMessage('캡차 인증을 먼저 해주세요.');
+
     try {
       const res = await request.call(api.postTradeExplore, haveVoucher, trades);
       console.log(res);
@@ -214,6 +226,7 @@ const TradeExplorePage = () => {
         <ModalBody>
           {trades.length > 0 &&
           <>
+          {chaptchaMessage ? <MessageLabel>{chaptchaMessage}</MessageLabel> : null}
           <p>{haveVoucher.name} 카드를 {trades[0].username} 에게 주고</p>
           <p>{trades[trades.length - 1].username} (으)로부터 {trades[trades.length - 1].name} 을(를) 받게 됩니다.</p>
           <p>정말로 교환하시겠습니까?</p>
@@ -320,6 +333,12 @@ const TradeExplorePage = () => {
         <div className="label">아래의 교환을 통해서 <b>{haveVoucher.name}</b> 카드를 주고 <b>{trades[trades.length - 1].name}</b> 카드를 받을 수 있습니다. </div>
         <TradeExploreList trades={trades} haveVoucher={haveVoucher} />
         {tradeMessage ? <MessageLabel>{tradeMessage}</MessageLabel> : null}
+
+        <p className="label">캡차 인증</p>
+        <ReCAPTCHA
+          sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY}
+          onChange={onChangeCaptcha}
+        />
         <Button className="explore_button" onClick={openTradeModal}>교환 요청</Button>
         </>
         }
