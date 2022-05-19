@@ -11,6 +11,10 @@ import MessageLabel from '../../components/MessageLabel';
 import UserTemplate from '../../templates/UserTemplate';
 import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
 import VoucherCard from '../../components/card/VoucherCard';
+import Modal from '../../components/modal/Modal';
+import ModalHeader from '../../components/modal/ModalHeader';
+import ModalBody from '../../components/modal/ModalBody';
+import ModalFooter from '../../components/modal/ModalFooter';
 import produce from 'immer';
 import './ShippingRequestDetailPage.scss';
 
@@ -41,6 +45,7 @@ const ShippingRequestDetailPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [VoucherRequest, setVoucherRequest] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [vouchers, setVouchers] = useState([]); // 정식 소유권 목록
   const [groups, setGroups] = useState([]);
@@ -79,11 +84,44 @@ const ShippingRequestDetailPage = () => {
   };
   useEffect(() => { onLoad(); }, []);
 
+  const openRemoveModal = () => setShowRemoveModal(true);
+  const closeRemoveModal = () => setShowRemoveModal(false);
+
+  // 배송 요청 취소
+  const onClickRemove = async (e) => {
+    try {
+      const res = await request.call(api.deleteShippingRequest, requestId);
+      console.log(res);
+      return navigate('/mypage/shipping');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeRemoveModal();
+  }
+
   return (
     <UserTemplate className="ShippingRequestDetailPage" sidebar={<MyPageSidebar />}>
 
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
       {request.loading ? <LoadingSpinner /> : null}
+
+      {/* 요청 취소 모달창 */}
+      {showRemoveModal ?
+      <Modal className="add_modal" onClose={closeRemoveModal}>
+        <ModalHeader onClose={closeRemoveModal}>
+          <h1>배송 요청 취소</h1>
+        </ModalHeader>
+        <ModalBody>
+          <p>등록했던 배송 요청글이 삭제됩니다.</p>
+          <p>정말로 배송 요청을 취소하시겠습니까?</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeRemoveModal}>취소</Button>
+          <Button className="remove_button" onClick={onClickRemove}>예</Button>
+        </ModalFooter>
+      </Modal>
+      : null}
+
 
       <h1 className="title-label">배송 요청 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
@@ -125,6 +163,7 @@ const ShippingRequestDetailPage = () => {
         ) : null}
       </section>
       <section className="submit_section">
+        <Button className="remove_button" onClick={openRemoveModal}>요청 취소</Button>
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
       </section>
     </UserTemplate>
