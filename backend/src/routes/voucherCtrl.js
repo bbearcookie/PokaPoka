@@ -18,6 +18,7 @@ router.get('/list/mine', verifyLogin, async (req, res) => {
   try {
     let whereSqls = []; // WHERE 절에 들어갈 조건문 배열. 조건 작성후 getWhereClause 호출하면 WHERE절에 알맞는 문자열로 반환됨
     whereSqls.push(`username='${user.username}'`);
+    whereSqls.push(`V.state!='shipped'`);
 
     // 소유권 조회 조건에 permanent 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(permanent)) whereSqls.push(`permanent='${permanent}'`);

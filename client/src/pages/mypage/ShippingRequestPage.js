@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import produce from 'immer';
 import classNames from 'classnames';
 import useRequest from '../../utils/useRequest';
@@ -21,22 +21,23 @@ import './ShippingRequestPage.scss';
 
 //마이페이지 - 배송 요청
 const ShippingRequestPage = () => {
-  const request = useRequest();
-  const [users,setUsers]=useState({ // 배송 정보
+  const [users, setUsers] = useState({ // 배송 정보
     name: '',
     phone: '',
     address: ''
-});
-const [form, setForm] = useState({
-  selectVoucher: '',
-  useVouchers: [] // 사용하기로 등록한 소유권 목록
-});
-const [visible, setVisible] = useState(false);  // 주소 데이터가 있을 때와 없을 때 구분
-const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
+  });
+  const [form, setForm] = useState({
+    selectVoucher: '',
+    useVouchers: [] // 사용하기로 등록한 소유권 목록
+  });
+  const [visible, setVisible] = useState(false);  // 주소 데이터가 있을 때와 없을 때 구분
+  const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [message, setMessage] = useState('');
   const [modalMessage, setModalMessage] = useState('');
+  const request = useRequest();
+  const navigate = useNavigate();
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -101,6 +102,22 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
     }));
   }
 
+  // 배송 요청 버튼 클릭시
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (form.useVouchers.length === 0) return setMessage('받으려는 소유권을 선택해주세요.');
+
+    try {
+      const res = await request.call(api.postShippingRequest, form);
+      console.log(res);
+      return navigate(`/mypage/shipping/detail/${res.request_id}`);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+
+    console.log(form);
+  }
+
   return (
     <UserTemplate
       className="ShippingRequestPage"
@@ -143,9 +160,9 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
       <h1 className="title-label">배송 요청</h1>
 
       <div className="label_area">
-          <p className="label">소유권 선택</p>
-          <Button className="add_btn" onClick={openAddModal}>추가</Button>
-        </div>
+        <p className="label">받으려는 소유권</p>
+        <Button className="add_button" onClick={openAddModal}>추가</Button>
+      </div>
 
         <section className="card_section">
           {form.useVouchers ?
@@ -163,24 +180,17 @@ const [vouchers, setVouchers] = useState([]); // 화면에 보여줄 사용 가�
 
       <p className="label">배송 정보</p>
       <section className="delivery">
-        <form>
-            {visible && <h1>{users.name}</h1>}
-            {visible && <h1>{users.phone}</h1>}
-            {visible ? (<h1>{users.address}</h1>) : (<p className='none'>아직 등록된 주소가 없습니다.</p>)}
-            {visible ?  null : <Link to={"/mypage/deliveryinfo"}><Button className="btn">등록 페이지로 이동</Button></ Link>}
-        </form>
+        <section className="inner_section">
+          {visible && <h1>{users.name}</h1>}
+          {visible && <h1>{users.phone}</h1>}
+          {visible ? (<h1>{users.address}</h1>) : (<p className='none'>아직 등록된 주소가 없습니다.</p>)}
+          {visible ?  null : <Link to={"/mypage/deliveryinfo"}><Button className="btn">등록 페이지로 이동</Button></ Link>}
+        </section>
       </section>
-      <p className="label">결제 정보</p>
-      <section className="delivery">
-        <form>
-            <h1>결제 금액: 10원(테스트 금액)</h1>
-        </form>
-      </section>
-      <section className='payment'>
-        {form.useVouchers.length ? <Payment users={users} vouchers={form} />: <p className='message'>배송할 소유권을 선택하세요</p>}
-      </section>
+
       <section className="submit_section">
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
+        <Button className="submit_button" onClick={onSubmit}>배송 요청</Button>
       </section>
     </UserTemplate>
   );
