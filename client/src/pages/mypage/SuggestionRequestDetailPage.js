@@ -110,7 +110,7 @@ const SuggestionRequestDetailPage = () => {
         <Textarea
           name="reply"
           value={reply.reply}
-          placeholder="답변을 입력하세요"
+          placeholder="답변 대기중"
         />
       </section>
     </UserTemplate>
