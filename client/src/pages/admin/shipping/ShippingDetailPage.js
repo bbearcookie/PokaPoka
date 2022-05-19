@@ -95,12 +95,24 @@ const ShippingDetailPage = () => {
 
   const onClickState = async () => {
     try {
-      const res = await request.call(api.postSetState, requestId);
-      setMessage(res.message);
+      let res = await request.call(api.postSetState, requestId);
       console.log(res);
-      openModal();
-    } catch (error) {
-      
+
+      // 배송 요청 정보 가져오기 (화면 리프레쉬 하기위함)
+      res = await request.call(api.getShippingDetailAdmin, requestId);
+      setRequests({
+        username: res.requests.username,
+        state: res.requests.state,
+        payment_price: res.requests.payment_price,
+        payment_state: res.requests.payment_state,
+        regist_time: res.requests.regist_time,
+        name: res.users.name,
+        address: res.users.address,
+        phone: res.users.phone,
+      });
+
+    } catch (err) {
+      setMessage(err.response.data.message);
     }
   };
 
@@ -177,8 +189,9 @@ const ShippingDetailPage = () => {
       </section>
       <section className="submit_section">
         <Link to="/admin/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
-        {requests.state==='waiting' ? <Button className="add_button" onClick={onClickState}>배송 요청 처리</Button>: 
-        <Button className="add_button" onClick={onClickState}>배송 요청 처리 취소</Button>}
+        {requests.state === 'waiting' && <Button className="add_button" onClick={onClickState}>발송 완료 처리</Button>}
+        {/* {requests.state==='waiting' ? <Button className="add_button" onClick={onClickState}>배송 요청 처리</Button>: 
+        <Button className="add_button" onClick={onClickState}>배송 요청 처리 취소</Button>} */}
       </section>
     </AdminTemplate>
   );

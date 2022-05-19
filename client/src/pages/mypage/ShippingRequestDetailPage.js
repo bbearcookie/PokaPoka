@@ -66,10 +66,10 @@ const ShippingRequestDetailPage = () => {
       setVoucherRequest(res.vouchers);  // 배송 요청한 소유권 목록
 
       // 배송 요청한 소유권 목록 가져오기
-      res = await request.call(api.getVoucherListMine, {
+      let res2 = await request.call(api.getVoucherListMine, {
         permanent: 1
       });
-      setVouchers(res.vouchers);  // 정식 소유권 목록
+      setVouchers(res2.vouchers);  // 정식 소유권 목록
 
     } catch (err) {
       console.error(err);
@@ -94,16 +94,24 @@ const ShippingRequestDetailPage = () => {
         console.log(response);
 
         if (success) {
-          console.log("결제 성공");
-
-          const res = await request.call(api.postPaymentConfirmation, imp_uid, merchant_uid);
+          let res = await request.call(api.postPaymentConfirmation, imp_uid, merchant_uid);
           console.log(res);
-          
+
+          // 배송 요청 정보 가져오기 (결제 상태등 리프레쉬해서 보여주기위함)
+          res = await request.call(api.getShippingDetail, requestId);
+          setRequests({
+            username: res.requests.username,
+            state: res.requests.state,
+            payment_price: res.requests.payment_price,
+            payment_state: res.requests.payment_state,
+            regist_time: res.requests.regist_time
+          });
         } else {
           console.log("결제 실패: " + error_msg);
         }
-      });
 
+        return navigate(`/mypage/shipping/detail/${requestId}`);
+      });
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -185,8 +193,10 @@ const ShippingRequestDetailPage = () => {
         ) : null}
       </section>
       <section className="submit_section">
-        {authState.user.username === requests.username && <Button className="edit_button" onClick={onClickPayment}>결제하기</Button>}
-        <Button className="remove_button" onClick={openRemoveModal}>요청 취소</Button>
+        {authState.user.username === requests.username &&
+        requests.payment_state === 'waiting' && 
+        <Button className="edit_button" onClick={onClickPayment}>결제하기</Button>}
+        {requests.payment_state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>요청 취소</Button>}
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
       </section>
     </UserTemplate>

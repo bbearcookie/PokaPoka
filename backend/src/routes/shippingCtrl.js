@@ -77,6 +77,7 @@ router.get('/shipping/request/voucher/mine', verifyLogin, async (req, res) => {
   try {
     let whereSqls = []; // WHERE 절에 들어갈 조건문 배열. 조건 작성후 getWhereClause 호출하면 WHERE절에 알맞는 문자열로 반환됨
     whereSqls.push(`username='${user.username}'`);
+    whereSqls.push(`V.state NOT IN ('requested', 'shipped')`);
 
     // 소유권 조회 조건에 permanent 필드에 대한 조건이 있으면 WHERE 조건에 추가
     if (!isNull(permanent)) whereSqls.push(`permanent='${permanent}'`);
@@ -490,9 +491,9 @@ router.post('/shipping/state/:requestId', verifyLogin, async (req, res) => {
     ShippingProvision (provider, recipient, request_id)
     VALUES (?, ?, ?)`;
     await con.execute(sql, [user.username, request.username, requestId]);
-
     await con.commit();
-    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+
+    return res.status(200).json({ message: '배송 처리되었습니다.' });
   } catch (err) {
     console.error(err);
     await con.rollback();

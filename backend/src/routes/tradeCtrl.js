@@ -193,6 +193,7 @@ router.get('/trade/wantcard/mine/:tradeId', verifyLogin, async (req, res) => {
     whereSqls.push(`W.trade_id='${trade.trade_id}'`);
     whereSqls.push(`V.username='${user.username}'`);
     whereSqls.push(`V.permanent=${trade.permanent}`);
+    whereSqls.push(`V.state NOT IN ('requested', 'shipped')`);
 
     // 임시 소유권이면 아직 거래 한 번도 안한 소유권만 조회하도록 WHERE 조건에 추가
     if (trade.permanent === 0) whereSqls.push(`V.state='initial'`);
@@ -240,10 +241,11 @@ router.post('/trade/new', verifyLogin, async (req, res) => {
     await con.beginTransaction();
 
     // 사용하려는 소유권 정보 확인
-    let sql = `SELECT photocard_id, username FROM Voucher WHERE voucher_id=${haveVoucherId}`;
+    let sql = `SELECT photocard_id, username, state FROM Voucher WHERE voucher_id=${haveVoucherId}`;
     let [[voucher]] = await con.query(sql);
     if (!voucher) return res.status(400).json({ message: '사용하려는 소유권이 존재하지 않는 소유권입니다.' });
     if (voucher.username !== user.username) return res.status(400).json({ message: '사용하려는 소유권이 당신의 것이 아닙니다.' });
+    if (voucher.state === 'requested' || voucher.state === 'shipped') return res.status(400).json({ message: '배송 처리된 소유권은 사용할 수 없습니다.' });
     if (wantPhotocards.includes(voucher.photocard_id)) return res.status(400).json({ message: '받으려는 포토카드는 사용하려는 소유권과 같은 종류일 수 없습니다.' });
 
     // 이미 해당 소유권으로 등록된 거래 진행중인 교환글이 있다면 등록 불가능.
@@ -306,12 +308,13 @@ router.put('/trade/:tradeId', verifyLogin, async (req, res) => {
     if (trade.state !== 'finding') return res.status(400).json({ message: '교환 완료된 교환글은 수정할 수 없습니다.' });
 
     // 사용하려는 소유권 소유자 확인
-    sql = `SELECT photocard_id, username, permanent FROM Voucher WHERE voucher_id=${haveVoucherId}`;
+    sql = `SELECT photocard_id, username, permanent, state FROM Voucher WHERE voucher_id=${haveVoucherId}`;
     let [[voucher]] = await con.query(sql);
 
     if (!voucher) return res.status(400).json({ message: '사용하려는 소유권이 존재하지 않는 소유권입니다.' });
     if (voucher.username !== user.username) return res.status(400).json({ message: '사용하려는 소유권이 당신의 것이 아닙니다.' });
     if (voucher.permanent === 0 && parseInt(wantAmount) > 1) return res.status(400).json({ message: '임시 소유권으로는 한 개의 포토카드만 받을 수 있습니다.' });
+    if (voucher.state === 'requested' || voucher.state === 'shipped') return res.status(400).json({ message: '배송 처리된 소유권은 사용할 수 없습니다.' });
     if (wantPhotocards.includes(voucher.photocard_id)) return res.status(400).json({ message: '받으려는 포토카드는 사용하려는 소유권과 같은 종류일 수 없습니다.' });
 
     // 이미 해당 소유권으로 등록된 거래 진행중인 교환글이 있다면 등록 불가능.
