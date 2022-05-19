@@ -70,7 +70,7 @@ const NoticeDetailUserPage = () => {
         <p>{notice.content}</p>
       </section>
       <section className="submit_section">
-        <Link to="/main"><Button className="cancel_button">뒤로 가기</Button></Link>
+        <Link to="/notice"><Button className="cancel_button">뒤로 가기</Button></Link>
       </section>
     </UserTemplate>
   );
