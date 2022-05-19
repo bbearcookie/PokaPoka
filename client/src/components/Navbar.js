@@ -43,6 +43,10 @@ const Navbar = () => {
                 className={classNames("nav-item link", {"active": URI.includes('/stoarage')})}
                 to="/stoarage/permanent"
               >포토카드 보관함</Link>
+              <Link
+                className={classNames("nav-item link", {"active": URI.includes('/notice')})}
+                to="/notice"
+              >공지사항</Link>
             </>
             : null}
           </section>
