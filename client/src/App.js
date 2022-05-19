@@ -30,6 +30,7 @@ import UserMainPage from './pages/MainPage';
 import SuggestionListPage from './pages/admin/suggestion/SuggestionListPage';
 import SuggestionDetailPage from './pages/admin/suggestion/SuggestionDetailPage';
 import NoticeListPage from './pages/admin/notice/NoticeListPage';
+import NoticeListUserPage from './pages/NoticeListUserPage';
 import NoticeDetailPage from './pages/admin/notice/NoticeDetailPage';
 import NoticeDetailUserPage from './pages/NoticeDetailUserPage';
 import NoticeWriterPage from './pages/admin/notice/NoticeWriterPage';
@@ -131,6 +132,7 @@ function App() {
         <Route path="/admin/voucher/provision/writer" element={<VoucherProvisionWriter />}/>
         <Route path="/admin/voucher/provision/writer/:requestId" element={<VoucherProvisionWriter />}/>
         <Route path="/admin/notice" element={<NoticeListPage />}/>
+        <Route path="/notice" element={<NoticeListUserPage />}/>
         <Route path="/admin/notice/detail/:noticeId" element={<NoticeDetailPage />}/>
         <Route path="/admin/notice/writer" element={<NoticeWriterPage />}/>
         <Route path="/admin/notice/writer/:noticeId" element={<NoticeWriterPage />}/>

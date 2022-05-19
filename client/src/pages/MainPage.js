@@ -86,13 +86,9 @@ const MainPage = () => {
         </Slider>
       </section>
 
+    
       <section className="title_area">
-        <h1 className="title-label">공지사항 목록</h1>
-      </section>
-      <NoticeList notices={notices} perPage="5" />
-
-      <section className="title_area">
-        <h1 className="title-label">최근 진행중인 포토카드 교환글</h1>
+        <h1 className="title-label">최근 등록된 포토카드 교환글</h1>
       </section>
       <TradeList contents={trades} perPage="5" onDetailView={onClickDetailView} onFavorite={onClickFavorite} />
 
