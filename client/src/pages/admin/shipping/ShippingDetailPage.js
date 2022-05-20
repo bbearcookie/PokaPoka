@@ -47,17 +47,10 @@ const ShippingDetailPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [VoucherRequest, setVoucherRequest] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [vouchers, setVouchers] = useState([]); // 정식 소유권 목록
   const [groups, setGroups] = useState([]);
-
-  //모달 창 열기 / 닫기
-  const openModal = () => setShowModal(true);
-  const closeModal = () => {
-    setShowModal(false);
-    navigate(0);
-  }
-  const [showModal, setShowModal] = useState(false); // 모달 창 화면에 띄우기 on/off
 
   // 페이지 로드시 동작
   const onLoad = async () => {
@@ -93,6 +86,20 @@ const ShippingDetailPage = () => {
   };
   useEffect(() => { onLoad(); }, []);
 
+  //모달 창 열기 / 닫기
+  const openRemoveModal = () => setShowRemoveModal(true);
+  const closeRemoveModal = () => setShowRemoveModal(false);
+
+  // 배송 요청 취소
+  const onClickRemove = async (e) => {
+    try {
+      const res = await request.call(api.deleteShippingRequest, requestId);
+      return navigate('/admin/shipping');
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+  }
+
   const onClickState = async () => {
     try {
       let res = await request.call(api.postSetState, requestId);
@@ -122,19 +129,22 @@ const ShippingDetailPage = () => {
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
       {request.loading ? <LoadingSpinner /> : null}
 
-      {/* 모달 창 */}
-      {showModal ?
-      <Modal onClose={closeModal}>
-        <ModalHeader onClose={closeModal}>
-          <h1>배송요청 처리</h1>
+      {/* 요청 취소 모달창 */}
+      {showRemoveModal ?
+      <Modal onClose={closeRemoveModal}>
+        <ModalHeader onClose={closeRemoveModal}>
+          <h1>배송 요청 취소</h1>
         </ModalHeader>
         <ModalBody>
-          <p>{message ? <MessageLabel>{message}</MessageLabel> : null}</p>
+          <p>등록했던 배송 요청글이 삭제됩니다.</p>
+          <p>정말로 배송 요청을 취소하시겠습니까?</p>
         </ModalBody>
         <ModalFooter>
-          <Button className="submit_button" onClick={closeModal}>확인</Button>
+          <Button className="cancel_button" onClick={closeRemoveModal}>취소</Button>
+          <Button className="remove_button" onClick={onClickRemove}>예</Button>
         </ModalFooter>
-      </Modal> : null}
+      </Modal>
+      : null}
 
       <h1 className="title-label">배송 요청 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
@@ -189,9 +199,8 @@ const ShippingDetailPage = () => {
       </section>
       <section className="submit_section">
         <Link to="/admin/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
-        {requests.state === 'waiting' && <Button className="add_button" onClick={onClickState}>발송 완료 처리</Button>}
-        {/* {requests.state==='waiting' ? <Button className="add_button" onClick={onClickState}>배송 요청 처리</Button>: 
-        <Button className="add_button" onClick={onClickState}>배송 요청 처리 취소</Button>} */}
+        {requests.state === 'waiting' && <Button className="edit_button" onClick={onClickState}>발송 완료</Button>}
+        {requests.payment_state === 'waiting' && <Button className="add_button" onClick={openRemoveModal}>요청 삭제</Button>}
       </section>
     </AdminTemplate>
   );

@@ -398,8 +398,8 @@ router.get('/shipping/voucher/mine', verifyLogin, async (req, res) => {
   const { permanent, state, memberId, groupId, username } = req.query; // WHERE 필터링 조건으로 사용될 값들
   const { accessToken } = req;
 
-   // 관리자 권한 확인
-   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+  //  // 관리자 권한 확인
+  //  if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
 
   const con = await db.getConnection();
   try {

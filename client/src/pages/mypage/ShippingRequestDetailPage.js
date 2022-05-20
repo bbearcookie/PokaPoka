@@ -66,12 +66,17 @@ const ShippingRequestDetailPage = () => {
       setVoucherRequest(res.vouchers);  // 배송 요청한 소유권 목록
 
       // 배송 요청한 소유권 목록 가져오기
-      let res2 = await request.call(api.getVoucherListMine, {
-        permanent: 1
+      // let res2 = await request.call(api.getVoucherListMine, {
+      //   permanent: 1
+      // });
+      let res2 = await request.call(api.getShippingVoucherListMine, {
+        permanent: 1,
+        username: res.requests.username
       });
       setVouchers(res2.vouchers);  // 정식 소유권 목록
 
     } catch (err) {
+      setMessage(err.response.data.message);
       console.error(err);
     }
   };
