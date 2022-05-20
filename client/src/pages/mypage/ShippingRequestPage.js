@@ -8,6 +8,7 @@ import { BACKEND } from '../../utils/api';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Button from '../../components/form/Button';
 import MessageLabel from '../../components/MessageLabel';
+import Input from '../../components/form/Input';
 import Select from '../../components/form/Select';
 import VoucherCard from '../../components/card/VoucherCard';
 import MyPageSidebar from '../../components/sidebar/MyPageSidebar';
@@ -21,12 +22,8 @@ import './ShippingRequestPage.scss';
 
 //마이페이지 - 배송 요청
 const ShippingRequestPage = () => {
-  const [users, setUsers] = useState({ // 배송 정보
-    name: '',
-    phone: '',
-    address: ''
-  });
   const [form, setForm] = useState({
+    address: '', // 배송 주소
     selectVoucher: '',
     useVouchers: [] // 사용하기로 등록한 소유권 목록
   });
@@ -49,11 +46,12 @@ const ShippingRequestPage = () => {
       console.log(res.vouchers);
       const res3 = await request.call(api.getAddress);
       if(res3.user.address) setVisible(true);    // 주소가 있다면 배송 정보 출력
-      setUsers({
-          name: res3.user.name,
-          phone: res3.user.phone,
-          address: res3.user.address
-        });
+      setForm({
+        ...form,
+        name: res3.user.name,
+        phone: res3.user.phone,
+        address: res3.user.address
+      });
     } catch (err) {
       console.error(err);
     }
@@ -64,6 +62,13 @@ const ShippingRequestPage = () => {
   const closeAddModal = () => {
     setModalMessage('');
     setShowAddModal(false);
+  }
+
+  // input 값 변경시
+  const onChangeInput = (e) => {
+    setForm(produce(draft => {
+      draft[e.target.name] = e.target.value;
+    }));
   }
 
   // 소유권 선택 모달에서 추가 버튼 클릭시
@@ -114,8 +119,6 @@ const ShippingRequestPage = () => {
     } catch (err) {
       setMessage(err.response.data.message);
     }
-
-    console.log(form);
   }
 
   return (
@@ -178,15 +181,17 @@ const ShippingRequestPage = () => {
             ) : null}
         </section>
 
-      <p className="label">배송 정보</p>
-      <section className="delivery">
-        <section className="inner_section">
-          {visible && <h1>{users.name}</h1>}
-          {visible && <h1>{users.phone}</h1>}
-          {visible ? (<h1>{users.address}</h1>) : (<p className='none'>아직 등록된 주소가 없습니다.</p>)}
-          {visible ?  null : <Link to={"/mypage/deliveryinfo"}><Button className="btn">등록 페이지로 이동</Button></ Link>}
-        </section>
-      </section>
+      <p className="label">배송 주소</p>
+      <Input
+        type="text"
+        name="address"
+        value={form.address}
+        autoComplete="off"
+        readOnly={true}
+        placeholder="주소를 입력해주세요"
+        onChange={onChangeInput}
+      />
+      <p className="text-label">배송 주소는 배송 정보 페이지에서 수정해주세요.</p>
 
       <section className="submit_section">
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>

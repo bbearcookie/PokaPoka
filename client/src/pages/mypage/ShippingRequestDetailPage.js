@@ -40,6 +40,7 @@ const ShippingRequestDetailPage = () => {
   const [requests, setRequests] = useState({ // 문의사항 상세 정보
     username: '', // 요청자
     state: '', // 처리 상태
+    address: '', // 배송 주소
     payment_price: '',  // 결제 금액
     payment_state: '',  //결제 상태
     regist_time: '' // 요청 등록일
@@ -59,6 +60,7 @@ const ShippingRequestDetailPage = () => {
       setRequests({
         username: res.requests.username,
         state: res.requests.state,
+        address: res.requests.address,
         payment_price: res.requests.payment_price,
         payment_state: res.requests.payment_state,
         regist_time: res.requests.regist_time

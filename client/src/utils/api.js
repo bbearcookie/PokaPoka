@@ -497,7 +497,8 @@ export const getShippingProvisionListAll = () => axios.get(`${BACKEND}/api/shipp
 // 사용자 - 배송 요청 등록
 export const postShippingRequest = (form) => axios.post(`${BACKEND}/api/shipping/request`,
   {
-    useVouchers: form.useVouchers.map(element => element.voucher_id)
+    useVouchers: form.useVouchers.map(element => element.voucher_id),
+    address: form.address
   },
   options
 );

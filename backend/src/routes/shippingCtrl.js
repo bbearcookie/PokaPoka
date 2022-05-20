@@ -178,14 +178,15 @@ router.get('/shipping/payment/detail/:requestId', async (req, res) => {
 
 // *** NEW: 사용자 - 배송 요청 등록
 router.post('/shipping/request', verifyLogin, async (req, res) => {
+  const { address, useVouchers } = req.body;
   const { user } = req;
-  const { useVouchers } = req.body;
 
   // 로그인 상태 확인
   if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (isNull(useVouchers)) return res.status(400).json({ message: '배송 요청할 포토카드 소유권을 선택해주세요.' });
+  if (!address) return res.status(400).json({ message: '배송 받을 주소를 입력해주세요.' });
   
   const con = await db.getConnection();
   try {
