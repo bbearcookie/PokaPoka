@@ -94,7 +94,7 @@ const DeliveryInfoPage = () => {
                     <Button className="submit_button" onClick={closeModal}>확인</Button>
                 </ModalFooter>
             </Modal> : null}
-            <h1 className="h">배송정보</h1>
+            <h1 className="h">배송 정보</h1>
             <section className="delivery">
                 <form>
                     {visible && <h1>{users.name}</h1>}
@@ -104,8 +104,8 @@ const DeliveryInfoPage = () => {
                 </form>
             </section>
             <section className="delivery1">
-              {visible ? <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >배송정보 수정하기</Button></ Link>
-              : <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >배송정보 추가하기</Button></ Link>}
+              {visible ? <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >수정하기</Button></ Link>
+              : <Link to={"/mypage/deliveryinfo/write"}><Button className="btn" >작성하기</Button></ Link>}
             </section>
 
     </UserTemplate>

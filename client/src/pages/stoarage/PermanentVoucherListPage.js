@@ -46,9 +46,9 @@ const PermanentVoucherListPage = () => {
       {groups ?
       groups.map(group =>
         <section className="card_section" key={group.group_id}>
-          {vouchers.find(v => v.group_id === group.group_id && v.shipping === 0) &&
+          {vouchers.find(v => v.group_id === group.group_id && v.state !== 'requested' && v.state !== 'shipped') &&
           <p className="label">{group.name}</p>}
-          {vouchers.filter(v => v.group_id === group.group_id && v.shipping === 0).map(v =>
+          {vouchers.filter(v => v.group_id === group.group_id && v.state !== 'requested' && v.state !== 'shipped').map(v =>
             <VoucherCard
               key={v.voucher_id}
               name={v.name}
@@ -62,9 +62,9 @@ const PermanentVoucherListPage = () => {
       {groups ?
       groups.map(group =>
         <section className="card_section" key={group.group_id}>
-          {vouchers.find(v => v.group_id === group.group_id && v.shipping === 1) &&
+          {vouchers.find(v => v.group_id === group.group_id && v.state === 'requested') &&
           <p className="label">{group.name}</p>}
-          {vouchers.filter(v => v.group_id === group.group_id && v.shipping === 1).map(v =>
+          {vouchers.filter(v => v.group_id === group.group_id && v.state === 'requested').map(v =>
             <VoucherCard
               key={v.voucher_id}
               name={v.name}

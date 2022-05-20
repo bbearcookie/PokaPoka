@@ -492,12 +492,30 @@ export const getShippingVoucherListMine = (filter) => axios.get(
 export const postSetState = (requestId) => axios.post(`${BACKEND}/api/shipping/state/${requestId}`, {}, options);
 // 관리자-모든 포토카드 배송 내역 조회
 export const getShippingProvisionListAll = () => axios.get(`${BACKEND}/api/shipping/provision`, options);
-// paymentCtrl
-// 백엔드 서버에 거래 데이터 생성 요청
-export const postPayment = (payment, vouchers) => axios.post(`${BACKEND}/api/payment/mypage/request`,
+
+
+// 사용자 - 배송 요청 등록
+export const postShippingRequest = (form) => axios.post(`${BACKEND}/api/shipping/request`,
   {
-    payment,
-    useVouchers: vouchers.useVouchers.map(element => element.voucher_id)
+    useVouchers: form.useVouchers.map(element => element.voucher_id)
+  },
+  options
+);
+
+// 배송 요청 삭제
+export const deleteShippingRequest = (requestId) => axios.delete(`${BACKEND}/api/shipping/request/${requestId}`, options);
+
+// 백엔드 서버에 거래 데이터 생성 요청
+export const postPaymentRequest = () => axios.post(`${BACKEND}/api/payment/mypage/request`, {}, options);
+
+// 배송 요청에서 필요한 결제 정보 가져오기
+export const getShippingPayment = (requestId) => axios.get(`${BACKEND}/api/shipping/payment/detail/${requestId}`, options);
+
+// 결제 검증
+export const postPaymentConfirmation = (impUid, merchantUid) => axios.post(`${BACKEND}/api/payment/confirmation`, 
+  {
+    impUid: impUid,
+    merchantUid: merchantUid
   },
   options
 );

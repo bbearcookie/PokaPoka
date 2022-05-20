@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import qs from 'qs';
 import classNames from 'classnames';
 import produce from 'immer';
+import ReCAPTCHA from 'react-google-recaptcha';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
 import { BACKEND } from '../../utils/api';
@@ -35,7 +36,8 @@ const TradeDetailPage = () => {
   const { state: authState, actions: authActions } = useContext(AuthContext);
   const [form, setForm] = useState({
     selectVoucher: '', // 소유권 사용 모달 창에서 사용될 변수
-    useVouchers: [] // 사용하기로 등록한 소유권 목록
+    useVouchers: [], // 사용하기로 등록한 소유권 목록
+    chaptcha: '' // 캡차 인증
   });
   const [trade, setTrade] = useState({ // 교환글 상세 정보
     state: ''
@@ -71,6 +73,11 @@ const TradeDetailPage = () => {
   // 교환글 삭제 모달 열기 / 닫기
   const openRemoveModal = () => setShowRemoveModal(true);
   const closeRemoveModal = () => setShowRemoveModal(false);
+
+  // 캡차 인증 변경시
+  const onChangeCaptcha = (value) => {
+    setForm({ ...form, chaptcha: value });
+  }
 
   // 사용할 소유권 선택시
   const onClickVoucher = (e) => {
@@ -150,7 +157,9 @@ const TradeDetailPage = () => {
   // 교환 신청 버튼 클릭시
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+
+    if (!form.chaptcha) return setMessage('캡차 인증을 먼저 해주세요.');
+
     try {
       const res = await request.call(api.postTradeTransaction, form, tradeId);
       setMessage('');
@@ -269,6 +278,12 @@ const TradeDetailPage = () => {
               </VoucherCard>
             ) : null}
         </section>
+
+        <p className="label">캡차 인증</p>
+        <ReCAPTCHA
+          sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY}
+          onChange={onChangeCaptcha}
+        />
 
         <section className="submit_section">
           <Button className="submit_button" type="submit">신청</Button>
