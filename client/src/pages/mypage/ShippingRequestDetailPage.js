@@ -66,12 +66,17 @@ const ShippingRequestDetailPage = () => {
       setVoucherRequest(res.vouchers);  // 배송 요청한 소유권 목록
 
       // 배송 요청한 소유권 목록 가져오기
-      let res2 = await request.call(api.getVoucherListMine, {
-        permanent: 1
+      // let res2 = await request.call(api.getVoucherListMine, {
+      //   permanent: 1
+      // });
+      let res2 = await request.call(api.getShippingVoucherListMine, {
+        permanent: 1,
+        username: res.requests.username
       });
       setVouchers(res2.vouchers);  // 정식 소유권 목록
 
     } catch (err) {
+      setMessage(err.response.data.message);
       console.error(err);
     }
   };
@@ -194,7 +199,7 @@ const ShippingRequestDetailPage = () => {
       </section>
       <section className="submit_section">
         {authState.user.username === requests.username &&
-        requests.payment_state === 'waiting' && 
+        requests.payment_state === 'waiting' &&
         <Button className="edit_button" onClick={onClickPayment}>결제하기</Button>}
         {requests.payment_state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>요청 취소</Button>}
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>

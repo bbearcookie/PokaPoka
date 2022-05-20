@@ -120,7 +120,7 @@ const UserInfoPage = () => {
 
             {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
             {request.loading ? <LoadingSpinner /> : null}
-            <h1 className="title-label">사용자 정보 관리</h1>
+            <h1 className="title-label">사용자 정보 설정</h1>
             <section className="InfoManage_sec">
                 <form>
                     <Table>

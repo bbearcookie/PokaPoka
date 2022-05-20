@@ -26,7 +26,7 @@ const Navbar = () => {
   return (
     <nav className="Navbar">
       {authState.user.role === 'admin' ? 
-      <Link className="nav-logo" to="/admin">PokaPoka</Link> : 
+      <Link className="nav-logo" to="/admin/user">PokaPoka</Link> : 
       <Link className="nav-logo" to="/main">PokaPoka</Link>}
       
       <section className="nav-items">
