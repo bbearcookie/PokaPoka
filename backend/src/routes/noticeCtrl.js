@@ -113,7 +113,7 @@ router.delete('/admin/:noticeId', verifyLogin, async (req, res) => {
 router.get('/noticeList', async (req, res) => {
     const con = await db.getConnection();
     try {
-      let sql = `SELECT notice_id, username, title, write_time FROM notice`;
+      let sql = `SELECT notice_id, username, title, write_time FROM notice ORDER BY write_time DESC`;
       let [notice] = await con.query(sql);
       return res.status(200).json({ message: '공지사항 목록 조회에 성공했습니다.', notice });
     } catch (err) {

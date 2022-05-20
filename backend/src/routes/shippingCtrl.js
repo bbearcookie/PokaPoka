@@ -33,7 +33,10 @@ router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
     let { address, address_detail } = req.body;
     let { user } = req;
 
-    if(address) address = address + ' ' + address_detail;
+    // if(address) address = address + ' ' + address_detail;
+
+    // 유효성 검사
+    if (!address) return res.status(400).json({ message: '배송 주소를 입력해주세요.' });
   
     // 로그인 상태 확인
     if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
@@ -53,8 +56,8 @@ router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
       WHERE username = '${user.username}'`;
       await con.execute(sql);
   
-      if(!address) return res.status(200).json({ message: '주소를 삭제했습니다.' });
-      else return res.status(200).json({ message: '주소를 추가했습니다.' });
+      if(!address) return res.status(200).json({ message: '배송 주소를 삭제했습니다.' });
+      else return res.status(200).json({ message: '배송 주소를 수정했습니다.', address });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -175,14 +178,15 @@ router.get('/shipping/payment/detail/:requestId', async (req, res) => {
 
 // *** NEW: 사용자 - 배송 요청 등록
 router.post('/shipping/request', verifyLogin, async (req, res) => {
+  const { address, useVouchers } = req.body;
   const { user } = req;
-  const { useVouchers } = req.body;
 
   // 로그인 상태 확인
   if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   // 유효성 검사
   if (isNull(useVouchers)) return res.status(400).json({ message: '배송 요청할 포토카드 소유권을 선택해주세요.' });
+  if (!address) return res.status(400).json({ message: '배송 받을 주소를 입력해주세요.' });
   
   const con = await db.getConnection();
   try {
@@ -286,24 +290,48 @@ router.post('/shipping/mypage/voucher', verifyLogin, async (req, res) => {
 
 // 일반 사용자 & 관리자 - 배송 요청 목록 조회
 router.get('/shipping/list', verifyLogin, async (req, res) => {
-  const { accessToken } = req;
-  let { user } = req;
+  const { user, accessToken } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
-    if(isAdmin(accessToken)){ // 관리자 일 경우
-      let sql = `SELECT request_id, state, username, regist_time FROM ShippingRequest`;
-      let [request] = await con.query(sql);
-      return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request });
+    let sql = '';
+    let requests = [];
+
+    // 관리자일 경우
+    if (isAdmin(accessToken)) {
+      sql = `
+      SELECT request_id, state, payment_state, username, regist_time
+      FROM ShippingRequest
+      ORDER BY regist_time DESC`;
+      [requests] = await con.query(sql);
     }
-    else if(user){  // 일반 사용자일 경우
-      let sql = `SELECT request_id, state, username, regist_time FROM ShippingRequest WHERE username='${user.username}'`;
-      let [request] = await con.query(sql);
-      return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request });
+    // 일반 사용자일 경우
+    else {
+      sql = `
+      SELECT request_id, state, payment_state, username, regist_time
+      FROM ShippingRequest
+      WHERE username='${user.username}'
+      ORDER BY regist_time DESC`;
+      [requests] = await con.query(sql);
     }
-    else{
-      return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
-    }
+
+    requests = await Promise.all(requests.map(async (request) => {
+      // 원하는 포토카드의 목록을 가져옴
+      let sql = `
+      SELECT P.photocard_id, P.name
+      FROM ShippingWant as W
+      INNER JOIN Voucher as V ON V.voucher_id=W.voucher_id
+      INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
+      WHERE W.request_id=${request.request_id}`
+      let [wantcards] = await con.query(sql);
+
+      return { ...request, wantcards };
+  }));
+
+    return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request: requests });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
@@ -519,6 +547,19 @@ router.get('/shipping/provision', verifyLogin, async (req, res) => {
     FROM ShippingProvision
     ORDER BY provide_time DESC`;
     let [provisions] = await con.query(sql);
+
+    provisions = await Promise.all(provisions.map(async (prov) => {
+      // 원하는 포토카드의 목록을 가져옴
+      let sql = `
+      SELECT P.photocard_id, P.name
+      FROM ShippingWant as W
+      INNER JOIN Voucher as V ON V.voucher_id=W.voucher_id
+      INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
+      WHERE W.request_id=${prov.request_id}`
+      let [wantcards] = await con.query(sql);
+
+      return { ...prov, wantcards };
+  }));
 
     return res.status(200).json({ message: '포토카드 배송 내역을 조회했습니다.', provisions });
   } catch (err) {

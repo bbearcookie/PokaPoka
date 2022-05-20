@@ -40,7 +40,6 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
       <Table>
         <thead>
           <tr>
-            <th className="provision_id">번호</th>
             <th className="permanent">임시 소유권 여부</th>
             <th className="name">포토카드 이름</th>
             <th className="recipient">요청자</th>
@@ -52,7 +51,6 @@ const VoucherProvisionList = ({ className, provisions, perPage }) => {
         {provisions ?
           provisions.filter((prov, idx) => isInCurrentPage(idx + 1)).map((prov, idx) => 
             <tr key={idx} provision_id={prov.provision_id} onClick={onClickDetailView}>
-                <td>{prov.provision_id}</td>
                 <td>{<Badge type={permanentState[prov.permanent]} />}</td>
                 <td>{prov.name}</td>
                 <td>{prov.recipient}</td>

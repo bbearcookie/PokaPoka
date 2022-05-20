@@ -64,7 +64,10 @@ const TradeExplorePage = () => {
 
   // 교환 요청 확인 모달 열기 / 닫기
   const openTradeModal = () => setShowTradeModal(true);
-  const closeTradeModal = () => setShowTradeModal(false);
+  const closeTradeModal = () => {
+    setChaptchaMessage('');
+    setShowTradeModal(false);
+  }
 
   // 캡차 인증 변경시
   const onChangeCaptcha = (value) => {
@@ -219,7 +222,7 @@ const TradeExplorePage = () => {
 
       {/* 교환 요청 버튼 누르면 보여줄 확인 모달 */}
       {showTradeModal ?
-      <Modal className="remove_modal" onClose={closeTradeModal}>
+      <Modal onClose={closeTradeModal}>
         <ModalHeader onClose={closeTradeModal}>
           <h1>교환 요청</h1>
         </ModalHeader>
@@ -227,8 +230,9 @@ const TradeExplorePage = () => {
           {trades.length > 0 &&
           <>
           {chaptchaMessage ? <MessageLabel>{chaptchaMessage}</MessageLabel> : null}
-          <p>{haveVoucher.name} 카드를 {trades[0].username} 에게 주고</p>
-          <p>{trades[trades.length - 1].username} (으)로부터 {trades[trades.length - 1].name} 을(를) 받게 됩니다.</p>
+          <p><span className="have-text">[{haveVoucher.name}]</span> 을(를) {trades[0].username} 에게 <span className="have-text">주고</span></p>
+          <p><span className="want-text">[{trades[trades.length - 1].name}]</span> 을(를) {trades[trades.length - 1].username} (으)로부터 <span className="want-text">받게</span> 됩니다.</p>
+          <br />
           <p>정말로 교환하시겠습니까?</p>
           </>
           }
@@ -330,7 +334,10 @@ const TradeExplorePage = () => {
         <p className="label">{exploreMessage}</p>
         {trades.length > 0 &&
         <>
-        <div className="label">아래의 교환을 통해서 <b>{haveVoucher.name}</b> 카드를 주고 <b>{trades[trades.length - 1].name}</b> 카드를 받을 수 있습니다. </div>
+        <div className="label">
+          아래의 교환을 통해서 <b className="have-text">{haveVoucher.name}</b> 카드를 주고&nbsp;
+          <b className="want-text">{trades[trades.length - 1].name}</b> 카드를 받을 수 있습니다.
+        </div>
         <TradeExploreList trades={trades} haveVoucher={haveVoucher} />
         {tradeMessage ? <MessageLabel>{tradeMessage}</MessageLabel> : null}
 

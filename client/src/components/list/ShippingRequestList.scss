@@ -4,9 +4,11 @@
 
     // 테이블 크기 지정
     thead {
-      .request_id { width: 12%; }
+      .request_id { width: 5%; }
       .state { width: 12%; }
-      .username { width: 15%; }
+      .payment_state { width: 12%; }
+      .photocards { width: 31%; }
+      .username { width: 25%; }
       .regist_time { width: 15%; }
     }
 

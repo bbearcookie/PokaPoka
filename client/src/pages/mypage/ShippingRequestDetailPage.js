@@ -22,15 +22,15 @@ import './ShippingRequestDetailPage.scss';
 
 // 배송 요청 처리 상태에 따라 화면에 보여줄 텍스트
 const ShippingState = {
-  'waiting': '요청 처리 전',
-  'finished': '처리 완료'
+  'waiting': '대기중',
+  'finished': '발송 완료'
 }
 
 // 결제 상태에 따라 화면에 보여줄 텍스트
 const PaymentState = {
   'waiting': '결제 대기중',
   'paid': '결제 완료',
-  'forgery': '위조된 결제'
+  'forgery': '위조됨' 
 }
 
 // 문의사항 상세 조회 페이지
@@ -40,6 +40,7 @@ const ShippingRequestDetailPage = () => {
   const [requests, setRequests] = useState({ // 문의사항 상세 정보
     username: '', // 요청자
     state: '', // 처리 상태
+    address: '', // 배송 주소
     payment_price: '',  // 결제 금액
     payment_state: '',  //결제 상태
     regist_time: '' // 요청 등록일
@@ -59,6 +60,7 @@ const ShippingRequestDetailPage = () => {
       setRequests({
         username: res.requests.username,
         state: res.requests.state,
+        address: res.requests.address,
         payment_price: res.requests.payment_price,
         payment_state: res.requests.payment_state,
         regist_time: res.requests.regist_time
@@ -167,10 +169,6 @@ const ShippingRequestDetailPage = () => {
       <section className="label_area">
         <p className="label">배송 요청 처리 상태</p>
         <p>{ShippingState[requests.state]}</p>
-      </section>
-      <section className="label_area">
-        <p className="label">결제 금액</p>
-        <p>{requests.payment_price}</p>
       </section>
       <section className="label_area">
         <p className="label">결제 상태</p>

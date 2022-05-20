@@ -36,7 +36,6 @@ const NoticeList = ({ className, notices, perPage }) => {
       <Table>
         <thead>
           <tr>
-            <th className="notice_id">번호</th>
             <th className="title">제목</th>
             <th className="username">작성자</th>
             <th className="write_time">등록일</th>
@@ -46,7 +45,6 @@ const NoticeList = ({ className, notices, perPage }) => {
         {notices ?
           notices.filter((notice, idx) => isInCurrentPage(idx + 1)).map((notice, idx) => 
             <tr key={idx} notice_id={notice.notice_id} onClick={onClickDetailView}>
-                <td>{notice.notice_id}</td>
                 <td>{notice.title}</td>
                 <td>{notice.username}</td>
                 <td>{getFormattedDate(notice.write_time)}</td>
