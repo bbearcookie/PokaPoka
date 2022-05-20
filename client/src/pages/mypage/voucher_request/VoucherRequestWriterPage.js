@@ -15,7 +15,7 @@ import UserTemplate from '../../../templates/UserTemplate';
 import './VoucherRequestWriterPage.scss';
 
 const VoucherRequestWriterPage = () => {
-  const { voucherId } = useParams(); // URL에 포함된 voucherId Params 정보
+  const { requestId } = useParams(); // URL에 포함된 voucherId Params 정보
   const [form, setForm] = useState({
     delivery: '',
     trackingNumber: '',
@@ -39,8 +39,20 @@ const VoucherRequestWriterPage = () => {
   // 페이지 로드시 동작
   const onLoad = async () => {
     try {
-      const res = await request.call(api.getGroupList);
+      let res = await request.call(api.getGroupList);
       setGroups(res.groups);
+      if(requestId){
+        res = await request.call(api.getVoucherRequestDetail, requestId);
+        setForm(produce(draft => {
+        draft.delivery = res.request.delivery;
+        draft.trackingNumber = res.request.tracking_number;
+        draft.groupId = res.request.group_id;
+        draft.memberId = res.request.member_id;
+        draft.photocardId = res.request.photocard_id;
+        draft.image.previewURL = `${BACKEND}/image/voucher/${res.request.image_name}`;
+        draft.image.initialURL = `${BACKEND}/image/voucher/${res.request.image_name}`;
+        }));
+      }
     } catch (err) {
       setMessage(err.response.data.message);
     }
@@ -152,11 +164,22 @@ const VoucherRequestWriterPage = () => {
     console.log(form);
 
     // 새로 작성하는 경우
-    if (!voucherId) {
+    if (!requestId) {
       try {
         const res = await request.call(api.postVoucherRequest, form);
         console.log(res);
         return navigate('/mypage/voucher');
+      } catch (err) {
+        setMessage(err.response.data.message);
+      }
+    }
+    // 수정하는 경우
+    else{
+      try {
+        const res = await request.call(api.putVoucherRequest, form, requestId);
+        console.log(res);
+        setMessage(res.message);
+        return navigate(-1);
       } catch (err) {
         setMessage(err.response.data.message);
       }
@@ -169,7 +192,7 @@ const VoucherRequestWriterPage = () => {
       sidebar={<MyPageSidebar />}
     >
       <form onSubmit={onSubmit}>
-        {voucherId ?
+        {requestId ?
         <h1 className="title-label">포토카드 소유권 요청 수정</h1> :
         <h1 className="title-label">포토카드 소유권 요청 등록</h1>}
 
@@ -253,7 +276,8 @@ const VoucherRequestWriterPage = () => {
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>
-          <Button className="submit_button" type="submit">작성</Button>
+          {requestId ? <Button className="submit_button" type="submit">수정</Button>:
+          <Button className="submit_button" type="submit">작성</Button>}
         </section>
       </form>
     </UserTemplate>

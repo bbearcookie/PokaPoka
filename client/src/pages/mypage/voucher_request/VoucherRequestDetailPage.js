@@ -89,6 +89,16 @@ const VoucherRequestDetailPage = () => {
     closeRemoveModal();
   }
 
+  // 수정 버튼 클릭시
+  const gotoWriterPage = async () => {
+    try {
+      return navigate(`/mypage/voucher/writer/${requestId}`);
+    } catch (err) {
+      setMessage(err.response.data.message);
+    }
+    closeRemoveModal();
+  }
+
   return (
     <UserTemplate
       className="VoucherRequestDetailPage"
@@ -158,7 +168,7 @@ const VoucherRequestDetailPage = () => {
 
       <section className="submit_section">
         <Link to="/mypage/voucher"><Button className="cancel_button">뒤로 가기</Button></Link>
-        {voucherRequest.state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>수정</Button>}
+        {voucherRequest.state === 'waiting' && <Button className="edit_button" onClick={gotoWriterPage}>수정</Button>}
         {voucherRequest.state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>삭제</Button>}
         
       </section>

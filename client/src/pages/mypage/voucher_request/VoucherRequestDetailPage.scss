@@ -89,6 +89,15 @@
     }
   }
 
+  .edit_button {
+    color: white;
+    background-color: #0dcaf0;
+
+    &:hover {
+      background-color: #11badc;
+    }
+  }
+
   .cancel_button {
     background-color: #ececec;
 

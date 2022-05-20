@@ -154,7 +154,7 @@ function App() {
         <Route path="/mypage/voucher" element={<VoucherRequestListPage />}/>
         <Route path="/mypage/voucher/detail/:requestId" element={<VoucherRequestDetailPage />}/>
         <Route path="/mypage/voucher/writer" element={<VoucherRequestWriterPage />}/>
-        <Route path="/mypage/voucher/writer/:voucherId" element={<VoucherRequestWriterPage />}/>
+        <Route path="/mypage/voucher/writer/:requestId" element={<VoucherRequestWriterPage />}/>
         <Route path="/mypage/suggestion" element={<SuggestionRequestListPage />}/>
         <Route path="/mypage/suggestion/writer" element={<SuggestionWriterPage />}/>
         <Route path="/mypage/suggestion/detail/:suggestionId" element={<SuggestionRequestDetailPage />}/>
