@@ -265,6 +265,18 @@ export const postVoucherRequest = (form) => {
   { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
   );
 }
+// 사용자가 포토카드 소유권 발급 요청 수정
+export const putVoucherRequest = (form, requestId) => {
+  let formData = new FormData();
+  formData.append('delivery', form.delivery);
+  formData.append('trackingNumber', form.trackingNumber);
+  formData.append('photocardId', form.photocardId);
+  formData.append('image', form.image.file);
+
+  return axios.put(`${BACKEND}/api/voucher/request/${requestId}`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
 // 관리자가 포토카드 소유권 발급
 export const postVoucherProvisionNew = (form) => axios.post(`${BACKEND}/api/voucher/provision/new`,
   {
