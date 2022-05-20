@@ -82,7 +82,7 @@ const VoucherRequestDetailPage = () => {
   const onClickRemove = async () => {
     try {
       const res = await request.call(api.deleteVoucherRequest, requestId);
-      return navigate('/admin/voucher/request');
+      return navigate('/mypage/voucher');
     } catch (err) {
       setMessage(err.response.data.message);
     }
