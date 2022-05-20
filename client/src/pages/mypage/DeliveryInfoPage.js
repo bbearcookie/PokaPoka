@@ -17,6 +17,8 @@ import './DeliveryInfoPage.scss';
 
 const DeliveryInfoPage = () => {
   const [form, setForm] = useState({
+    name: '',
+    phone: '',
     address: ''
   });
   const [showSearchModal, setShowSearchModal] = useState(false); // 주소 검색 모달 창 화면에 띄우기 on/off
@@ -32,6 +34,8 @@ const DeliveryInfoPage = () => {
       let res = await request.call(api.getAddress);
       console.log(res);
       setForm({
+        name: res.user.name,
+        phone: res.user.phone,
         address: res.user.address
       });
     }
@@ -132,6 +136,32 @@ const DeliveryInfoPage = () => {
         {message ? <MessageLabel>{message}</MessageLabel> : null}
 
         <div className="label_section">
+          <span className="label">수령인</span>
+          <Input
+            type="text"
+            name="name"
+            value={form.name}
+            autoComplete="off"
+            readOnly={true}
+            placeholder="수령인 이름은 사용자 정보 페이지에서 수정해주세요"
+            onChange={onChangeInput}
+          />
+        </div>
+
+        <div className="label_section">
+          <span className="label">연락처</span>
+          <Input
+            type="text"
+            name="phone"
+            value={form.phone}
+            autoComplete="off"
+            readOnly={true}
+            placeholder="연락처는 사용자 정보 페이지에서 수정해주세요"
+            onChange={onChangeInput}
+          />
+        </div>
+
+        <div className="label_section">
           <span className="label">주소</span>
           <Input
             type="text"
@@ -143,6 +173,8 @@ const DeliveryInfoPage = () => {
           />
           <Button className="cancel_button" type="button" onClick={openSearchModal}>주소 검색</Button>
         </div>
+        <p className="text-label">수령인 이름과 연락처는 사용자 설정 페이지에서 수정해주세요.</p>
+
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onClickBackButton}>취소</Button>

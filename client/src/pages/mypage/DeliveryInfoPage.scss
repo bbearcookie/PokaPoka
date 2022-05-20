@@ -19,7 +19,7 @@
     flex-direction: column;
 
     .label_section {
-      margin-bottom: 5px;
+      margin-bottom: 15px;
     }
 
     .input_section {
@@ -45,7 +45,7 @@
     }
 
     .Button {
-      width: 10%; max-width: 100px; height: 30px;
+      width: 10%; max-width: 100px; height: 40px;
       margin-left: 15px;
     }
   }
@@ -83,5 +83,9 @@
     &:hover {
       background-color: #11badc;
     }
+  }
+
+  .text-label {
+    text-align: center;
   }
 }
