@@ -38,7 +38,6 @@ const SuggestionList = ({ className, suggestions, perPage }) => {
       <Table>
         <thead>
           <tr>
-            <th className="suggestion_id">번호</th>
             <th className="category">분류</th>
             <th className="state">처리 상태</th>
             <th className="title">제목</th>
@@ -50,7 +49,6 @@ const SuggestionList = ({ className, suggestions, perPage }) => {
         {suggestions ?
           suggestions.filter((suggestion, idx) => isInCurrentPage(idx + 1)).map((suggestion, idx) => 
             <tr key={idx} suggestion_id={suggestion.suggestion_id} onClick={onClickDetailView}>
-                <td>{suggestion.suggestion_id}</td>
                 <td><Badge type={suggestion.category} /></td>
                 <td><Badge type={suggestion.state} /></td>
                 <td>{suggestion.title}</td>

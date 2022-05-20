@@ -34,7 +34,6 @@ const ShippingProvisionList = ({ className, provisions, perPage }) => {
       <Table>
         <thead>
           <tr>
-            <th className="provision_id">번호</th>
             <th className="request_id">요청 번호</th>
             <th className="photocards">포토카드</th>
             <th className="recipient">수령인</th>
@@ -46,7 +45,6 @@ const ShippingProvisionList = ({ className, provisions, perPage }) => {
         {provisions ?
           provisions.filter((prov, idx) => isInCurrentPage(idx + 1)).map((prov, idx) => 
             <tr key={idx} request_id={prov.request_id} onClick={onClickDetailView}>
-                <td>{prov.provision_id}</td>
                 <td>{prov.request_id}</td>
                 <td>{prov.wantcards[0].name} {prov.wantcards.length > 1 && <span>외 {prov.wantcards.length - 1}장</span>}</td>
                 <td>{prov.recipient}</td>
