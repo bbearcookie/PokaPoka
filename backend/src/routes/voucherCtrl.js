@@ -207,6 +207,99 @@ router.post('/request', voucherImageUpload.single('image'), verifyLogin, async (
   return res.status(501).json({ message: 'end of line' });
 });
 
+// 포토카드 소유권 발급 요청 수정
+router.put('/request/:requestId', voucherImageUpload.single('image'), verifyLogin, async (req, res) => {
+  const { requestId } = req.params;
+  const { delivery, trackingNumber, photocardId } = req.body;
+  const { user, file } = req;
+
+  // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
+  function removeTempFile() {
+    if (file) {
+      try { fs.rm(file.path); }
+      catch (err) { console.error(err); }
+    }
+  }
+
+  // 로그인 상태 검사
+  if (!user) {
+    removeTempFile();
+    return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
+  }
+
+  // 유효성 검사
+  if (!delivery) {
+    removeTempFile();
+    return res.status(400).json({ message: '택배사를 입력해주세요.' });
+  }
+  if (!trackingNumber){
+    removeTempFile();
+    return res.status(400).json({ message: '운송장 번호를 입력해주세요.' });
+  }
+  if (!photocardId) {
+    removeTempFile();
+    return res.status(400).json({ message: '발급 받고자 하는 포토카드를 선택해주세요.' });
+  }
+
+  const con = await db.getConnection();
+  try {
+
+    // 수정하려는 요청 존재 유무 확인
+    let sql = `SELECT request_id, image_name FROM VoucherRequest WHERE request_id=${requestId}`;
+    let [[request]] = await con.query(sql);
+    if (!request) {
+      removeTempFile();
+      return res.status(404).json({ message: '수정하려는 소유권 요청이 DB에 없습니다.' });
+    }
+    
+    // 수정하려는 요청에 일치하는 사용자가 아닌경우
+    sql = `SELECT username FROM VoucherRequest WHERE request_id=${requestId}`;
+    [[userCheck]] = await con.query(sql);
+    if (userCheck.username !== user.username) {
+      removeTempFile();
+      return res.status(404).json({ message: '수정하려는 소유권 요청의 사용자가 일치하지 않습니다.' });
+    }
+
+    // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경하고 기존의 이미지 삭제
+    let filename = "";
+    if (file) {
+      // 기존 이미지 삭제
+      if (request.image_name) {
+        try { fs.rm(path.join(VOUCHER_IMAGE_DIR, request.image_name)); }
+        catch (err) { console.error(err); }
+      }
+
+      // 이미지 이름 변경
+      filename = getTimestampFilename(requestId, file.mimetype);
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
+
+      // DB에 이미지 파일 이름 변경 내용 반영
+      sql = `UPDATE VoucherRequest SET image_name = '${filename}' WHERE request_id = ${requestId}`;
+      await con.execute(sql);
+    }
+
+    // 수정된 내용 DB에 저장
+    sql = `UPDATE VoucherRequest 
+    SET delivery = '${delivery}',
+    tracking_number = '${trackingNumber}',
+    photocard_id = ${photocardId},
+    regist_time = NOW()
+    WHERE request_id = ${requestId}`;
+    await con.execute(sql);
+
+    return res.status(200).json({ message: '소유권 요청 정보를 수정했습니다.' });
+  } catch (err) {
+    console.error(err);
+    removeTempFile();
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+
+  return res.status(501).json({ message: 'end of line' });
+});
+
 // 포토카드 소유권 요청 삭제
 router.delete('/request/:requestId', verifyLogin, async (req, res) => {
   const { requestId } = req.params;
