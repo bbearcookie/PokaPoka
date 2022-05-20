@@ -199,7 +199,7 @@ const ShippingRequestDetailPage = () => {
       </section>
       <section className="submit_section">
         {authState.user.username === requests.username &&
-        requests.payment_state === 'waiting' && 
+        requests.payment_state === 'waiting' &&
         <Button className="edit_button" onClick={onClickPayment}>결제하기</Button>}
         {requests.payment_state === 'waiting' && <Button className="remove_button" onClick={openRemoveModal}>요청 취소</Button>}
         <Link to="/mypage/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>

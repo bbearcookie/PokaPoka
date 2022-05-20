@@ -199,7 +199,9 @@ const ShippingDetailPage = () => {
       </section>
       <section className="submit_section">
         <Link to="/admin/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
-        {requests.state === 'waiting' && <Button className="edit_button" onClick={onClickState}>발송 완료</Button>}
+        {requests.state === 'waiting' &&
+        requests.payment_state === 'paid' && 
+        <Button className="edit_button" onClick={onClickState}>발송 완료</Button>}
         {requests.payment_state === 'waiting' && <Button className="add_button" onClick={openRemoveModal}>요청 삭제</Button>}
       </section>
     </AdminTemplate>
