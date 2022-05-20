@@ -299,7 +299,7 @@ router.get('/shipping/list', verifyLogin, async (req, res) => {
     // 관리자일 경우
     if (isAdmin(accessToken)) {
       sql = `
-      SELECT request_id, state, username, regist_time
+      SELECT request_id, state, payment_state, username, regist_time
       FROM ShippingRequest
       ORDER BY regist_time DESC`;
       [requests] = await con.query(sql);
@@ -307,7 +307,7 @@ router.get('/shipping/list', verifyLogin, async (req, res) => {
     // 일반 사용자일 경우
     else {
       sql = `
-      SELECT request_id, state, username, regist_time
+      SELECT request_id, state, payment_state, username, regist_time
       FROM ShippingRequest
       WHERE username='${user.username}'
       ORDER BY regist_time DESC`;

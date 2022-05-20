@@ -15,6 +15,8 @@ const TYPES = {
   'commented': '완료',
   'finished': '완료',
   'finding': '진행중',
+  'paid': '완료',
+  'forgery': '위조됨',
 }
 
 // 뱃지 컴포넌트

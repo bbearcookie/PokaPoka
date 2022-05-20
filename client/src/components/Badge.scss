@@ -14,7 +14,7 @@
     color: black;
   }
 
-  &[type="voucher"] {
+  &[type="voucher"], &[type="forgery"] {
     background-color: rgb(255, 255, 0);
     color: black;
   }
@@ -24,8 +24,8 @@
     color: white;
   }
 
-  &[type="trade"], &[type="finding"] {
-    background-color: rgb(149, 220, 248);
+  &[type="trade"], &[type="finding"], &[type="paid"] {
+    background-color: rgb(137, 215, 246);
     color: black;
   }
 

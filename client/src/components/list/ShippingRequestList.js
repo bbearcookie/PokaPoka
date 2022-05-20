@@ -40,6 +40,7 @@ const ShippingRequestList = ({ className, requests, perPage }) => {
           <tr>
             <th className="request_id">요청 번호</th>
             <th className="state">처리 상태</th>
+            <th className="payment_state">결제 상태</th>
             <th className="photocards">포토카드</th>
             <th className="username">요청자</th>
             <th className="regist_time">요청일</th>
@@ -51,6 +52,7 @@ const ShippingRequestList = ({ className, requests, perPage }) => {
             <tr key={idx} request_id={req.request_id} onClick={onClickDetailView}>
                 <td>{req.request_id}</td>
                 <td><Badge type={req.state} /></td>
+                <td><Badge type={req.payment_state} /></td>
                 <td>{req.wantcards[0].name} {req.wantcards.length > 1 && <span>외 {req.wantcards.length - 1}장</span>}</td>
                 <td>{req.username}</td>
                 <td>{getFormattedDate(req.regist_time)}</td>
