@@ -31,7 +31,7 @@ const AdminSidebar = () => {
         to="/admin/voucher/provision"
       >소유권 발급</Link>
       <Link className={classNames("link", {"active": URI.includes('/admin/shipping')})}
-        to="/admin/shipping">배송 요청</Link>
+        to="/admin/shipping">배송 관리</Link>
       <section className="subtitle_section">DB 데이터 관리</section>
       <Link
         className={classNames("link", {"active": URI.includes('/admin/group')})}

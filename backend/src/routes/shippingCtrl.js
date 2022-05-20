@@ -544,6 +544,19 @@ router.get('/shipping/provision', verifyLogin, async (req, res) => {
     ORDER BY provide_time DESC`;
     let [provisions] = await con.query(sql);
 
+    provisions = await Promise.all(provisions.map(async (prov) => {
+      // 원하는 포토카드의 목록을 가져옴
+      let sql = `
+      SELECT P.photocard_id, P.name
+      FROM ShippingWant as W
+      INNER JOIN Voucher as V ON V.voucher_id=W.voucher_id
+      INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
+      WHERE W.request_id=${prov.request_id}`
+      let [wantcards] = await con.query(sql);
+
+      return { ...prov, wantcards };
+  }));
+
     return res.status(200).json({ message: '포토카드 배송 내역을 조회했습니다.', provisions });
   } catch (err) {
     console.error(err);

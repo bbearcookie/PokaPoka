@@ -20,10 +20,10 @@ const ShippingListPage = () => {
     try {
       const res = await request.call(api.getShippingRequestList);
       setRequests(res.request);
-      console.log(res);
 
       const res2 = await request.call(api.getShippingProvisionListAll);
       setProvisions(res2.provisions);
+      console.log(res2);
     } catch (err) {
       console.error(err);
     }
@@ -36,9 +36,6 @@ const ShippingListPage = () => {
 
       <section className="title_area">
         <h1 className="title-label">포토카드 배송 요청 목록</h1>
-        {/* <Link to="/admin/shipping/provision">
-          <Button className="add_button">배송 내역</Button>
-        </Link> */}
       </section>
       <ShippingRequestList requests={requests} perPage="10" />
 
