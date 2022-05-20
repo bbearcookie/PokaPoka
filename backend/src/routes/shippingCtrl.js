@@ -33,7 +33,10 @@ router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
     let { address, address_detail } = req.body;
     let { user } = req;
 
-    if(address) address = address + ' ' + address_detail;
+    // if(address) address = address + ' ' + address_detail;
+
+    // 유효성 검사
+    if (!address) return res.status(400).json({ message: '배송 주소를 입력해주세요.' });
   
     // 로그인 상태 확인
     if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
@@ -53,8 +56,8 @@ router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
       WHERE username = '${user.username}'`;
       await con.execute(sql);
   
-      if(!address) return res.status(200).json({ message: '주소를 삭제했습니다.' });
-      else return res.status(200).json({ message: '주소를 추가했습니다.' });
+      if(!address) return res.status(200).json({ message: '배송 주소를 삭제했습니다.' });
+      else return res.status(200).json({ message: '배송 주소를 수정했습니다.', address });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
