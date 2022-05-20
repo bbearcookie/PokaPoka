@@ -21,7 +21,7 @@ const VoucherRequestList = ({ className, requests, perPage }) => {
     let user = localStorage.getItem(STORAGE_KEY_NAME); // 세션 스토리지의 사용자 정보 가져옴
     user = JSON.parse(user);
     if (user.role === 'admin') return navigate(`/admin/voucher/request/detail/${requestId}`);
-    // else return navigate(`/mypage/suggestion/detail/${suggestionId}`);
+    else return navigate(`/mypage/voucher/detail/${requestId}`);
   }
   
   // 해당 문의사항이 현재 페이지에 조회되어야 할 내용인지를 체크. true or false 반환.
