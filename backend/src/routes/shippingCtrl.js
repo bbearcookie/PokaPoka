@@ -286,24 +286,48 @@ router.post('/shipping/mypage/voucher', verifyLogin, async (req, res) => {
 
 // 일반 사용자 & 관리자 - 배송 요청 목록 조회
 router.get('/shipping/list', verifyLogin, async (req, res) => {
-  const { accessToken } = req;
-  let { user } = req;
+  const { user, accessToken } = req;
+
+  // 로그인 상태 확인
+  if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
 
   const con = await db.getConnection();
   try {
-    if(isAdmin(accessToken)){ // 관리자 일 경우
-      let sql = `SELECT request_id, state, username, regist_time FROM ShippingRequest`;
-      let [request] = await con.query(sql);
-      return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request });
+    let sql = '';
+    let requests = [];
+
+    // 관리자일 경우
+    if (isAdmin(accessToken)) {
+      sql = `
+      SELECT request_id, state, username, regist_time
+      FROM ShippingRequest
+      ORDER BY regist_time DESC`;
+      [requests] = await con.query(sql);
     }
-    else if(user){  // 일반 사용자일 경우
-      let sql = `SELECT request_id, state, username, regist_time FROM ShippingRequest WHERE username='${user.username}'`;
-      let [request] = await con.query(sql);
-      return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request });
+    // 일반 사용자일 경우
+    else {
+      sql = `
+      SELECT request_id, state, username, regist_time
+      FROM ShippingRequest
+      WHERE username='${user.username}'
+      ORDER BY regist_time DESC`;
+      [requests] = await con.query(sql);
     }
-    else{
-      return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
-    }
+
+    requests = await Promise.all(requests.map(async (request) => {
+      // 원하는 포토카드의 목록을 가져옴
+      let sql = `
+      SELECT P.photocard_id, P.name
+      FROM ShippingWant as W
+      INNER JOIN Voucher as V ON V.voucher_id=W.voucher_id
+      INNER JOIN Photocard as P ON P.photocard_id=V.photocard_id
+      WHERE W.request_id=${request.request_id}`
+      let [wantcards] = await con.query(sql);
+
+      return { ...request, wantcards };
+  }));
+
+    return res.status(200).json({ message: '배송 요청 목록 조회에 성공했습니다.', request: requests });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
