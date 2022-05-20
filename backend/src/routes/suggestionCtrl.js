@@ -51,12 +51,12 @@ router.get('/list', verifyLogin, async (req, res) => {
     const con = await db.getConnection();
     try {
       if(isAdmin(accessToken)){ // 관리자 일 경우
-        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion`;
+        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion ORDER BY write_time DESC`;
         let [suggestion] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
       else if(user){  // 일반 사용자일 경우
-        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion WHERE username='${user.username}'`;
+        let sql = `SELECT suggestion_id, state, category, title, username, write_time FROM suggestion WHERE username='${user.username}' ORDER BY write_time DESC`;
         let [suggestion] = await con.query(sql);
         return res.status(200).json({ message: '문의사항 목록 조회에 성공했습니다.', suggestion });
       }
