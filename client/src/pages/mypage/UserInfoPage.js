@@ -126,27 +126,27 @@ const UserInfoPage = () => {
                     <Table>
                         <tr>
                             <th className="b">아이디</th>
-                            <th><p>{users.username}</p></th>
+                            <th className="a"><p>{users.username}</p></th>
                         </tr>
                         <tr>
                             <th className="b">이름</th>
-                            <th><p>{users.name}</p></th>
+                            <th className="a"><p>{users.name}</p></th>
                         </tr>
                         <tr>
                             <th className="b">전화번호</th>
-                            <th><p>{users.phone}</p></th>
+                            <th className="a"><p>{users.phone}</p></th>
                         </tr>
                         <tr>
                             <th className="b">닉네임</th>
-                            <th><p>{users.nickname}</p></th>
+                            <th className="a"><p>{users.nickname}</p></th>
                         </tr>
                         <tr>
                             <th className="b"> 최애그룹</th>
-                            <th><p>{users.favorite}</p></th>
+                            <th className="a"><p>{users.favorite}</p></th>
                         </tr>
                         <tr>
                             <th className="b">탈퇴 요청 여부</th>
-                            <th><p>{withdrawalState[users.withdrawal]}</p></th>
+                            <th className="a"><p>{withdrawalState[users.withdrawal]}</p></th>
                         </tr>
                     </Table>
                     <section className='submit_section'>

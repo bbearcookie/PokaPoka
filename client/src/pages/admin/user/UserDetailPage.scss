@@ -146,7 +146,7 @@
   
       form{
    
-        width: 500px;
+        width: 700px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -154,19 +154,35 @@
     table{
         margin:30px;
         border-collapse: collapse;
-        height: 300px;
-        width: 750px;
+        height: 100%;
+        width: 100%;
+        box-shadow: 0px 5px 11px 1px #C0C0C0;
       tr{
           th{
-            border: 1px solid grey;
-            
-            
+            border: 3px solid white;
+                color: white;
+                margin-bottom: 50px;
+                text-align: center;
+                font-size: 26px;
+                font-weight: bold;
+                align-self: flex-start;
+                font-size: 20px;
+                margin: 5px 0 0 0;
+                white-space: pre-wrap;
+                background-color:#e7708d;
+                width:20%;
           }
-          .b{
-            background-color: #e5e5e5;
-            text-align: center;
+            
+            
+          
+        .a{
+            color:#070707;
+            background-color:#f8d7da;
+            width:80%;
+            font-weight:lighter;
           }
         }
+        
 
     }
     .btn {

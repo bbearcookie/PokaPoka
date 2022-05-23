@@ -162,15 +162,15 @@ const UserDetailPage = () => {
       <section className="InfoManage_sec">
         <form>
           <Table>
-            <tr><th className="b">아이디</th><th><p>{users.username}</p></th></tr>
-            <tr><th className="b">이름</th><th><p>{users.name}</p></th></tr>
-            <tr><th className="b">전화번호</th><th><p>{users.phone}</p></th></tr>
-            <tr><th className="b">닉네임</th><th><p>{users.nickname}</p></th></tr>
-            <tr><th className="b">최애그룹</th><th><p>{users.favorite}</p></th></tr>
-            <tr><th className="b">주소</th><th><p>{users.address}</p></th></tr>
-            <tr><th className="b">탈퇴 요청 여부</th><th><p>{withdrawalState[users.withdrawal]}</p></th></tr>
-            <tr><th className="b">비활성화 여부</th><th><p>{inactiveState[users.inactive]}</p></th></tr>
-            <tr><th className="b">등록일</th><th><p>{getFormattedDate(users.regist_time)}</p></th></tr>
+            <tr><th className="b">아이디</th><th className="a"><p>{users.username}</p></th></tr>
+            <tr><th className="b">이름</th><th className="a"><p>{users.name}</p></th></tr>
+            <tr><th className="b">전화번호</th><th className="a"><p>{users.phone}</p></th></tr>
+            <tr><th className="b">닉네임</th><th className="a"><p>{users.nickname}</p></th></tr>
+            <tr><th className="b">최애그룹</th><th className="a"><p>{users.favorite}</p></th></tr>
+            <tr><th className="b">주소</th><th className="a"><p>{users.address}</p></th></tr>
+            <tr><th className="b">탈퇴 요청 여부</th><th className="a"><p>{withdrawalState[users.withdrawal]}</p></th></tr>
+            <tr><th className="b">비활성화 여부</th><th className="a"><p>{inactiveState[users.inactive]}</p></th></tr>
+            <tr><th className="b">등록일</th><th className="a"><p>{getFormattedDate(users.regist_time)}</p></th></tr>
           </Table>
         </form>
       </section>
