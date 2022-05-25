@@ -462,8 +462,9 @@ export const getAddress = () => axios.get(`${BACKEND}/api/shipping/deliveryInfo`
 export const putAddress = (form) => axios.put(`${BACKEND}/api/shipping/addressUpdate`,
   {
     address: form.address,
-    address_detail: form.address_detail
-  }, 
+    name: form.name,
+    phone: form.phone
+  },
   options
 );
 // 배송요청 상세 데이터 조회 요청

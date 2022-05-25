@@ -2,6 +2,7 @@ const router = require('../config/express').router;
 const crypto = require('crypto');
 const { db } = require('../config/database');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
+const { checkSMSVerification } = require('../utils/sms');
 const { isNull, getWhereClause } = require('../utils/common');
 
 // 일반 사용자 - 마이페이지 배송 정보
@@ -30,16 +31,29 @@ router.get('/shipping/deliveryInfo', verifyLogin, async (req, res) => {
 
 // 일반 사용자 - 사용자 주소 데이터 업데이트
 router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
-    let { address, address_detail } = req.body;
-    let { user } = req;
-
-    // if(address) address = address + ' ' + address_detail;
-
-    // 유효성 검사
-    if (!address) return res.status(400).json({ message: '배송 주소를 입력해주세요.' });
-  
+    const { address, name } = req.body;
+    let { phone } = req.body;
+    const { user } = req;
+    const { smsVerification } = req.session;
+ 
     // 로그인 상태 확인
     if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
+
+    // 유효성 검사
+    if (!name) return res.status(400).json({ message: '수령인 이름을 입력해주세요.' });
+    if (name.length > 10) return res.status(400).json({ message: '수령인 이름은 최대 10글자까지 입력할 수 있습니다.' });
+    if (!address) return res.status(400).json({ message: '배송 주소를 입력해주세요.' });
+
+    // 전화번호 유효성 검사
+    if (!phone) return res.status(400).json({ message: '전화번호를 입력해주세요.' });
+    let regex = /[^0-9]/g;
+    phone = phone.replace(regex, ""); // 전화번호에서 숫자만 추출함.
+    if (phone.length !== 11) return res.status(400).json({ message: '휴대폰 번호가 올바른 자릿수가 아닙니다.' });
+    if (phone.substring(0, 2) !== '01') return res.status(400).json({ message: '휴대폰 번호는 01로 시작해야 합니다.' });
+
+    // 휴대폰 인증 검사
+    if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
+    if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' });
   
     const con = await db.getConnection();
     try {
@@ -52,12 +66,12 @@ router.put('/shipping/addressUpdate', verifyLogin, async (req, res) => {
   
       // 수정된 내용 DB에 저장
       sql = `UPDATE User 
-      SET address = '${address}' 
-      WHERE username = '${user.username}'`;
+      SET address='${address}', name='${name}', phone='${phone}'
+      WHERE username='${user.username}'`;
       await con.execute(sql);
   
-      if(!address) return res.status(200).json({ message: '배송 주소를 삭제했습니다.' });
-      else return res.status(200).json({ message: '배송 주소를 수정했습니다.', address });
+      if(!address) return res.status(200).json({ message: '배송 정보를 삭제했습니다.' });
+      else return res.status(200).json({ message: '배송 정보를 수정했습니다.', address });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });

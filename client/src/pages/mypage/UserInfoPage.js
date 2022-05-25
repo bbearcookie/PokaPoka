@@ -16,8 +16,8 @@ import ModalFooter from '../../components/modal/ModalFooter';
 import './UserInfoPage.scss';
 
 const withdrawalState = {
-  0: '일반 상태',
-  1: '탈퇴 요청'
+  0: 'X',
+  1: 'O'
 }
 
 const UserInfoPage = () => {
@@ -46,7 +46,7 @@ const UserInfoPage = () => {
     try {
       //회원 정보 가져오기
       let res = await request.call(api.getUserInfo);
-      if(!res.user.favorite) res.user.favorite = '없음';
+      if(!res.user.favorite || res.user.favorite === 'null') res.user.favorite = '없음';
       setUsers({
         username: res.user.username,
         name: res.user.name,
@@ -120,7 +120,7 @@ const UserInfoPage = () => {
 
             {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
             {request.loading ? <LoadingSpinner /> : null}
-            <h1 className="title-label">사용자 정보 설정</h1>
+            <h1 className="title-label">사용자 정보</h1>
             <section className="InfoManage_sec">
                 <form>
                     <Table>
@@ -141,11 +141,11 @@ const UserInfoPage = () => {
                             <th className="a"><p>{users.nickname}</p></th>
                         </tr>
                         <tr>
-                            <th className="b"> 최애그룹</th>
+                            <th className="b">최애그룹</th>
                             <th className="a"><p>{users.favorite}</p></th>
                         </tr>
                         <tr>
-                            <th className="b">탈퇴 요청 여부</th>
+                            <th className="b">탈퇴 요청</th>
                             <th className="a"><p>{withdrawalState[users.withdrawal]}</p></th>
                         </tr>
                     </Table>
