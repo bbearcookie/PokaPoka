@@ -1,6 +1,7 @@
 const router = require('../config/express').router;
 const { db } = require('../config/database');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
+const { checkSMSVerification } = require('../utils/sms');
 const { isNull, getWhereClause, convertToMysqlTime, convertToMysqlStr } = require('../utils/common');
 
 // 사용자 정보 - 일반 사용자: 아이디, 이름, 전화번호, 닉네임, 최애그룹
@@ -49,9 +50,9 @@ router.put('/user/mypage/edit', verifyLogin, async (req, res) => {
   if (phone.length !== 11) return res.status(400).json({ message: '휴대폰 번호가 올바른 자릿수가 아닙니다.' });
   if (phone.substring(0, 2) !== '01') return res.status(400).json({ message: '휴대폰 번호는 01로 시작해야 합니다.' });
 
-  // 휴대폰 인증 검사 //테스트할 때 매번 인증하지 않도록 잠시 주석처리
-  // if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
-  // if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' });
+  // 휴대폰 인증 검사
+  if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
+  if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' });
 
   const con = await db.getConnection();
   try {

@@ -18,13 +18,13 @@ import Table from 'react-bootstrap/Table';
 import './UserDetailPage.scss';
 
 const withdrawalState = {
-  0: '일반 상태',
-  1: '탈퇴 요청'
+  0: 'X',
+  1: 'O'
 }
 
 const inactiveState = {
-  0: '일반 상태',
-  1: '비활성화'
+  0: 'X',
+  1: 'O'
 }
 
 // 회원 정보 상세 조회 페이지
@@ -164,7 +164,7 @@ const UserDetailPage = () => {
           <Table>
             <tr><th className="b">아이디</th><th className="a"><p>{users.username}</p></th></tr>
             <tr><th className="b">이름</th><th className="a"><p>{users.name}</p></th></tr>
-            <tr><th className="b">전화번호</th><th className="a"><p>{users.phone}</p></th></tr>
+            <tr><th className="b">전화번호</th><th className="a"><p>{users.phone ? users.phone : '없음'}</p></th></tr>
             <tr><th className="b">닉네임</th><th className="a"><p>{users.nickname}</p></th></tr>
             <tr><th className="b">최애그룹</th><th className="a"><p>{users.favorite}</p></th></tr>
             <tr><th className="b">주소</th><th className="a"><p>{users.address}</p></th></tr>

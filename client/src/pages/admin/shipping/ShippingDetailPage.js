@@ -6,6 +6,7 @@ import * as api from '../../../utils/api';
 import { getFormattedDate } from '../../../utils/common';
 import Button from '../../../components/form/Button';
 import Textarea from '../../../components/form/Textarea';
+import Input from '../../../components/form/Input';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import MessageLabel from '../../../components/MessageLabel';
 import AdminTemplate from '../../../templates/AdminTemplate';
@@ -44,9 +45,15 @@ const ShippingDetailPage = () => {
     address: '',
     phone: ''
   });
+  const [form, setForm] = useState({ // 발송 처리 정보
+    delivery: '',
+    trackingNumber: ''
+  })
   const [message, setMessage] = useState('');
+  const [sendModalMessage, setSendModalMessage] = useState('');
   const navigate = useNavigate();
   const request = useRequest();
+  const [showSendModal, setShowSendModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [VoucherRequest, setVoucherRequest] = useState([]); // 화면에 보여줄 사용 가능한 자신의 소유권 목록
   const [vouchers, setVouchers] = useState([]); // 정식 소유권 목록
@@ -86,7 +93,14 @@ const ShippingDetailPage = () => {
   };
   useEffect(() => { onLoad(); }, []);
 
-  //모달 창 열기 / 닫기
+  // 발송 모달 창 열기 / 닫기
+  const openSendModal = () => setShowSendModal(true);
+  const closeSendModal = () => {
+    setSendModalMessage('');
+    setShowSendModal(false);
+  }
+
+  // 삭제 모달 창 열기 / 닫기
   const openRemoveModal = () => setShowRemoveModal(true);
   const closeRemoveModal = () => setShowRemoveModal(false);
 
@@ -100,10 +114,17 @@ const ShippingDetailPage = () => {
     }
   }
 
-  const onClickState = async () => {
+  // input 값 변경시
+  const onChangeInput = (e) => {
+    setForm(produce(draft => {
+      draft[e.target.name] = e.target.value;
+    }));
+  }
+
+  // 발송 처리하는 버튼 클릭시
+  const onClickSendButton = async () => {
     try {
-      let res = await request.call(api.postSetState, requestId);
-      console.log(res);
+      let res = await request.call(api.postSetState, requestId, form);
 
       // 배송 요청 정보 가져오기 (화면 리프레쉬 하기위함)
       res = await request.call(api.getShippingDetailAdmin, requestId);
@@ -118,10 +139,11 @@ const ShippingDetailPage = () => {
         phone: res.users.phone,
       });
 
+      closeSendModal();
     } catch (err) {
-      setMessage(err.response.data.message);
+      setSendModalMessage(err.response.data.message);
     }
-  };
+  }
 
   return (
     <AdminTemplate className="ShippingDetailPage">
@@ -146,6 +168,40 @@ const ShippingDetailPage = () => {
       </Modal>
       : null}
 
+      {/* 요청 취소 모달창 */}
+      {showSendModal ?
+      <Modal onClose={closeSendModal}>
+        <ModalHeader onClose={closeSendModal}>
+          <h1>포토카드 발송</h1>
+        </ModalHeader>
+        <ModalBody>
+          {sendModalMessage ? <MessageLabel>{sendModalMessage}</MessageLabel> : null}
+          <p className="label">발송한 택배사</p>
+          <Input
+            type="text"
+            name="delivery"
+            value={form.delivery}
+            autoComplete="off"
+            placeholder="택배사를 입력하세요"
+            onChange={onChangeInput}
+          />
+          <p className="label">운송장 번호</p>
+          <Input
+            type="text"
+            name="trackingNumber"
+            value={form.trackingNumber}
+            autoComplete="off"
+            placeholder="운송장 번호를 입력하세요"
+            onChange={onChangeInput}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button className="cancel_button" onClick={closeSendModal}>취소</Button>
+          <Button className="remove_button" onClick={onClickSendButton}>발송</Button>
+        </ModalFooter>
+      </Modal>
+      : null}
+
       <h1 className="title-label">배송 요청 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
       <section className="label_area">
@@ -161,7 +217,7 @@ const ShippingDetailPage = () => {
         <p>{PaymentState[requests.payment_state]}</p>
       </section>
       <section className="label_area">
-        <p className="label">이름</p>
+        <p className="label">수령인</p>
         <p>{requests.name}</p>
       </section>
       <section className="label_area">
@@ -173,7 +229,7 @@ const ShippingDetailPage = () => {
         <p>{requests.phone}</p>
       </section>
       <section className="label_area">
-        <p className="label">작성일</p>
+        <p className="label">요청일</p>
         <p>{getFormattedDate(requests.regist_time)}</p>
       </section>
       <p className="label">배송 요청한 소유권</p>
@@ -197,7 +253,7 @@ const ShippingDetailPage = () => {
         <Link to="/admin/shipping"><Button className="cancel_button">뒤로 가기</Button></Link>
         {requests.state === 'waiting' &&
         requests.payment_state === 'paid' && 
-        <Button className="edit_button" onClick={onClickState}>발송 완료</Button>}
+        <Button className="edit_button" onClick={openSendModal}>발송</Button>}
         {requests.payment_state === 'waiting' && <Button className="add_button" onClick={openRemoveModal}>요청 삭제</Button>}
       </section>
     </AdminTemplate>
