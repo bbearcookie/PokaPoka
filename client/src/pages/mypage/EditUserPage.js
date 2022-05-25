@@ -38,6 +38,10 @@ const EditUserPage = () => {
       // 페이지 로드시 동작
       const onLoad = async () => {
         try {
+          // 휴대폰 인증 관련 세션정보 초기화
+          await request.call(api.deleteSmsSession);
+
+
           let res = await request.call(api.getUserInfo);
         setForm(produce(draft => {
           draft.name = res.user.name;
