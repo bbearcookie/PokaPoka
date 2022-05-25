@@ -46,9 +46,9 @@ const UserList = ({ className, users, perPage }) => {
             <tr key={idx} username={user.username} onClick={onClickDetailView}>
                 <td>{user.username}</td>
                 <td>{user.name}</td>
-                <td>{user.phone}</td>
+                <td>{user.phone ? user.phone : '없음'}</td>
                 <td>{user.nickname}</td>
-                <td>{user.favorite}</td>
+                <td>{user.favorite ? user.favorite : '없음'}</td>
                 <td>{getFormattedDate(user.regist_time)}</td>
             </tr>
           ) : null}

@@ -134,7 +134,7 @@ const UserInfoPage = () => {
                         </tr>
                         <tr>
                             <th className="b">전화번호</th>
-                            <th className="a"><p>{users.phone}</p></th>
+                            <th className="a"><p>{users.phone ? users.phone : '없음'}</p></th>
                         </tr>
                         <tr>
                             <th className="b">닉네임</th>

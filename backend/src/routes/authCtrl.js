@@ -182,6 +182,7 @@ router.get('/login/kakao', async (req, res) => {
         'Authorization': `Bearer ${token.access}`
       }
     });
+    console.log(result.data);
 
     // 사용자 정보를 가져왔으니 필요 없어진 액세스 토큰을 폐기하기 위해 카카오 로그아웃 처리 요청
     await axios({
@@ -193,10 +194,18 @@ router.get('/login/kakao', async (req, res) => {
     });
 
     // 카카오가 제공해준 사용자 정보를 가지고 우리 서비스의 사용자 정보와 매칭한다.
-    const username = `${result.data.id}_${strategy}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
-    const nickname = result.data.properties.nickname;
-    const user = await OAuthLogin(username, strategy, nickname); // 우리 서비스에서의 사용자 정보
-    console.log(user);
+    const userData = {
+      username: `${result.data.id}_${strategy}`,
+      strategy,
+      nickname: result.data.kakao_account.profile.nickname,
+      phone: '',
+      name: result.data.kakao_account.profile.nickname
+    }
+
+    const user = await OAuthLogin(userData); // 우리 서비스에서의 사용자 정보
+    // const username = `${result.data.id}_${strategy}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
+    // const nickname = result.data.properties.nickname;
+    // const user = await OAuthLogin(username, strategy, nickname); // 우리 서비스에서의 사용자 정보
 
     // 계정이 비활성화 상태이면 로그인 불가
     if (user.inactive)
@@ -249,6 +258,7 @@ router.get('/login/naver', async (req, res) => {
         'Authorization': `Bearer ${token.access}`
       }
     });
+    result.data.response.mobile = result.data.response.mobile.replaceAll('-', ''); // 전화번호 정보에서 - 문자 제거
 
     // 사용자 정보를 가져왔으니 필요 없어진 액세스 토큰을 폐기하기 위해 네이버에 폐기 요청
     await axios({
@@ -264,10 +274,20 @@ router.get('/login/naver', async (req, res) => {
     });
 
     // 네이버가 제공해준 사용자 정보를 가지고 우리 서비스의 사용자 정보와 매칭한다.
-    const username = `${result.data.response.id}_${strategy}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
-    const nickname = result.data.response.nickname;
-    const user = await OAuthLogin(username, strategy, nickname); // 우리 서비스에서의 사용자 정보
-    console.log(user);
+    // const username = `${result.data.response.id}_${strategy}`; // 카카오 서버가 제공한 고유의 사용자 id에 _kakao를 붙혀서 사용한다.
+    // const nickname = result.data.response.nickname;
+    // const phone = result.data.response.mobile;
+    // const name = result.data.response.name;
+
+    const userData = {
+      username: `${result.data.response.id}_${strategy}`,
+      strategy,
+      nickname: result.data.response.nickname,
+      phone: result.data.response.mobile,
+      name: result.data.response.name
+    }
+
+    const user = await OAuthLogin(userData); // 우리 서비스에서의 사용자 정보
 
     // 계정이 비활성화 상태이면 로그인 불가
     if (user.inactive)
