@@ -261,7 +261,7 @@ const DeliveryInfoPage = () => {
           />
           <Button className="cancel_button" type="button" onClick={openSearchModal}>주소 검색</Button>
         </div>
-        <p className="text-label">배송 정보는 포토카드를 받을 때 사용되니 정확하게 입력해주세요.</p>
+        <p className="text-label">배송 정보는 포토카드를 받을 때 사용되오니 정확하게 입력해주세요.</p>
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onClickBackButton}>취소</Button>

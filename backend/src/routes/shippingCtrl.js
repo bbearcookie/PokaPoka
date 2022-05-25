@@ -2,7 +2,7 @@ const router = require('../config/express').router;
 const crypto = require('crypto');
 const { db } = require('../config/database');
 const { verifyLogin, isAdmin } = require('../utils/jwt');
-const { checkSMSVerification } = require('../utils/sms');
+const { checkSMSVerification, sendSMS } = require('../utils/sms');
 const { isNull, getWhereClause } = require('../utils/common');
 
 // 일반 사용자 - 마이페이지 배송 정보
@@ -200,11 +200,26 @@ router.post('/shipping/request', verifyLogin, async (req, res) => {
 
   // 유효성 검사
   if (isNull(useVouchers)) return res.status(400).json({ message: '배송 요청할 포토카드 소유권을 선택해주세요.' });
-  if (!address) return res.status(400).json({ message: '배송 받을 주소를 입력해주세요.' });
   
   const con = await db.getConnection();
   try {
     await con.beginTransaction();
+
+    // 사용자 정보 검사
+    let sql = `SELECT username, phone, address FROM User where username='${user.username}'`;
+    let [[userInfo]] = await con.query(sql);
+    if (!userInfo) {
+      await con.rollback();
+      return res.status(400).json({ message: '사용자 정보를 찾을 수 없습니다.' });
+    }
+    if (!userInfo.phone) {
+      await con.rollback();
+      return res.status(400).json({ message: '연락처를 먼저 등록해주세요.' });
+    }
+    if (!userInfo.address) {
+      await con.rollback();
+      return res.status(400).json({ message: '배송 받을 주소를 먼저 등록해주세요.' });
+    }
 
     // 소유권 검사
     try {
@@ -227,11 +242,12 @@ router.post('/shipping/request', verifyLogin, async (req, res) => {
         if (trades.length > 0) throw new Error("해당 소유권으로 등록된 교환글이 있어서 배송 요청할 수 없습니다.");
       }));
     } catch (err) {
+      await con.rollback();
       return res.status(400).json({ message: err.message });
     }
 
     // 배송 요청 데이터 등록
-    let sql = `
+    sql = `
     INSERT INTO ShippingRequest (username, payment_uid, payment_price)
     VALUES ('${user.username}', 'mid_${crypto.randomBytes(8).toString('hex')}', 10)`;
     let [result] = await con.execute(sql);
@@ -493,12 +509,15 @@ router.get('/shipping/voucher/mine', verifyLogin, async (req, res) => {
 router.post('/shipping/state/:requestId', verifyLogin, async (req, res) => {
   const { requestId } = req.params;
   const { user, accessToken } = req;
-
-  // 유효성 검사
-  if (isNull(requestId)) return res.status(400).json({ message: '배송 처리 하려는 배송 요청 글을 선택해주세요.' });
+  const { delivery, trackingNumber } = req.body;
 
   // 관리자 권한 확인
   if (!isAdmin(accessToken)) return res.status(403).json({ message: '권한이 없습니다.' });
+
+  // 유효성 검사
+  if (isNull(requestId)) return res.status(400).json({ message: '배송 처리 하려는 배송 요청 글을 선택해주세요.' });
+  if (!delivery) return res.status(400).json({ message: '택배사를 입력해주세요.' });
+  if (!trackingNumber) return res.status(400).json({ message: '운송장 번호를 입력해주세요.' });
 
   const con = await db.getConnection();
   try {
@@ -514,6 +533,37 @@ router.post('/shipping/state/:requestId', verifyLogin, async (req, res) => {
     if (request.payment_state !== 'paid') {
       await con.rollback();
       return res.status(400).json({ message: '해당 배송 요청의 배송비가 아직 결제되지 않았습니다.' });
+    }
+
+    // 요청자 정보 가져오기
+    sql = `SELECT phone FROM User WHERE username='${request.username}'`;
+    let [[recipient]] = await con.query(sql);
+    if (!recipient) {
+      await con.rollback();
+      return res.status(400).json({ message: '해당 배송 요청자를 찾을 수 없습니다.' });
+    }
+
+    // 요청자에게 배송 정보를 문자로 보내주기
+    try {
+      // 문자로 발송할 데이터
+      const smsData = {
+        type: 'SMS',
+        contentType: 'COMM',
+        countryCode: '82',
+        from: process.env.NAVER_CALLER_PHONE,
+        content: '[PokaPoka]',
+        messages: [
+          {
+            to: recipient.phone,
+            content: `[PokaPoka]\n${delivery} ${trackingNumber}\n요청하신 포토카드를 발송했습니다.`
+          }
+        ]
+      };
+
+      await sendSMS(smsData);
+    } catch (err) {
+      await con.rollback();
+      return res.status(400).json({ message: '배송 문자 발송에 문제가 생겼습니다.' });
     }
 
     // 배송 요청 처리 완료
@@ -533,8 +583,8 @@ router.post('/shipping/state/:requestId', verifyLogin, async (req, res) => {
     ShippingProvision (provider, recipient, request_id)
     VALUES (?, ?, ?)`;
     await con.execute(sql, [user.username, request.username, requestId]);
-    await con.commit();
 
+    await con.commit();
     return res.status(200).json({ message: '배송 처리되었습니다.' });
   } catch (err) {
     console.error(err);

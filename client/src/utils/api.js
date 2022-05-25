@@ -502,10 +502,16 @@ export const getShippingVoucherListMine = (filter) => axios.get(
   options
 );
 // 관리자 배송 요청 처리
-export const postSetState = (requestId) => axios.post(`${BACKEND}/api/shipping/state/${requestId}`, {}, options);
+export const postSetState = (requestId, form) => axios.post(`${BACKEND}/api/shipping/state/${requestId}`,
+  {
+    delivery: form.delivery,
+    trackingNumber: form.trackingNumber
+  },
+  options
+);
+
 // 관리자-모든 포토카드 배송 내역 조회
 export const getShippingProvisionListAll = () => axios.get(`${BACKEND}/api/shipping/provision`, options);
-
 
 // 사용자 - 배송 요청 등록
 export const postShippingRequest = (form) => axios.post(`${BACKEND}/api/shipping/request`,

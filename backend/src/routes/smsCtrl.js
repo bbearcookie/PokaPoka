@@ -30,11 +30,11 @@ router.post('/sending', async (req, res) => {
     contentType: 'COMM',
     countryCode: '82',
     from: process.env.NAVER_CALLER_PHONE,
-    content: '[현장실습연계프로젝트]',
+    content: '[PokaPoka]',
     messages: [
       {
         to: phone,
-        content: `[현장실습연계프로젝트]\n인증번호는 ${smsVerification.answer} 입니다.`
+        content: `[PokaPoka]\n인증번호는 ${smsVerification.answer} 입니다.`
       }
     ]
   };
