@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/form/Button';
-import './UsernamePage.scss';
 import useRequest from '../utils/useRequest';
 import Modal from '../components/modal/Modal';
 import ModalHeader from '../components/modal/ModalHeader';
@@ -9,13 +8,15 @@ import ModalBody from '../components/modal/ModalBody';
 import ModalFooter from '../components/modal/ModalFooter';
 import LoadingSpinner from '../components/LoadingSpinner';
 import * as api from '../utils/api';
+import { getFormattedDate } from '../utils/common';
+import './UsernamePage.scss';
 
 const UsernamePage = () =>{
   const [form, setForm] = useState({
     name: '',
     phone: ''
   });
-  const [id, setId] = useState({});
+  const [users, setUsers] = useState({});
   const [message, setMessage] = useState('');
   const request = useRequest();
   const navigate = useNavigate();
@@ -37,9 +38,8 @@ const UsernamePage = () =>{
   const onFindButton = async () => {
     try {
       const res = await request.call(api.getUsername, form.name, form.phone);
-      setMessage(res.message);
-      setId(res.username);
-      if(res.username) openModal();
+      setUsers(res.users);
+      openModal();
     } catch (err) {
       console.error(err);
       setMessage(err.response.data.message);
@@ -74,10 +74,17 @@ const UsernamePage = () =>{
     {showModal ?
     <Modal onClose={closeModal}>
       <ModalHeader onClose={closeModal}>
-        <h1>아이디 찾기</h1>
+        <h1>가입된 아이디</h1>
       </ModalHeader>
       <ModalBody>
-        <p>아이디는 {id.username} 입니다.</p>
+        {users &&
+        users.map((user, idx) => (
+          <Fragment key={idx}>
+            <p>아이디: {user.username}</p>
+            <p>가입일: {getFormattedDate(user.regist_time)}</p>
+            <br />
+          </Fragment>
+        ))}
       </ModalBody>
       <ModalFooter>
         <Button className="submit_button" onClick={gotoLogin}>확인</Button>
@@ -86,7 +93,7 @@ const UsernamePage = () =>{
 
     <section className="username_section">
     <form>
-        <p className="title-label">아이디찾기</p>
+        <p className="title-label">아이디 찾기</p>
       
         {message ? <p className="message-label">{message}</p> : null}
         <input

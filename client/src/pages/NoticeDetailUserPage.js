@@ -45,7 +45,6 @@ const NoticeDetailUserPage = () => {
   return (
     <UserTemplate
       className="NoticeDetailUserPage"
-      sidebar={<PhotoStoarageSidebar />}
     >
 
       {/* 데이터 로딩시 화면에 로딩 스피너 보여줌 */}
