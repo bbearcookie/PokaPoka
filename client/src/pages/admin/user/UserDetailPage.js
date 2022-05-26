@@ -89,6 +89,7 @@ const UserDetailPage = () => {
         header: '회원 탈퇴',
         body: res.message
       });
+      return navigate('/admin/user/');
     } catch (err) {
       setModalContent({
         header: '회원 탈퇴',
