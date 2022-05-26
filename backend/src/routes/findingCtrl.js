@@ -12,20 +12,21 @@ router.get('/findId', async (req, res) => {
   if (!name || !phone) {
     return res.status(400).json({ message: '이름과 전화번호를 입력해주세요.' });
   }
-  //else if (!checkSMSVerification(req)) return res.status(400).json({ message: '휴대폰 인증을 먼저 해주세요.' });
-  //else if (phone !== smsVerification.phone) return res.status(400).json({ message: '입력한 휴대폰 번호와 인증된 휴대폰 번호가 다릅니다.' })
+
   try {
-    let sql = `SELECT username FROM user WHERE name='${name}' AND phone='${phone}'`; // SQL 정의
-    let [[username]] = await con.query(sql) // SQL 실행
-    if (username){
-      return res.status(200).json({ message: '아이디 찾기에 성공했습니다.', username });
-    }
-    else  return res.status(200).json({ message: '이름 혹은 전화번호가 틀립니다.'});
+    let sql = `
+    SELECT username, regist_time
+    FROM user WHERE name='${name}' AND phone='${phone}' AND strategy='local'
+    ORDER BY regist_time DESC`;
+    let [users] = await con.query(sql) // SQL 실행
+    if (users.length === 0) return res.status(400).json({ message: '가입된 계정이 없습니다.'});
+
+    return res.status(200).json({ message: '아이디 찾기에 성공했습니다.', users });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
   } finally {
-    con.release(); // DB를 다 사용했으니 할당받은 자원을 해제함.
+    con.release();
   }
 });
 
