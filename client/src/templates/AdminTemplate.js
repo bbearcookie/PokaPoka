@@ -5,6 +5,7 @@ import { STORAGE_KEY_NAME } from '../contexts/Auth';
 import Navbar from '../components/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
 import './AdminTemplate.scss';
+import Footer from '../components/Footer';
 
 const AdminTemplate = ({ className, children }) => {
   const navigate = useNavigate();
@@ -18,15 +19,18 @@ const AdminTemplate = ({ className, children }) => {
   }, []);
 
   return (
-    <div className="AdminTemplate">
-      <Navbar />
-      <section className="middle_section">
-        <AdminSidebar />
-        <section className={classNames("content_section", className)}>
-          {children}
+    <>
+      <div className="AdminTemplate">
+        <Navbar />
+        <section className="middle_section">
+          <AdminSidebar />
+          <section className={classNames("content_section", className)}>
+            {children}
+          </section>
         </section>
-      </section>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

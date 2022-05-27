@@ -1,4 +1,7 @@
 .AdminTemplate {
+  height: auto;
+  min-height: calc(100% - 100px);
+  margin-bottom: 100px;
 
   .middle_section {
     display: flex;
