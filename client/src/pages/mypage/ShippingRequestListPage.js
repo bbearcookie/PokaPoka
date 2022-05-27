@@ -26,13 +26,13 @@ const ShippingRequestListPage = () => {
 
   return (
     <UserTemplate
-      className="ShippingRequestListPage"
+      className="ShippingRequestListPage_"
       sidebar={<MyPageSidebar />}
     >
       <section className="title_area">
         <h1 className="title-label">포토카드 배송 요청</h1>
         <Link to="/mypage/shipping/request">
-          <Button className="add_button">추가</Button>
+          <Button className="add_button">등록</Button>
         </Link>
       </section>
 

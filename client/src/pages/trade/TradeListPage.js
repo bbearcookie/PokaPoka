@@ -159,7 +159,7 @@ const TradeListPage = () => {
 
       <section className="search_area">
         <article className="search">
-          <p className="label">필터링 조건</p>
+          <p className="label">필터링</p>
           <Select name="searchType" value={select.searchType} onChange={onChangeSelect}>
             <option value="">선택</option>
             <option value="all">전체</option>
