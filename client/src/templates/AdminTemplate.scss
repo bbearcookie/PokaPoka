@@ -4,6 +4,7 @@
 
   .middle_section {
     display: flex;
+    min-height: calc(100vh - 220px);
 
     .SidebarTemplate {
       flex-shrink: 0;
