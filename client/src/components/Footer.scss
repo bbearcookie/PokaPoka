@@ -1,11 +1,11 @@
 .Footer {
-  width: 100%;
+  width: calc(100% - 40px);
+  height: 90px;
   padding: 20px;
-  box-sizing: border-box;
   font-size: 12px;
   color: gainsboro;
   background-color: rgb(47, 52, 65);
-  transform: translateY(-100%);
+  // transform: translateY(-1px);
 
   .white {
     color: white;

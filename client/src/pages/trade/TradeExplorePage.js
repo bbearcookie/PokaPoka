@@ -343,6 +343,7 @@ const TradeExplorePage = () => {
 
         <p className="label">캡차 인증</p>
         <ReCAPTCHA
+          className="captcha"
           sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY}
           onChange={onChangeCaptcha}
         />
