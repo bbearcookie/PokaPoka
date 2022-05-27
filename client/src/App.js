@@ -43,14 +43,10 @@ import VoucherRequestWriterPage from './pages/mypage/voucher_request/VoucherRequ
 import SuggestionRequestListPage from './pages/mypage/SuggestionRequestList';
 import SuggestionWriterPage from './pages/mypage/SuggestionWriterPage';
 import SuggestionRequestDetailPage from './pages/mypage/SuggestionRequestDetailPage';
-import ChangeLetterListPage from './pages/mypage/ChangeLetterListPage';
-import ChangeLetterWritePage from './pages/mypage/ChangeLetterWritePage';
-import ChangeLetterCorrectPage from './pages/mypage/ChangeLetterCorrectPage';
 import DeliveryInfoPage from './pages/mypage/DeliveryInfoPage';
 import DeliveryInfoWritePage from './pages/mypage/DeliveryInfoWritePage';
 import EditUserPage from './pages/mypage/EditUserPage';
 import UserInfoPage from './pages/mypage/UserInfoPage';
-import AskingPage from './pages/mypage/AskingPage';
 import VoucherProvisionListPage from './pages/admin/voucher/VoucherProvisionList';
 import UserListPage from './pages/admin/user/UserListPage';
 import WithdrawalUserListPage from './pages/admin/user/WithdrawalUserListPage';
@@ -158,14 +154,10 @@ function App() {
         <Route path="/mypage/suggestion" element={<SuggestionRequestListPage />}/>
         <Route path="/mypage/suggestion/writer" element={<SuggestionWriterPage />}/>
         <Route path="/mypage/suggestion/detail/:suggestionId" element={<SuggestionRequestDetailPage />}/>
-        <Route path="/mypage/changeletterlist" element={<ChangeLetterListPage />}/>
-        <Route path="/mypage/changeletterwrite" element={<ChangeLetterWritePage />}/>
-        <Route path="/mypage/changelettercorrect" element={<ChangeLetterCorrectPage />}/>
         <Route path="/mypage/deliveryinfo" element={<DeliveryInfoPage />}/>
         <Route path="/mypage/deliveryinfo/write" element={<DeliveryInfoWritePage />}/>
         <Route path="/mypage/userInfo/edit" element={<EditUserPage />}/>
         <Route path="/mypage/userInfo" element={<UserInfoPage />}/>
-        <Route path="/mypage/asking" element={<AskingPage />}/>
         <Route path="/mypage/shipping/request" element={<ShippingRequestPage />}/>
         <Route path="/mypage/shipping" element={<ShippingRequestListPage />}/>
         <Route path="/mypage/shipping/detail/:requestId" element={<ShippingRequestDetailPage />}/>

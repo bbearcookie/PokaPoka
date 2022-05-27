@@ -1,5 +1,6 @@
 .Navbar {
   padding: 20px 0;
+  height: 50px;
   display: flex;
   align-items: center;
   color: white;
@@ -35,6 +36,9 @@
         color: rgba(255, 255, 255, 0.5);
         text-decoration: none;
         user-select: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
   
         &:hover, &.active {
           color: white;
@@ -56,6 +60,14 @@
         align-items: center;
         color: white;
         text-decoration: none;
+        text-align: center;
+      }
+
+      .nav-item {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
 

@@ -1,10 +1,10 @@
 .UserDetailPage {
-  margin: 0 10%;
+  margin: 0 5%;
   display: flex;
   flex-direction: column;
 
   .title-label {
-    margin: 20px 0;
+    margin: 20px 0 0 0;
     font-size: 36px;
     text-align: center;
   }
@@ -69,7 +69,7 @@
     }
   }
 
-  .remove_button {
+  .submit_button {
     color: white;
     background-color: rgb(206, 28, 73);
 
@@ -140,7 +140,7 @@
   }
 
   .InfoManage_sec{
-    margin: 20px 100px; padding: 40px 0;
+    // margin: 20px 100px; padding: 40px 0;
     display: flex;
     justify-content: center;
   

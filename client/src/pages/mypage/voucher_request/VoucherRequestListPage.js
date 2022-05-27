@@ -32,7 +32,7 @@ const VoucherRequestListPage = () => {
       <section className="title_area">
         <h1 className="title-label">포토카드 소유권 요청</h1>
         <Link to="/mypage/voucher/writer">
-          <Button className="add_button">추가</Button>
+          <Button className="add_button">등록</Button>
         </Link>
       </section>
 

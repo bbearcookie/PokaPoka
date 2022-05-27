@@ -1,5 +1,5 @@
 .TradeExplorePage {
-  margin: 0 10%;
+  margin: 0 5%;
   display: flex;
   flex-direction: column;
 
@@ -42,6 +42,10 @@
   }
   .want-text {
     color: blue;
+  }
+
+  .captcha {
+    margin-bottom: 20px;
   }
 
   .label_area {

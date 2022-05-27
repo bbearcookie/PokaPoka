@@ -17,7 +17,7 @@ const MyPageSidebar = () => {
       <Link className={classNames("link", {"active": URI.includes('/mypage/deliveryinfo')})}
         to="/mypage/deliveryinfo">배송 정보</Link>
       {/* <Link className="link" to="/mypage/changeletterlist">교환글</Link> */}
-      <section className="subtitle_section">관리자에게 요청하기</section>
+      <section className="subtitle_section">관리자에게 요청</section>
       <Link 
         className={classNames("link", {"active": URI.includes('/mypage/suggestion')})}
         to="/mypage/suggestion">문의사항</Link>
