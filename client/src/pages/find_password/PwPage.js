@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Button from '../../components/form/Button';
+import MessageLabel from '../../components/MessageLabel';
 import './PwPage.scss';
 import useRequest from '../../utils/useRequest';
 import * as api from '../../utils/api';
@@ -47,9 +48,9 @@ const PwPage = () => {
       </header>
       <section className="PwPage_section">
         <form>
-          <p className="title-label">비밀번호찾기</p>
+          <p className="title-label">비밀번호 찾기</p>
         
-          {message ? <p className="message-label">{message}</p> : null}
+          {message ? <MessageLabel>{message}</MessageLabel> : null}
           <input
             type="text"
             name="username"
