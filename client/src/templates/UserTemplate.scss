@@ -24,11 +24,13 @@
 
       .SidebarTemplate {
         width: 100%;
-        max-width: 100vh;
+        max-width: 100%;
       }
 
       .content_section {
         margin: 0;
+        // padding: 0;
+        box-sizing: border-box;
       }
     }
   }
