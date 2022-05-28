@@ -41,7 +41,7 @@ const PwChangePage = () => {
       </header>
       <section className="PwChange_section">
       <form>
-          <p className="title-label">비밀번호변경</p>
+          <p className="title-label">비밀번호 변경</p>
         
           {message ? <p className="message-label">{message}</p> : null}
           <input

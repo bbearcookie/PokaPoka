@@ -24,7 +24,6 @@ import UsernamePage from './pages/UsernamePage';
 import PasswordPage from './pages/find_password/PwPage';
 import SignupCompletePage from './pages/SignupCompletePage';
 import PwChangePage from './pages/find_password/PwChangePage';
-import ManagerLoginPage from './pages/ManagerLoginPage';
 import CertificationPage from './pages/find_password/CertificationPage';
 import UserMainPage from './pages/MainPage';
 import SuggestionListPage from './pages/admin/suggestion/SuggestionListPage';
@@ -104,7 +103,6 @@ function App() {
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
         <Route path="/auth/signupcomplete" element={<SignupCompletePage />} />
-        <Route path="/auth/managerlogin" element={<ManagerLoginPage />}/>
 
         <Route path="/admin" element={<AdminMainPage />} />
         <Route path="/admin/group" element={<GroupListPage />} />

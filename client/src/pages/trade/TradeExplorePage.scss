@@ -4,20 +4,20 @@
   flex-direction: column;
 
   .title-label {
-    margin: 20px 0;
-    font-size: 36px;
+    margin: 1.25rem 0;
+    font-size: 2.25rem;
     text-align: center;
   }
 
   .MessageLabel {
-    margin: 0 0 20px 0;
+    margin: 0 0 1.25rem 0;
     white-space: pre-line;
   }
 
   .label {
     align-self: flex-start;
-    font-size: 20px;
-    margin: 15px 0 15px 0;
+    font-size: 1.25rem;
+    margin: 1rem 0 1rem 0;
   }
 
   .submit_button {
@@ -49,15 +49,15 @@
   }
 
   .label_area {
-    margin: 20px 0;
+    margin: 1.25rem 0;
     display: flex;
 
     .add_button {
-      width: 50px; height: 35px;
+      width: 3.125rem; height: 2.188rem;
       align-self: center;
-      margin-left: 10px;
-      border-radius: 50px;
-      font-size: 16px;
+      margin-left: 0.625rem;
+      border-radius: 3.125rem;
+      font-size: 1rem;
       background-color: rgb(206, 28, 73);
       color: white;
 
@@ -68,41 +68,44 @@
   }
 
   .search_area {
-    min-width: 500px;
+    // min-width: 500px;
     width: 100%;
     margin: 0 auto;
     display: flex;
     justify-content: space-around;
 
-    .label {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
     .search {
+      margin-bottom: 1rem;
       display: flex;
+      flex-direction: column;
+
+      .label {
+        margin: 0 0 0.25rem 0.5rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
 
       .Select {
-        width: 200px; height: 40px;
-        margin-left: 5px;
+        width: 12.5rem; height: 2.5rem;
+        margin-left: 0.313rem;
         align-self: center;
       }
 
       .Input {
-        height: 40px;
-        font-size: 16px;
-        margin-left: 5px;
+        height: 2.5rem;
+        font-size: 1rem;
+        margin-left: 0.313rem;
         align-self: center;
       }
     }
   }
 
   .card_section {
-    margin-top: 10px;
+    margin-top: 0.625rem;
     text-align: center;
 
     .VoucherCard {
-      margin: 0 25px 50px 25px;
+      margin: 0 1.563rem 3.125rem 1.563rem;
       display: inline-block;
 
       &.active {
@@ -114,14 +117,14 @@
     }
 
     .ImageCard {
-      margin: 0 25px 50px 25px;
+      margin: 0 1.563rem 3.125rem 1.563rem;
       display: inline-block;
 
       p {
         margin: 0;
         padding: 0;
-        line-height: 40px;
-        font-size: 16px;
+        line-height: 2.5rem;
+        font-size: 1rem;
       }
 
       &.active {
@@ -133,11 +136,11 @@
     }
 
     .remove_button {
-      margin: 0 0 15px 0;
-      width: 55px; height: 30px;
+      margin: 0 0 1rem 0;
+      width: 3.438rem; height: 1.875rem;
       align-self: center;
-      border-radius: 50px;
-      font-size: 16px;
+      border-radius: 3.125rem;
+      font-size: 1rem;
       background-color: rgb(206, 28, 73);
       color: white;
 
@@ -148,14 +151,24 @@
   }
 
   .explore_button {
-    width: 500px; height: 50px;
+    width: 31.250rem; height: 3.125rem;
+    margin: 1rem;
     align-self: center;
-    font-size: 16px;
+    font-size: 1rem;
     color: white;
     background-color: rgb(206, 28, 73);
 
     &:hover {
       background-color: rgb(163, 33, 66);
+    }
+  }
+
+  @media screen and (max-width: 650px) {
+    .search_area {
+      width: 90%;
+      margin-bottom: 3rem;
+      flex-direction: column;
+      align-items: center;
     }
   }
 }

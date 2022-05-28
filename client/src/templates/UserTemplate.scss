@@ -1,10 +1,11 @@
 .UserTemplate {
+  width: 100%;
   height: auto;
-  min-height: calc(100% - 130px);
+  min-height: calc(100% - 8.125rem);
 
   .middle_section {
     display: flex;
-    min-height: calc(100vh - 220px);
+    min-height: calc(100vh - 13.75rem);
 
     .SidebarTemplate {
       flex-shrink: 0;
@@ -12,8 +13,25 @@
   
     .content_section {
       width: 100%;
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  @media screen and (max-width: 800px) {
+    .middle_section {
+      flex-direction: column;
+
+      .SidebarTemplate {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .content_section {
+        margin: 0;
+        // padding: 0;
+        box-sizing: border-box;
+      }
     }
   }
 }

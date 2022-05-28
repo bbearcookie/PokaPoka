@@ -1,11 +1,11 @@
 .TradeCard {
-  padding: 25px;
-  margin-bottom: 50px;
+  padding: 1.563rem;
+  margin-bottom: 3.125rem;
   display: flex;
   background-color: beige;
   border: 1px solid gainsboro;
   box-shadow: 0px 5px 11px 1px #C0C0C0;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   user-select: none;
   cursor: pointer;
   transition: all 0.1s;
@@ -22,8 +22,8 @@
     }
 
     .favorite_button {
-      margin: 10px;
-      padding: 5px 15px 8px 15px;
+      margin: 0.625rem;
+      padding: 0.3rem 1rem 0.5rem 1rem;
       display: inline-block;
       color: coral;
       background-color: white;
@@ -36,8 +36,8 @@
       }
 
       .value {
-        margin-left: 8px;
-        max-width: 70px;
+        margin-left: 0.5rem;
+        max-width: 4.375rem;
         display: inline-block;
         position: relative;
         top: 5px;
@@ -51,7 +51,7 @@
 
   .label_section {
     width: 100%;
-    margin: 0 20px;
+    margin: 0 1.25rem;
 
     .label {
       margin: 0.5em 0;
@@ -64,8 +64,8 @@
     }
 
     .image_section {
-      padding: 5px;
-      border-radius: 10px;
+      padding: 0.313rem;
+      border-radius: 0.625rem;
       border: 1px solid rgba(0, 0, 0, 0.2);
       background-color: white;
       text-align: center;
@@ -74,7 +74,7 @@
         display: inline-block;
 
         img {
-          margin: 5px;
+          margin: 0.313rem;
           object-fit: contain;
           border: 1px solid rgba(0, 0, 0, 0.2);
         }
@@ -84,6 +84,22 @@
           text-align: center;
         }
       }
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    flex-direction: column;
+
+    .card_section {
+      text-align: start;
+
+      .favorite_button {
+        margin-left: 4rem;
+      }
+    }
+
+    .label_section {
+      margin: 0;
     }
   }
 }

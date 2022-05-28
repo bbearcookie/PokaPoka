@@ -1,5 +1,5 @@
 .TradeExploreCard {
-  margin-bottom: 50px;
+  margin-bottom: 3.125em;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -28,6 +28,18 @@
     .VoucherCard {
       background-color: white;
       margin: 0 0 15px !important;
+    }
+  }
+
+  @media screen and (max-width: 700px) {
+    flex-direction: column;
+    padding-bottom: 3rem;
+    border-bottom: 3px solid gainsboro;
+
+    .arrow_section {
+      img {
+        transform: rotate(90deg);
+      }
     }
   }
 }

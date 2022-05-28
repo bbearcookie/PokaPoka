@@ -15,4 +15,21 @@
       padding: 20px;
     }
   }
+
+  @media screen and (max-width: 800px) {
+    .middle_section {
+      flex-direction: column;
+
+      .SidebarTemplate {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .content_section {
+        margin: 0;
+        // padding: 0;
+        box-sizing: border-box;
+      }
+    }
+  }
 }
