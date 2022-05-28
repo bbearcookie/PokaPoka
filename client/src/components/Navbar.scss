@@ -1,6 +1,7 @@
 .Navbar {
-  padding: 20px 0;
-  height: 50px;
+  width: 100%;
+  padding: 1.25em 0;
+  // height: 50px;
   display: flex;
   align-items: center;
   color: white;
@@ -11,7 +12,7 @@
   }
 
   .nav-logo {
-    margin-left: 43px;
+    margin-left: 2.5rem;
     color: #ec1b5a;
     font-family: Inter, sans-serif;
     font-size: 2rem;
@@ -23,10 +24,10 @@
   .nav-items {
     width: 100%;
     display: flex;
-    font-size: 20px;
+    font-size: 1.25rem;
 
     .link_section {
-      padding-left: 12%;
+      padding-left: 5%;
       flex-grow: 1;
       display: flex;
       justify-content: center;
@@ -49,10 +50,10 @@
     .user_section {
       display: flex;
       align-items: center;
-      font-size: 16px;
+      font-size: 1rem;
       
       img {
-        margin-right: 15px;
+        margin-right: 1em;
       }
 
       a {
@@ -64,7 +65,7 @@
       }
 
       .nav-item {
-        max-width: 200px;
+        max-width: 12.5em;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -72,11 +73,30 @@
     }
 
     .nav-item {
-      margin-right: 15px;
+      margin-right: 1em;
     }
 
     .logout {
       cursor: pointer;
+    }
+  }
+
+  @media screen and (max-width: 830px) {
+    .nav-items {
+      .link_section {
+        .link span {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 650px) {
+    .link_section {
+      margin: 0;
+    }
+    .user_section .username {
+      display: none;
     }
   }
 }
