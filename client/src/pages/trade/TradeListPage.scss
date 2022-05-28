@@ -71,10 +71,7 @@
       margin-bottom: 3rem;
       border-bottom: 3px solid gainsboro;
       flex-direction: column;
-
-      .label {
-        text-align: center;
-      }
+      align-items: center;
     }
   }
 }
