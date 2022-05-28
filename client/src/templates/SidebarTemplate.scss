@@ -1,26 +1,26 @@
 .SidebarTemplate {
-  width: 20%;
-  max-width: 230px;
-  // min-height: calc(100vh - 220px);
+  // width: 20%;
+  width: 25vh;
+  max-width: 14.375em;
   color: white;
   background-color: rgb(47, 52, 65);
 
   .title_section {
-    height: 80px;
-    margin-bottom: 20px;
+    height: 5rem;
+    margin-bottom: 1.25rem;
     text-align: center;
-    line-height: 80px;
-    font-size: 18px;
+    line-height: 5rem;
+    font-size: 1.125rem;
     color: white;
     background-color: #ec1b5a;
     user-select: none;
   }
 
   .subtitle_section {
-    height: 40px;
+    height: 2.5rem;
     text-align: center;
-    line-height: 40px;
-    font-size: 16px;
+    line-height: 2.5rem;
+    font-size: 1rem;
     color: white;
     background-color: rgb(52, 152, 219);
     user-select: none;
@@ -28,7 +28,7 @@
 
   .link {
     width: 100%;
-    padding: 20px 0 20px 20px;
+    padding: 1.25em 1.25rem;
     display: block;
     box-sizing: border-box;
     border-left: 5px solid rgba(0, 0, 0, 0);

@@ -99,4 +99,13 @@
       display: none;
     }
   }
+
+  @media screen and (max-width: 480px) {
+    .nav-logo {
+      display: none;
+    }
+    .link_section {
+      justify-content: flex-start !important;
+    }
+  }
 }

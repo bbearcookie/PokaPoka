@@ -17,4 +17,19 @@
       margin-bottom: 1.25rem;
     }
   }
+
+  @media screen and (max-width: 800px) {
+    .middle_section {
+      flex-direction: column;
+
+      .SidebarTemplate {
+        width: 100%;
+        max-width: 100vh;
+      }
+
+      .content_section {
+        margin: 0;
+      }
+    }
+  }
 }
