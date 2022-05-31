@@ -21,6 +21,41 @@
     .VoucherCard {
       margin: 0 25px 50px 25px;
       display: inline-block;
+      background-color: white;
+    }
+  }
+
+  .available_voucher_section, .waiting_voucher_section {
+    min-height: 10rem;
+    margin-top: 2rem;
+    border-radius: 0.625rem;
+    border: 1px solid gainsboro;
+    box-shadow: 0px 5px 11px 1px #C0C0C0;
+
+    .title-label {
+      margin: 0;
+      padding: 1rem;
+      border-top-left-radius: 2rem;
+      border-top-right-radius: 2rem;
+      color: white;
+    }
+  }
+
+  .available_voucher_section {
+    background-color: rgba(255, 221, 220, 0.7);
+    border-radius: 2rem;
+
+    .title-label {
+      background-color: #ec1b5a;
+    }
+  }
+
+  .waiting_voucher_section {
+    background: linear-gradient(110deg, rgb(228, 228, 228, 0.7) 60%, rgba(105, 167, 224, 0.203) 60%);
+    border-radius: 2rem;
+
+    .title-label {
+      background-color: rgb(47, 52, 65);
     }
   }
 }
