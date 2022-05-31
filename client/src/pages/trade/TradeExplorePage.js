@@ -271,7 +271,8 @@ const TradeExplorePage = () => {
       </section>
 
       <section className="card_section">
-        {vouchers ?
+        {vouchers &&
+        (vouchers.length > 0 ?
           vouchers.filter(v => v.shipping === 0).map(v =>
             <VoucherCard
               className={classNames({"active": v.voucher_id === parseInt(voucherId) })}
@@ -281,8 +282,11 @@ const TradeExplorePage = () => {
               albumName={v.album_name}
               src={`${BACKEND}/image/photocard/${v.image_name}`}
               onClick={onClickVoucher}
-            />
-          ) : null}
+            />) : 
+            have.groupId !== '' && have.memberId !== '' ?
+            <p>해당 조건에 맞는 당신의 소유권이 없습니다.</p> :
+            <p>사용하려는 소유권의 조회 조건을 선택해주세요.</p>
+        )}
       </section>
 
       <p className="label">받으려는 포토카드</p>

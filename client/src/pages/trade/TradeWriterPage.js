@@ -372,7 +372,8 @@ const TradeWriterPage = () => {
         </section>
 
         <section className="card_section">
-          {vouchers ?
+          {vouchers &&
+          (vouchers.length > 0 ?
             vouchers.filter(v => v.shipping === 0).map(v =>
               <VoucherCard
                 className={classNames({"active": v.voucher_id === parseInt(form.haveVoucherId) })}
@@ -382,8 +383,11 @@ const TradeWriterPage = () => {
                 albumName={v.album_name}
                 src={`${BACKEND}/image/photocard/${v.image_name}`}
                 onClick={onClickVoucher}
-              />
-            ) : null}
+              />) : 
+            select.have.groupId !== '' && select.have.memberId !== '' ?
+            <p>조회된 당신의 소유권이 없습니다.</p> :
+            <p>사용하려는 소유권 조회 조건을 선택해주세요.</p>
+          )}
         </section>
 
         <div className="label_area">
@@ -420,16 +424,6 @@ const TradeWriterPage = () => {
             <option value="9">9</option>
           </Select>
         </section>
-
-        {/* <Input
-          type="text"
-          name="wantAmount"
-          value={form.wantAmount}
-          maxLength="1"
-          autoComplete="off"
-          placeholder="받으려는 포토카드의 개수를 입력하세요 (숫자)"
-          onChange={onChangeNumberInput}
-        /> */}
 
         <section className="submit_section">
           <Button className="cancel_button" type="button" onClick={onCancel}>취소</Button>

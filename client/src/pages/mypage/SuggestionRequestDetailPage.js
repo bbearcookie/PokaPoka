@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import useRequest from '../../utils/useRequest';
+import { BACKEND } from '../../utils/api';
 import * as api from '../../utils/api';
 import { getFormattedDate } from '../../utils/common';
 import Button from '../../components/form/Button';
@@ -17,7 +18,7 @@ const category = {
   'normal': '기타',
   'shipping': '배송',
   'voucher': '소유권',
-  'contents': '새로운 데이터 추가',
+  'contents': '제보',
   'trade': '거래'
 }
 
@@ -36,7 +37,8 @@ const SuggestionRequestDetailPage = () => {
     content: '',
     category: '',
     state: '', // 문의 사항 처리 상태
-    write_time: ''
+    write_time: '',
+    image_name: ''
   });
   const [reply, setReply] = useState({  //답변 정보
     reply: ''
@@ -57,7 +59,8 @@ const SuggestionRequestDetailPage = () => {
         content: res.suggestion.content,
         category: res.suggestion.category,
         state: res.suggestion.state,
-        write_time: res.suggestion.write_time
+        write_time: res.suggestion.write_time,
+        image_name: res.suggestion.image_name
       });
       if(res.reply){ // 답변이 있을 때 답변 정보 가져오기
         setReply(produce(draft => {
@@ -78,6 +81,17 @@ const SuggestionRequestDetailPage = () => {
 
       <h1 className="title-label">문의사항 상세 정보</h1>
       {message ? <MessageLabel>{message}</MessageLabel> : null}
+      {suggestion.image_name &&
+      <section className="label_area">
+        <p className="label">첨부 이미지</p>
+        <img 
+            width="200px"
+            height="200px"
+            src={`${BACKEND}/image/suggestion/${suggestion.image_name}`}
+            onError={e => e.target.src = '/no_image.jpg'}
+            alt="이미지"
+        />
+      </section>}
       <section className="label_area">
         <p className="label">작성자</p>
         <p>{suggestion.username}</p>

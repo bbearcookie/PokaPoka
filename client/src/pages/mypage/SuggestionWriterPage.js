@@ -18,7 +18,12 @@ const SuggestionWriterPage = () => {
   const [form, setForm] = useState({
     title: '',
     content: '',
-    category: ''
+    category: '',
+    image: {
+      file: '', // 업로드 된 실제 이미지 파일
+      previewURL: '', // 브라우저에 임시로 보여줄 이미지 URL
+      initialURL: '', // 브라우저에 보여줄 초기 이미지 URL. 작성시에는 빈 값이고 수정시에는 원래 있는 이미지가 된다.
+    }
   });
   const [message, setMessage] = useState('');
   const categoryRefs = { // 문의사항 작성시 radio input을 checked 조작하기 위한 ref
@@ -28,6 +33,7 @@ const SuggestionWriterPage = () => {
     'contents': useRef(null),
     'trade': useRef(null)
   }
+  const imageRef = useRef(null);
   const navigate = useNavigate();
   const request = useRequest();
 
@@ -48,6 +54,37 @@ const SuggestionWriterPage = () => {
     }
   };
   useEffect(() => { onLoad(); }, []);
+
+  // 이미지 파일 변경시
+  const onChangeImage = (e) => {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    if (file) {
+      reader.onloadend = () => {
+        setForm(produce(draft => {
+          draft.image.file = file; // 실제 이미지 파일 설정
+          draft.image.previewURL = reader.result; // 브라우저에 임시로 보여줄 이미지 URL 설정
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // 이미지 업로드 초기화 클릭시
+  const onClickImageReset = () => {
+    imageRef.current.value = ''; // file 타입의 input 값 초기화
+    setForm(produce(draft => {
+      draft.image.file = ""; // 실제 이미지 파일 초기화
+      draft.image.previewURL = form.image.initialURL; // 브라우저에 임시로 보여줄 이미지 URL 초기화
+    }));
+  }
+
+  // 이미지 업로드 버튼 클릭시
+  const onClickImageUpload = () => {
+    imageRef.current.click(); // 숨겨져 있는 file 타입의 input 클릭 처리
+  }
 
   // input 값 변경시
   const onChangeInput = (e) => {
@@ -84,6 +121,23 @@ const SuggestionWriterPage = () => {
         <h1 className="title-label">문의사항 작성</h1>}
         
         {message ? <MessageLabel>{message}</MessageLabel> : null}
+
+        <p className="label">이미지</p>
+        <section className="image_section">
+          <img 
+            width="200px"
+            height="200px"
+            src={form.image['previewURL']}
+            onError={e => e.target.src = '/no_image.jpg'}
+            alt="그룹"
+          />
+          <input type="file" accept=".jpg, .png" ref={imageRef} onChange={onChangeImage} />
+          <section className="button_section">
+            <Button className="cancel_button" onClick={onClickImageReset}>초기화</Button>
+            <Button className="submit_button" onClick={onClickImageUpload}>업로드</Button>
+          </section>
+        </section>
+
         <p className="label">제목</p>
         <Input
           type="text"
@@ -109,7 +163,7 @@ const SuggestionWriterPage = () => {
           <input id="voucher" type="radio" name="category" value="voucher" ref={categoryRefs.voucher} onChange={onChangeInput} />
           <label htmlFor="voucher">소유권</label>
           <input id="contents" type="radio" name="category" value="contents" ref={categoryRefs.contents} onChange={onChangeInput} />
-          <label htmlFor="contents">새로운 데이터 추가</label>
+          <label htmlFor="contents">제보</label>
           <input id="trade" type="radio" name="category" value="trade" ref={categoryRefs.trade} onChange={onChangeInput} /> 
           <label htmlFor="trade">거래</label>
         </section>

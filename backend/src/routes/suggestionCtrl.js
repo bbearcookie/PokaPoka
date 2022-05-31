@@ -1,5 +1,8 @@
 const router = require('../config/express').router;
+const path = require('path');
+const fs = require('fs').promises;
 const { db } = require('../config/database');
+const { getTimestampFilename, suggestionImageUpload, SUGGESTION_IMAGE_DIR } = require('../config/multer');
 const { isAdmin, verifyLogin } = require('../utils/jwt');
 const { isNull } = require('../utils/common');
 
@@ -8,39 +11,64 @@ const { isNull } = require('../utils/common');
 //suggestion(자동 생성), username, category, state, title, content, write_time, update_time
 
 //작성 완료 버튼을 눌렀을 때 DB에 내용 저장
-router.post('/new', verifyLogin, async (req, res) => {
-    const { title, content, category } = req.body;
-    const { accessToken } = req;
-    let { user } = req;
+router.post('/new', suggestionImageUpload.single('image'), verifyLogin, async (req, res) => {
+  const { title, content, category } = req.body;
+  const { accessToken, file } = req;
+  let { user } = req;
 
-    //로그인 상태 검사
-    if (!user) return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
-    
-    const con = await db.getConnection();
-    try {
-        //데이터 유효성 검사
-        if (!title) {
-            return res.status(400).json({ message: '제목을 입력해주세요.' });
-        }
-        if (!content) {
-            return res.status(400).json({ message: '내용을 입력해주세요.' });
-        }
-        if (!category) {
-          return res.status(400).json({ message: '카테고리를 선택해주세요.' });
-        }
-        //문의사항 DB에 등록
-        let sql = `INSERT into suggestion(username, category, title, content) 
-        values(?, ?, ?, ?)`;
-        let [result] = await con.execute(sql, [accessToken.payload.username, category, title, content]);
-
-        return res.status(200).json({ message: '문의사항이 등록되었습니다.'});
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
-    } finally {
-        con.release();
+  // 유효성 검사 실패시 다운 받은 임시 이미지 파일을 삭제하는 함수
+  function removeTempFile() {
+    if (file) {
+      try { fs.rm(file.path); }
+      catch (err) { console.error(err); }
     }
-  });
+  }
+
+  //로그인 상태 검사
+  if (!user) {
+    removeTempFile();
+    return res.status(401).json({ message: '로그인 상태가 아닙니다.' });
+  }
+  
+  const con = await db.getConnection();
+  try {
+    // 데이터 유효성 검사
+    if (!title) {
+      removeTempFile();
+      return res.status(400).json({ message: '제목을 입력해주세요.' });
+    }
+    if (!content) {
+      removeTempFile();
+      return res.status(400).json({ message: '내용을 입력해주세요.' });
+    }
+    if (!category) {
+      removeTempFile();
+      return res.status(400).json({ message: '카테고리를 선택해주세요.' });
+    }
+
+    // 문의사항 DB에 등록
+    let sql = `INSERT into suggestion(username, category, title, content) 
+    values(?, ?, ?, ?)`;
+    let [result] = await con.execute(sql, [accessToken.payload.username, category, title, content]);
+
+    // 임시로 받은 이미지 파일의 이름을 실제로 저장할 이름으로 변경
+    let filename = "";
+    if (file) {
+      filename = getTimestampFilename(result.insertId, file.mimetype);
+      try { fs.rename(file.path, path.join(file.destination, filename)); }
+      catch (err) { console.error(err); }
+    }
+    sql = `UPDATE Suggestion SET image_name = '${filename}' WHERE suggestion_id = ${result.insertId}`;
+    await con.execute(sql);
+
+    return res.status(200).json({ message: '문의사항이 등록되었습니다.'});
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'DB 오류가 발생했습니다.' });
+  } finally {
+    con.release();
+  }
+});
 
 //문의사항 목록 조회
 router.get('/list', verifyLogin, async (req, res) => {
@@ -92,7 +120,7 @@ router.get('/viewing/:suggestionId', verifyLogin, async (req, res) => {
       if (!isSuggestion) return res.status(404).json({ message: '조회하려는 문의사항이 DB에 없습니다.' });
 
       //문의 사항 상세
-      sql = `SELECT username, category, state, title, content, write_time FROM suggestion WHERE suggestion_id=${suggestionId}`;
+      sql = `SELECT username, category, state, title, content, write_time, image_name FROM suggestion WHERE suggestion_id=${suggestionId}`;
       let [[suggestion]] = await con.query(sql);
 
       //문의 사항 답변 내용
@@ -126,11 +154,17 @@ router.delete('/:suggestionId', verifyLogin, async (req, res) => {
     const con = await db.getConnection();
     try {
       // 문의사항 존재 유무 확인
-      let sql = `SELECT suggestion_id from suggestion WHERE suggestion_id=${suggestionId}`;
+      let sql = `SELECT suggestion_id, image_name from suggestion WHERE suggestion_id=${suggestionId}`;
       let [[suggestion]] = await con.query(sql);
       if (!suggestion) return res.status(404).json({ message: '삭제하려는 문의사항이 DB에 없습니다.' });
 
-      //답변이 있는지 확인해서 있으면 삭제
+      // 이미지 파일 삭제
+      if (suggestion.image_name) {
+        try { fs.rm(path.join(SUGGESTION_IMAGE_DIR, suggestion.image_name)); }
+        catch (err) { console.error(err); }
+      }
+
+      // 답변이 있는지 확인해서 있으면 삭제
       sql = `SELECT suggestion_id from reply WHERE suggestion_id=${suggestionId}`;
       let [[reply]] = await con.query(sql);
       if (reply) {
