@@ -7,7 +7,7 @@ const TYPES = {
   'normal': '기타',
   'shipping': '배송',
   'voucher': '소유권',
-  'contents': '데이터',
+  'contents': '제보',
   'trade': '거래',
   'temporary': '임시',
   'permanent': '정식',

@@ -17,7 +17,7 @@ const category = {
   'normal': '기타',
   'shipping': '배송',
   'voucher': '소유권',
-  'contents': '새로운 데이터 추가',
+  'contents': '제보',
   'trade': '거래'
 }
 

@@ -109,7 +109,7 @@ const SuggestionWriterPage = () => {
           <input id="voucher" type="radio" name="category" value="voucher" ref={categoryRefs.voucher} onChange={onChangeInput} />
           <label htmlFor="voucher">소유권</label>
           <input id="contents" type="radio" name="category" value="contents" ref={categoryRefs.contents} onChange={onChangeInput} />
-          <label htmlFor="contents">새로운 데이터 추가</label>
+          <label htmlFor="contents">제보</label>
           <input id="trade" type="radio" name="category" value="trade" ref={categoryRefs.trade} onChange={onChangeInput} /> 
           <label htmlFor="trade">거래</label>
         </section>
