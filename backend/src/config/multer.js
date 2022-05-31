@@ -8,6 +8,7 @@ const IDOL_MEMBER_IMAGE_DIR = 'public/image/member/' // 아이돌 멤버 이미�
 const ALBUM_IMAGE_DIR = 'public/image/album/'; // 앨범 이미지 폴더
 const PHOTOCARD_IMAGE_DIR = 'public/image/photocard/'; // 포토카드 이미지 폴더
 const VOUCHER_IMAGE_DIR = 'public/image/voucher/'; // 포토카드 소유권 인증 사진 이미지 폴더
+const SUGGESTION_IMAGE_DIR = 'public/image/suggestion/'; // 문의사항 이미지 폴더
 
 // 파일의 mimeType에 따른 확장자를 반환하는 함수
 function getExtension(mimeType) {
@@ -55,6 +56,7 @@ const memberImageUpload = createUploader(IDOL_MEMBER_IMAGE_DIR); // 아이돌 �
 const albumImageUpload = createUploader(ALBUM_IMAGE_DIR); // 앨범 이미지 업로더
 const photocardImageUpload = createUploader(PHOTOCARD_IMAGE_DIR); // 포토카드 이미지 업로더
 const voucherImageUpload = createUploader(VOUCHER_IMAGE_DIR); // 포토카드 소유권 인증 사진 이미지 폴더
+const suggestionImageUpload = createUploader(SUGGESTION_IMAGE_DIR); // 포토카드 소유권 인증 사진 이미지 폴더
 
 module.exports.getExtension = getExtension;
 module.exports.getTimestampFilename = getTimestampFilename;
@@ -64,6 +66,7 @@ module.exports.memberImageUpload = memberImageUpload;
 module.exports.albumImageUpload = albumImageUpload;
 module.exports.photocardImageUpload = photocardImageUpload;
 module.exports.voucherImageUpload = voucherImageUpload;
+module.exports.suggestionImageUpload = suggestionImageUpload;
 
 
 module.exports.IDOL_GROUP_IMAGE_DIR = IDOL_GROUP_IMAGE_DIR;
@@ -71,3 +74,4 @@ module.exports.IDOL_MEMBER_IMAGE_DIR = IDOL_MEMBER_IMAGE_DIR;
 module.exports.ALBUM_IMAGE_DIR = ALBUM_IMAGE_DIR;
 module.exports.PHOTOCARD_IMAGE_DIR = PHOTOCARD_IMAGE_DIR;
 module.exports.VOUCHER_IMAGE_DIR = VOUCHER_IMAGE_DIR;
+module.exports.SUGGESTION_IMAGE_DIR = SUGGESTION_IMAGE_DIR;

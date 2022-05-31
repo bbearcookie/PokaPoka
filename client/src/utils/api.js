@@ -204,14 +204,26 @@ export const getSuggestionDetail = (suggestionId) => axios.get(`${BACKEND}/api/s
 // 문의사항 삭제 요헝
 export const deleteSuggestion = (suggestionId) => axios.delete(`${BACKEND}/api/suggestion/${suggestionId}`, options);
 // 문의사항 데이터 작성 요청
-export const postSuggestion = (form) => axios.post(`${BACKEND}/api/suggestion/new`,
-  {
-    title: form.title,
-    content: form.content,
-    category: form.category
-  },
-  options
-);
+export const postSuggestion = (form) => {
+  let formData = new FormData();
+  formData.append('title', form.title);
+  formData.append('content', form.content);
+  formData.append('category', form.category);
+  formData.append('image', form.image.file);
+
+  return axios.post(`${BACKEND}/api/suggestion/new`, formData,
+  { ...options, headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+}
+// export const postSuggestion = (form) => axios.post(`${BACKEND}/api/suggestion/new`,
+//   {
+//     title: form.title,
+//     content: form.content,
+//     category: form.category,
+
+//   },
+//   options
+// );
 // 문의사항 답변 데이터 작성 요청
 export const postReply = (reply, suggestionId) => axios.post(`${BACKEND}/api/suggestion/reply/${suggestionId}`,
   {
